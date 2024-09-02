@@ -1,0 +1,119 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 1rem;
+}
+
+.navbar-item {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer; /* Ensure items are clickable */
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+}
+.navbar-end {
+  display: flex;
+  align-items: center;
+}
+
+.profile-sidebar,
+.login-sidebar,
+.register-sidebar {
+  position: fixed;
+  top: 0;
+  right: -300px; /* Start off-screen */
+  height: 100%;
+  width: 300px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  color: black; /* Ensure the text color is visible */
+  overflow-y: auto; /* Allow scrolling if content is too long */
+}
+
+.profile-sidebar.active,
+.login-sidebar.active,
+.register-sidebar.active {
+  right: 0; /* Slide in */
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #333;
+  color: white;
+}
+
+.sidebar-title {
+  font-size: 1.2rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.profile-menu,
+.login-form,
+.register-form {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-menu li,
+.login-form label,
+.register-form label {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.profile-menu li:last-child,
+.login-form label:last-child,
+.register-form label:last-child {
+  border-bottom: none;
+}
+
+.logout-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.form-container {
+  padding: 1rem;
+}
+
+.form-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-container input {
+  width: calc(100% - 2rem); /* Full width minus padding */
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

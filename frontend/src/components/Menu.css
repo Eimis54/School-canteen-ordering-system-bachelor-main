@@ -1,0 +1,58 @@
+/* Menu.css */
+.menu {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    background: url('/src/assets/blackboard.jpg') no-repeat center center/cover;
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+  }
+  
+  .menu h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Chalkboard', sans-serif;
+  }
+  
+  .menu-category {
+    margin-bottom: 20px;
+  }
+  
+  .menu-category h3 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-family: 'Chalkboard', sans-serif;
+  }
+  
+  .menu ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #fff;
+    padding: 10px 0;
+  }
+  
+  .menu-item-name {
+    font-size: 20px;
+    font-family: 'Chalkboard', sans-serif;
+  }
+  
+  .menu-item-description {
+    font-size: 16px;
+    font-style: italic;
+    flex-grow: 1;
+    margin: 0 10px;
+  }
+  
+  .menu-item-price {
+    font-size: 18px;
+  }
+  
