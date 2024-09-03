@@ -105,6 +105,7 @@ const MenuAdministration = () => {
     }
   };
 
+// Function to toggle menu visibility
 const handlePublicToggle = async (menuId) => {
   try {
     const token = localStorage.getItem('token');
@@ -158,6 +159,7 @@ const handlePublicToggle = async (menuId) => {
     console.error('Error updating menu public status:', error.response ? error.response.data : error.message);
   }
 };
+
 
   
   const handleNewCategoryChange = (e) => {

@@ -8,7 +8,7 @@ const Menu = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await axios.get('/api/menu/public'); // Adjust API endpoint to fetch the public menu
+        const response = await axios.get('/api/menu/mainmenu'); // Fetch the public menu
         setMenu(response.data);
       } catch (error) {
         console.error('Error fetching menu:', error.response ? error.response.data : error.message);

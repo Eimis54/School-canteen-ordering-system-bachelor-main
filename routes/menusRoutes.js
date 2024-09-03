@@ -147,5 +147,28 @@ router.patch('/toggle-visibility/:id', authenticateToken, isAdmin, async (req, r
     res.status(500).json({ error: 'Failed to toggle menu visibility' });
   }
 });
+router.get('/mainmenu', async (req, res) => {
+  try {
+    const publicMenu = await Menu.findOne({
+      where: { IsPublic: true },
+      include: {
+        model: MenuItem,
+        as: 'MenuItems',
+        include: {
+          model: Product,
+          as: 'Product'
+        }
+      }
+    });
 
+    if (!publicMenu) {
+      return res.status(404).json({ error: 'No public menu available' });
+    }
+
+    res.json(publicMenu);
+  } catch (error) {
+    console.error('Error fetching public menu:', error);
+    res.status(500).json({ error: 'Failed to fetch public menu' });
+  }
+});
 module.exports = router;
