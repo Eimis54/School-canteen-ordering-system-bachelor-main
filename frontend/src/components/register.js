@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-
-const Register = () => {
+const Register = ({ onRegisterSuccess }) => {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  
 
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
@@ -17,16 +15,13 @@ const Register = () => {
   };
 
   const validatePassword = (password) => {
-    // Check if password is at least 8 characters long
     if (password.length <= 6) {
       return false;
     }
-    // Check if password contains at least one uppercase letter
     const hasUppercase = /[A-Z]/.test(password);
     if (!hasUppercase) {
       return false;
     }
-    // Check if password contains at least one special character
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     if (!hasSpecialChar) {
       return false;
@@ -50,7 +45,7 @@ const Register = () => {
     }
 
     if (!validatePassword(password)) {
-      setError('Password must be at least 6 characters long, have a special character and have atleast one uppercase letter.');
+      setError('Password must be at least 6 characters long, have a special character and have at least one uppercase letter.');
       return;
     }
 
@@ -62,11 +57,18 @@ const Register = () => {
         password,
       });
       console.log('Registration successful:', response.data);
-      setSuccess('Registration successful. You can now log in.');
+      setSuccess('Registration successful. Please log in.');
+
+      // Clear form fields
       setName('');
       setSurname('');
       setEmail('');
       setPassword('');
+
+      // Switch to the login form after successful registration
+      if (onRegisterSuccess) {
+        onRegisterSuccess();
+      }
     } catch (error) {
       console.error('Registration failed:', error.response ? error.response.data : error.message);
       setError(error.response ? error.response.data.error : 'Registration failed, please try again.');

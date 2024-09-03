@@ -1,45 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Menu.css';
 
 const Menu = () => {
-  const menuCategories = {
-    Soups: [
-      { name: 'Tomato Soup', description: 'Rich tomato soup with basil', price: '$5' },
-      { name: 'Chicken Soup', description: 'Classic chicken soup', price: '$6' },
-    ],
-    Drinks: [
-      { name: 'Coke', description: 'Chilled Coca-Cola', price: '$2' },
-      { name: 'Orange Juice', description: 'Freshly squeezed orange juice', price: '$3' },
-    ],
-    'Main Meals': [
-      { name: 'Spaghetti', description: 'Spaghetti with marinara sauce', price: '$10' },
-      { name: 'Grilled Chicken', description: 'Grilled chicken with vegetables', price: '$12' },
-    ],
-    Buns: [
-      { name: 'Cinnamon Roll', description: 'Warm cinnamon roll', price: '$4' },
-      { name: 'Chocolate Bun', description: 'Soft bun with chocolate filling', price: '$5' },
-    ],
-  };
+  const [menu, setMenu] = useState(null);
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const response = await axios.get('/api/menu/public'); // Adjust API endpoint to fetch the public menu
+        setMenu(response.data);
+      } catch (error) {
+        console.error('Error fetching menu:', error.response ? error.response.data : error.message);
+      }
+    };
+
+    fetchMenu();
+  }, []);
+
+  if (!menu) {
+    return <div>Loading...</div>;
+  }
+
+  const categorizedMenuItems = menu.categories.map(category => ({
+    ...category,
+    products: menu.items.filter(item => item.CategoryID === category.CategoryID)
+  }));
 
   return (
     <div className="menu">
       <h2>Our Menu</h2>
-      {Object.keys(menuCategories).map((category, index) => (
-        <div key={index} className="menu-category">
-          <h3>{category}</h3>
-          <ul>
-            {menuCategories[category].map((item, idx) => (
-              <li key={idx}>
-                <div className="menu-item">
-                  <div className="menu-item-name">{item.name}</div>
-                  <div className="menu-item-description">{item.description}</div>
-                  <div className="menu-item-price">{item.price}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {categorizedMenuItems.length ? (
+        categorizedMenuItems.map((category, index) => (
+          <div key={index} className="menu-category">
+            <h3>{category.CategoryName}</h3>
+            <ul>
+              {category.products.map((item, idx) => (
+                <li key={idx}>
+                  <div className="menu-item">
+                    <div className="menu-item-name">{item.ProductName}</div>
+                    <div className="menu-item-description">{item.Description}</div>
+                    <div className="menu-item-price">{item.Price}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      ) : (
+        <div>No menu available</div>
+      )}
     </div>
   );
 };

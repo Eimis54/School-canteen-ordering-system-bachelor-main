@@ -72,7 +72,7 @@ const App = () => {
           <Route path="/" element={<LoggedInPage />} />
           <Route path="/about" element={<Products />} />
           <Route
-            path="/login"
+            path="/"
             element={
               isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
             }
@@ -87,10 +87,10 @@ const App = () => {
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <LoggedInPage user={user}>
                 <Route path="/account" element={<ProtectedRoute isLoggedIn={isLoggedIn}><AccountManagement /></ProtectedRoute>} />
-                <Route path="/payment-history" element={<PaymentHistory />} />
+                {/* <Route path="/payment-history" element={<PaymentHistory />} /> */}
                 <Route path="/your-children" element={<ChildrenManagement />} />
-                <Route path="/help" element={<Help />} />
-                <Route path="/faq" element={<FAQ />} />
+                {/* <Route path="/help" element={<Help />} /> */}
+                {/* <Route path="/faq" element={<FAQ />} /> */}
                 <Route path="/" component={LoggedInPage} />
               </LoggedInPage>
             </ProtectedRoute>

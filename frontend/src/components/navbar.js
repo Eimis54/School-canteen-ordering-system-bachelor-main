@@ -64,7 +64,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 </div>
                 <div className="form-container">
                   {showLogin && <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
-                  {showRegister && <Register />}
+                  {showRegister && <Register onRegisterSuccess={openLogin} />} {/* Pass the openLogin function */}
                 </div>
               </div>
             </>

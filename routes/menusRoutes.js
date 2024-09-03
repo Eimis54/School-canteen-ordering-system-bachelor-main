@@ -24,7 +24,7 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
       const items = MenuItems.map(item => ({
         MenuID: menu.MenuID,
         ProductID: item.ProductID,
-        CustomPrice: item.CustomPrice || null
+        
       }));
       await MenuItem.bulkCreate(items);
     }
@@ -125,6 +125,26 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error deleting menu:', error);
     res.status(500).json({ error: 'Failed to delete menu' });
+  }
+});
+
+// Route to toggle the visibility of a menu
+router.patch('/toggle-visibility/:id', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { IsPublic } = req.body;
+
+  try {
+    // Find the menu by ID
+    const menu = await Menu.findByPk(id);
+    if (!menu) return res.status(404).json({ error: 'Menu not found' });
+
+    // Update the visibility status
+    await menu.update({ IsPublic });
+
+    res.json(menu);
+  } catch (error) {
+    console.error('Error toggling menu visibility:', error);
+    res.status(500).json({ error: 'Failed to toggle menu visibility' });
   }
 });
 
