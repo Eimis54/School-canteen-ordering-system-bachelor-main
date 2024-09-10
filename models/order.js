@@ -35,12 +35,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       field: 'TotalPrice' // Column name in database
-    }
-  }, {
-    tableName: 'orders', // Specify the table name
-    timestamps: true, // Enable timestamps for createdAt and updatedAt
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'createdAt', // Ensure the field name matches the database column name
+  },
+    updatedAt: {
+      type: DataTypes.DATE,
+      field: 'updatedAt', // Ensure the field name matches the database column name
+  }
+}, {
+    tableName: 'orders',
+    timestamps: true,
+    underscored: false,
   });
 
   Order.associate = function(models) {

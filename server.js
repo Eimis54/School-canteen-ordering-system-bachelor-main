@@ -36,7 +36,7 @@ sequelize.sync().then(() => {
 const authRoutes = require('./routes/authRoutes');
 const childrenRoutes = require('./routes/childrenRoutes');
 const dealsRoutes = require('./routes/dealsRoutes');
-const menusRoutes = require('./routes/menusRoutes');
+const menuRoutes = require('./routes/menusRoutes');
 const ordersRoutes = require('./routes/ordersRoutes');
 const photosRoutes = require('./routes/photosRoutes');
 const productsRoutes = require('./routes/productsRoutes');
@@ -44,6 +44,10 @@ const usersRoutes = require('./routes/usersRoutes');
 const adminMenuRoutes = require('./routes/adminMenuRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const productCategoriesRoutes = require('./routes/productCategoriesRoutes');
+// const cartRoutes = require('./routes/cartRoutes');
+
+
+app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', ordersRoutes);
@@ -53,9 +57,11 @@ app.use('/api/productcategories', productCategoriesRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/user', usersRoutes);
 app.use('/api/photo', photosRoutes);
-app.use('/api/menu', menusRoutes);
+app.use('/api/menu', menuRoutes);
 app.use('/api/deals', dealsRoutes);
 app.use('/api/children', childrenRoutes);
+// app.use('/api/cart', cartRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

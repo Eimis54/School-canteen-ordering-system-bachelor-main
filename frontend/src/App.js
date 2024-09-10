@@ -16,12 +16,15 @@ import UserAdministration from './components/UserAdministration';
 import DealAdministration from './components/DealAdministration';
 import MenuAdministration from './components/MenuAdministration';
 import AdminPhotoManager from './components/AdminPhotoManager';
+import ShoppingCart from './components/ShoppingCart';
+import OrderSection from './components/OrderSection';
 import './App.css';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -72,37 +75,54 @@ const App = () => {
           <Route path="/" element={<LoggedInPage />} />
           <Route path="/about" element={<Products />} />
           <Route
-            path="/"
-            element={
-              isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
-            }
+            path="/login"
+            element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
           />
           <Route
             path="/register"
-            element={
-              isLoggedIn ? <Navigate to="/loggedInPage" /> : <Register />
-            }
+            element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Register />}
           />
           <Route path="/loggedInPage" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <LoggedInPage user={user}>
-                <Route path="/account" element={<ProtectedRoute isLoggedIn={isLoggedIn}><AccountManagement /></ProtectedRoute>} />
-                {/* <Route path="/payment-history" element={<PaymentHistory />} /> */}
-                <Route path="/your-children" element={<ChildrenManagement />} />
-                {/* <Route path="/help" element={<Help />} /> */}
-                {/* <Route path="/faq" element={<FAQ />} /> */}
-                <Route path="/" component={LoggedInPage} />
-              </LoggedInPage>
+              <LoggedInPage user={user} />
             </ProtectedRoute>
           } />
-          <Route path="/account" element={<ProtectedRoute isLoggedIn={isLoggedIn}><AccountManagement /></ProtectedRoute>} />
-          <Route path="/your-children" element={<ProtectedRoute isLoggedIn={isLoggedIn}><ChildrenManagement /></ProtectedRoute>} />
+
+          {/* Add OrderSection and ShoppingCart Routes */}
+          <Route path="/order" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <OrderSection cart={cart} setCart={setCart} />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/cart" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ShoppingCart cart={cart} />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/account" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <AccountManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/your-children" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ChildrenManagement />
+            </ProtectedRoute>
+          } />
           <Route path="*" element={<Navigate to="/" />} />
-          <Route path="/admin" element={<ProtectedRoute isLoggedIn={isLoggedIn} isAdmin={user?.isAdmin}><AdminDashboard /></ProtectedRoute>}>
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn} isAdmin={user?.isAdmin}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }>
             <Route path="users" element={<UserAdministration />} />
             <Route path="deals" element={<DealAdministration />} />
             <Route path="menu" element={<MenuAdministration />} />
-            <Route path="photos" element={<AdminPhotoManager />}/>
+            <Route path="photos" element={<AdminPhotoManager />} />
           </Route>
         </Routes>
       </div>

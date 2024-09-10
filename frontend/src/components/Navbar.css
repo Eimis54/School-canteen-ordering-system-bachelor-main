@@ -117,3 +117,18 @@
   border: none;
   cursor: pointer;
 }
+.cart-button {
+  font-size: 1rem;
+  color: #fff; /* Adjust color to fit your design */
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  margin-left: 1rem;
+}
+
+.cart-button:hover {
+  background-color: #fff;
+  color: #000; /* Adjust color to fit your design */
+}
+

@@ -28,6 +28,11 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
       </div>
       <div className="navbar-menu">
         <div className="navbar-end">
+          {isLoggedIn && (
+            <div className="navbar-item">
+              <Link to="/cart" className="cart-button">Cart</Link>
+            </div>
+          )}
           {isLoggedIn ? (
             <>
               {user && user.isAdmin && (
