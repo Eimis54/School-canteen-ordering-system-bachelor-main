@@ -4,55 +4,52 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
-      field: 'OrderID' // Column name in database
     },
     UserID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
-        key: 'UserID'
+        model: 'Users',   // Correct model name for users
+        key: 'UserID',    // Make sure the key matches the Users model
       },
-      field: 'UserID' // Column name in database
     },
     OrderDate: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'OrderDate' // Column name in database
+      defaultValue: DataTypes.NOW,
     },
     Status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
-      field: 'status' // Column name in database
+      defaultValue: false,  // Represents 'pending' by default
     },
     TotalCalories: {
       type: DataTypes.DECIMAL(8, 2),
       allowNull: false,
-      field: 'TotalCalories' // Column name in database
     },
     TotalPrice: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      field: 'TotalPrice' // Column name in database
     },
     createdAt: {
       type: DataTypes.DATE,
-      field: 'createdAt', // Ensure the field name matches the database column name
-  },
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
     updatedAt: {
       type: DataTypes.DATE,
-      field: 'updatedAt', // Ensure the field name matches the database column name
-  }
-}, {
-    tableName: 'orders',
-    timestamps: true,
-    underscored: false,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    }
+  }, {
+    tableName: 'orders',  // Correct table name
+    timestamps: true,  // Enable automatic handling of timestamps
   });
 
-  Order.associate = function(models) {
-    Order.belongsTo(models.User, { foreignKey: 'UserID' });
-    Order.hasMany(models.OrderDetail, { foreignKey: 'OrderID' });
+  // Define associations
+  Order.associate = (models) => {
+    Order.belongsTo(models.User, { foreignKey: 'UserID', as: 'user' });
+    // Order.hasMany(models.CartItem, { foreignKey: 'OrderID', as: 'cartItems' }); // Once you associate orders with cart items
   };
 
   return Order;

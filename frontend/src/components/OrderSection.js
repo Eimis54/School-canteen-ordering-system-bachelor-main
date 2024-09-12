@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const OrderSection = ({ cart, setCart }) => {
+const OrderSection = () => {
   const [menu, setMenu] = useState(null);
   const [children, setChildren] = useState([]);
   const [selectedChild, setSelectedChild] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
+  const [cart, setCart] = useState([]);  // Define cart here
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -54,39 +55,49 @@ const OrderSection = ({ cart, setCart }) => {
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
+  
     if (!selectedChild) {
       return alert("Please select a child!");
     }
-
+  
+    if (selectedItems.length === 0) {
+      return alert("No items selected for cart.");
+    }
+  
     try {
-      if (selectedItems.length === 0) {
-        return alert("No items selected for cart.");
-      }
-
       const token = localStorage.getItem("token");
-
-      const response = await axios.get("http://localhost:3001/api/children", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.data.length === 0) {
-        return alert("No children found for the user.");
+  
+      // Get or create CartID for the user
+      let CartID = localStorage.getItem('cartID');
+      if (!CartID) {
+        // Generate a new CartID (handled by your backend or locally)
+        const cartResponse = await axios.post('http://localhost:3001/api/cart/create', {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        CartID = cartResponse.data.CartID;
+        localStorage.setItem('cartID', CartID); // Save CartID to local storage for subsequent use
       }
-
-      const userID = response.data[0].UserID;
-
+  
+      // Prepare cart items with CartID and the selected child
       const cartItems = selectedItems.map(item => ({
         ProductID: item.ProductID,
         Quantity: item.Quantity,
         Price: item.Price,
         Calories: item.Calories,
       }));
-
-      setCart(prevCart => [...prevCart, { ChildID: selectedChild, UserID: userID, Items: cartItems }]);
+  
+      // Send items to the backend with the ChildID and CartID
+      await axios.post("http://localhost:3001/api/cart/add", {
+        ChildID: selectedChild,
+        Items: cartItems,
+        CartID, // Send CartID along with the items
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       alert("Items added to cart successfully!");
-
       setSelectedChild("");
       setSelectedItems([]);
     } catch (error) {
@@ -94,11 +105,12 @@ const OrderSection = ({ cart, setCart }) => {
       console.error(error);
     }
   };
-
+  
   return (
     <div>
       <h2>Add to Cart</h2>
       {error && <div style={{ color: 'red' }}>{error}</div>}
+      
       {/* Select Child */}
       <div>
         <label>Select Child:</label>
@@ -115,6 +127,7 @@ const OrderSection = ({ cart, setCart }) => {
           )}
         </select>
       </div>
+      
       {/* Display Menu */}
       {menu ? (
         <div>
@@ -136,8 +149,28 @@ const OrderSection = ({ cart, setCart }) => {
       ) : (
         <p>Loading menu...</p>
       )}
+      
       {/* Add to Cart Button */}
       <button onClick={handleAddToCart}>Add to Cart</button>
+      
+      {/* Display Cart */}
+      <div>
+        <h3>Shopping Cart</h3>
+        {cart.length > 0 ? (
+          cart.map((cartItem, index) => (
+            <div key={index}>
+              <h4>Child: {cartItem.Child.Name}</h4>
+              {cartItem.Items.map(item => (
+                <p key={item.ProductID}>
+                  {item.ProductID}: {item.Quantity} x {item.Price} = {item.Quantity * item.Price}
+                </p>
+              ))}
+            </div>
+          ))
+        ) : (
+          <p>Cart is empty</p>
+        )}
+      </div>
     </div>
   );
 };

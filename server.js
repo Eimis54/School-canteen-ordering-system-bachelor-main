@@ -44,7 +44,7 @@ const usersRoutes = require('./routes/usersRoutes');
 const adminMenuRoutes = require('./routes/adminMenuRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const productCategoriesRoutes = require('./routes/productCategoriesRoutes');
-// const cartRoutes = require('./routes/cartRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 
 app.use(express.json());
@@ -60,7 +60,7 @@ app.use('/api/photo', photosRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/deals', dealsRoutes);
 app.use('/api/children', childrenRoutes);
-// app.use('/api/cart', cartRoutes);
+app.use('/api/cart', cartRoutes);
 
 
 app.listen(PORT, () => {
