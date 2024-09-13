@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('YOUR_STRIPE_PUBLIC_KEY'); // Replace with your Stripe public key
 
 const ShoppingCart = () => {
   const [cart, setCart] = useState([]);
@@ -25,12 +27,38 @@ const ShoppingCart = () => {
     fetchCartData();
   }, []);
 
-  const totalPrice = cart.reduce((acc, cartItem) => 
+  const handleCheckout = async () => {
+    try {
+      const stripe = await stripePromise;
+  
+      // Create a checkout session
+      const response = await axios.post("http://localhost:3001/api/payment/create-checkout-session", {
+        cartItems: cart,
+      });
+  
+      const sessionId = response.data.id;
+  
+      // Redirect to Stripe Checkout
+      const { error } = await stripe.redirectToCheckout({
+        sessionId,
+      });
+  
+      if (error) {
+        console.error("Stripe error:", error);
+      }
+    } catch (error) {
+      setError("Failed to proceed to checkout");
+      console.error(error);
+    }
+  };
+  
+
+  const totalPrice = cart.reduce((acc, cartItem) =>
     acc + (cartItem.Price * cartItem.Quantity), 
     0
   );
 
-  const totalCalories = cart.reduce((acc, cartItem) => 
+  const totalCalories = cart.reduce((acc, cartItem) =>
     acc + (cartItem.Calories * cartItem.Quantity), 
     0
   );
@@ -74,7 +102,7 @@ const ShoppingCart = () => {
         <p><strong>Total Calories:</strong> {totalCalories}</p>
       </div>
       <div className="checkout-button">
-        <Link to="/checkout" className="btn">Proceed to Checkout</Link>
+        <button onClick={handleCheckout} className="btn">Proceed to Checkout</button>
       </div>
     </div>
   );

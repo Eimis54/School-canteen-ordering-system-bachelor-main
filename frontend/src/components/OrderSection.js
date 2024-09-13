@@ -153,24 +153,6 @@ const OrderSection = () => {
       {/* Add to Cart Button */}
       <button onClick={handleAddToCart}>Add to Cart</button>
       
-      {/* Display Cart */}
-      <div>
-        <h3>Shopping Cart</h3>
-        {cart.length > 0 ? (
-          cart.map((cartItem, index) => (
-            <div key={index}>
-              <h4>Child: {cartItem.Child.Name}</h4>
-              {cartItem.Items.map(item => (
-                <p key={item.ProductID}>
-                  {item.ProductID}: {item.Quantity} x {item.Price} = {item.Quantity * item.Price}
-                </p>
-              ))}
-            </div>
-          ))
-        ) : (
-          <p>Cart is empty</p>
-        )}
-      </div>
     </div>
   );
 };
