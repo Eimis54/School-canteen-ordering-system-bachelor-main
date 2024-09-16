@@ -18,6 +18,7 @@ import MenuAdministration from './components/MenuAdministration';
 import AdminPhotoManager from './components/AdminPhotoManager';
 import ShoppingCart from './components/ShoppingCart';
 import OrderSection from './components/OrderSection';
+import SuccessPage from './components/Success';
 import './App.css';
 
 const App = () => {
@@ -87,20 +88,16 @@ const App = () => {
               <LoggedInPage user={user} />
             </ProtectedRoute>
           } />
-
-          {/* Add OrderSection and ShoppingCart Routes */}
           <Route path="/order" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <OrderSection cart={cart} setCart={setCart} />
             </ProtectedRoute>
           } />
-
           <Route path="/cart" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <ShoppingCart cart={cart} />
             </ProtectedRoute>
           } />
-
           <Route path="/account" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <AccountManagement />
@@ -111,7 +108,11 @@ const App = () => {
               <ChildrenManagement />
             </ProtectedRoute>
           } />
-          <Route path="*" element={<Navigate to="/" />} />
+
+          
+          <Route path="/success" element={
+            <SuccessPage userID={user?.id} />
+          } />
 
           {/* Admin Routes */}
           <Route path="/admin" element={
@@ -124,6 +125,8 @@ const App = () => {
             <Route path="menu" element={<MenuAdministration />} />
             <Route path="photos" element={<AdminPhotoManager />} />
           </Route>
+
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
     </Router>

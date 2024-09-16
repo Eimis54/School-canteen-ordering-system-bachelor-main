@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',   // Correct model name for users
-        key: 'UserID',    // Make sure the key matches the Users model
+        model: 'Users',
+        key: 'UserID',
       },
     },
     OrderDate: {
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     Status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,  // Represents 'pending' by default
+      defaultValue: false,  // Pending status by default
     },
     TotalCalories: {
       type: DataTypes.DECIMAL(8, 2),
@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
     TotalPrice: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+    },
+    OrderCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,  // Ensure each code is unique
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -40,16 +45,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-    }
+    },
   }, {
-    tableName: 'orders',  // Correct table name
-    timestamps: true,  // Enable automatic handling of timestamps
+    tableName: 'orders',
+    timestamps: true,
   });
 
-  // Define associations
   Order.associate = (models) => {
     Order.belongsTo(models.User, { foreignKey: 'UserID', as: 'user' });
-    // Order.hasMany(models.CartItem, { foreignKey: 'OrderID', as: 'cartItems' }); // Once you associate orders with cart items
   };
 
   return Order;
