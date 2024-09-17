@@ -20,7 +20,7 @@ const Login = ({ setIsLoggedIn, setUser }) => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userID', data.userID); // Ensure userID is being set
+        localStorage.setItem('userID', data.userID);
         setIsLoggedIn(true);
   
         const userResponse = await fetch('http://localhost:3001/api/user', {
@@ -43,9 +43,6 @@ const Login = ({ setIsLoggedIn, setUser }) => {
       setError('Error occurred. Please try again later.');
     }
   };
-
-  
-  
   return (
     <div>
       <h2>Login</h2>

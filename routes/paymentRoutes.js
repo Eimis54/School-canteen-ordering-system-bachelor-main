@@ -2,31 +2,12 @@ const express = require('express');
 const Stripe = require('stripe');
 const router = express.Router();
 const stripe = Stripe('sk_test_51PyCDDP2jQQJ6HBUzrvAtRxdgPaX61eNr8uVunSfinjaJDMCrFWU78Id7FjEkBbIF4FzQ3KgYZc9QTkls767hEnt00metXGzKE');
-const { v4: uuidv4 } = require('uuid');  // For generating random unique codes
 const { Order, CartItem } = require('../models'); // Assuming you have an Order and CartItem model
 
-// Helper function to generate a unique random code
-async function generateUniqueCode() {
-  let uniqueCode;
-  let isUnique = false;
-
-  while (!isUnique) {
-    uniqueCode = uuidv4().slice(0, 10).toUpperCase(); // Generate 10-character random code
-
-    // Check if the code already exists in the Orders table
-    const existingOrder = await Order.findOne({ where: { orderCode: uniqueCode } });
-
-    if (!existingOrder) {
-      isUnique = true;
-    }
-  }
-
-  return uniqueCode;
-}
-
-// Route to create Stripe Checkout session
 router.post('/create-checkout-session', async (req, res) => {
-  const { cartItems, userId } = req.body; // Assuming userId is sent in the request
+  const { cartItems, userId } = req.body;  // Ensure cartItems and userId are being sent
+  console.log("Received Cart Items:", cartItems);
+  console.log("Received UserID:", userId); // Log to ensure it's not undefined
 
   const lineItems = cartItems.map(item => ({
     price_data: {
@@ -57,11 +38,11 @@ router.post('/create-checkout-session', async (req, res) => {
 
 router.post('/payment-success', async (req, res) => {
   try {
-    const { session_id, userCartId, userId } = req.body;
+    const { session_id, userCartId, userID } = req.body;
 
     // Debug log to check values
     console.log('CartID:', userCartId);
-    console.log('UserID:', userId);
+    console.log('UserID:', userID);
 
     if (!userCartId) {
       return res.status(400).json({ error: 'CartID is missing' });
@@ -79,13 +60,13 @@ router.post('/payment-success', async (req, res) => {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    const orderCode = await generateUniqueCode();
+    const orderCode = userCartId;
     const totalAmount = cartItems.reduce((acc, item) => acc + item.Price * item.Quantity, 0);
     const totalCalories = cartItems.reduce((acc, item) => acc + item.Calories * item.Quantity, 0);
 
     const newOrder = await Order.create({
-      UserID: userId,  
-      orderCode,
+      UserID: userID,  
+      OrderCode: orderCode,
       TotalPrice: totalAmount,
       TotalCalories: totalCalories,
       Status: true,
@@ -99,5 +80,6 @@ router.post('/payment-success', async (req, res) => {
     res.status(500).json({ error: 'Failed to save order' });
   }
 });
+
 
 module.exports = router;

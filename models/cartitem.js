@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      field: 'CartItemID',
     },
     ProductID: {
       type: DataTypes.INTEGER,
@@ -12,19 +13,23 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Products',  // Correct model name for products
         key: 'ProductID',   // Ensure the key is correct
       },
+      field: 'ProductID',
     },
     Quantity: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 1,
+      field: 'Quantity',
     },
     Price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
+      field: 'Price',
     },
     Calories: {
       type: DataTypes.DECIMAL(8, 2),
       allowNull: true,
+      field: 'Calories',
     },
     ChildID: {
       type: DataTypes.INTEGER,
@@ -33,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Children',  // Reference the Children model
         key: 'id',
       },
+      field: 'ChildID',
     },
     CartID: {
       type: DataTypes.INTEGER,
@@ -43,11 +49,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+      field: 'createdAt',
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+      field: 'updatedAt',
     },
   }, {
     timestamps: true,  // Automatically handle `createdAt` and `updatedAt`

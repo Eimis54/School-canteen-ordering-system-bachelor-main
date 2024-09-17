@@ -12,13 +12,16 @@ const ShoppingCart = () => {
     const fetchCartData = async () => {
       try {
         const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId"); // Make sure userId is available in localStorage
+        console.log("UserID from localStorage:", userId);  // Log userId to check
+  
         const response = await axios.get("http://localhost:3001/api/cart", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data); // Check the full structure here
-        setCart(response.data.cartItems); // Assuming the response is in this format
+        console.log("Cart data:", response.data);  // Log the cart data
+        setCart(response.data.cartItems);
       } catch (error) {
         setError("Failed to fetch cart data");
         console.error(error);
@@ -28,33 +31,22 @@ const ShoppingCart = () => {
     fetchCartData();
   }, []);
   
+  
 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckout = async () => {
-    setIsLoading(true); // Show spinner
+    setIsLoading(true);
     try {
       const stripe = await stripePromise;
-  
-      // Check if the cart contains items and get the CartID from the first item
-      const userCartId = cart.length > 0 ? cart[0].CartID : null;
-  
-      if (!userCartId) {
-        setError("No CartID found.");
-        setIsLoading(false);
-        return;
-      }
-  
-      // Make the request to create the checkout session
+      const userId = localStorage.getItem("userId"); // Retrieve userId from localStorage
       const response = await axios.post('http://localhost:3001/api/payment/create-checkout-session', {
-        cartItems: cart,
-        userId: localStorage.getItem("userId"),
-        userCartId,  // Send the CartID
+        cartItems: cart,  // Pass the cart items
+        userId: userId,   // Pass the userId here
       });
   
       const sessionId = response.data.id;
       const { error } = await stripe.redirectToCheckout({ sessionId });
-  
       if (error) {
         console.error("Stripe error:", error);
       }
@@ -62,9 +54,9 @@ const ShoppingCart = () => {
       setError('Failed to proceed to checkout');
       console.error(error);
     } finally {
-      setIsLoading(false); // Hide spinner
+      setIsLoading(false);
     }
-  };
+  };  
   
   const totalPrice = cart.reduce((acc, cartItem) =>
     acc + (cartItem.Price * cartItem.Quantity), 
