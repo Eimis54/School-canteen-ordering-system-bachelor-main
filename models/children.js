@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
   Children.associate = function(models) {
     Children.belongsTo(models.User, { foreignKey: 'UserID' });
     Children.hasMany(models.CartItem, { foreignKey: 'ChildID' });
+    Children.hasMany(models.Order, { foreignKey: 'ChildID' });
   };
 
   return Children;

@@ -20,7 +20,7 @@ const Login = ({ setIsLoggedIn, setUser }) => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userID', data.userID);
+        localStorage.setItem('userId', data.UserID);
         setIsLoggedIn(true);
   
         const userResponse = await fetch('http://localhost:3001/api/user', {

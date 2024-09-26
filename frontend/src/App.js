@@ -19,6 +19,7 @@ import AdminPhotoManager from './components/AdminPhotoManager';
 import ShoppingCart from './components/ShoppingCart';
 import OrderSection from './components/OrderSection';
 import SuccessPage from './components/Success';
+import FetchOrderPage from './components/FetchOrderPage'; // Add this line
 import './App.css';
 
 const App = () => {
@@ -61,6 +62,7 @@ const App = () => {
     setIsLoggedIn(false);
     setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
   };
 
   if (loading) {
@@ -125,7 +127,7 @@ const App = () => {
             <Route path="menu" element={<MenuAdministration />} />
             <Route path="photos" element={<AdminPhotoManager />} />
           </Route>
-
+          <Route path="/fetch-order" element={<FetchOrderPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

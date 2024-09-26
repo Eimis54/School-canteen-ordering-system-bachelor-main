@@ -29,6 +29,8 @@ db.Photo = require('./models/photo')(sequelize, Sequelize.DataTypes);
 db.Menu = require('./models/menu')(sequelize, Sequelize.DataTypes);
 db.MenuItem = require('./models/menuitems')(sequelize, Sequelize.DataTypes);
 db.CartItem = require('./models/cartitem')(sequelize, Sequelize.DataTypes);
+db.OrderItem = require('./models/orderitem')(sequelize, Sequelize.DataTypes);
+
 
 
 // Add other models here and establish associations as needed

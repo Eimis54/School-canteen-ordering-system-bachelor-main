@@ -33,23 +33,34 @@ router.post('/register', async (req, res) => {
 
 // Login
 router.post('/login', async (req, res) => {
-    console.log('Login route hit');
+  console.log('Login route hit');
   try {
     const { email, password } = req.body;
+
     const user = await db.User.findOne({ where: { Email: email } });
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
     const isMatch = await bcrypt.compare(password, user.PasswordHash);
+    
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
     const token = jwt.sign({ id: user.UserID }, 'your_secret_key_here');
-    res.json({ token });
+
+    res.json({ 
+      token, 
+      UserID: user.UserID
+    });
+
   } catch (error) {
     console.error('Login failed:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 module.exports = router;

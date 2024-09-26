@@ -40,8 +40,18 @@ module.exports = (sequelize, DataTypes) => {
     OrderCode: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,  // Ensure each code is unique
+      unique: true,
       field: 'OrderCode',
+    },
+    ChildName: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      field: 'ChildName',
+    },
+    ChildID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'ChildID',
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -62,6 +72,8 @@ module.exports = (sequelize, DataTypes) => {
 
   Order.associate = (models) => {
     Order.belongsTo(models.User, { foreignKey: 'UserID', as: 'user' });
+    Order.belongsTo(models.Children, { foreignKey: 'ChildID', as: 'child' });
+    Order.hasMany(models.OrderItem, { foreignKey: 'OrderID', as: 'orderItems' });
   };
 
   return Order;

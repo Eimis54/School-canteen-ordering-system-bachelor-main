@@ -35,13 +35,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Children',  // Reference the Children model
+        model: 'Children',
         key: 'id',
       },
       field: 'ChildID',
     },
     CartID: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(20),
       allowNull: false,
       field: 'CartID',
     },
