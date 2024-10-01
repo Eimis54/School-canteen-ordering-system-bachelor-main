@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const FetchOrderPage = () => {
   const [orderCode, setOrderCode] = useState('');
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -15,11 +15,13 @@ const FetchOrderPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setOrderDetails(response.data);
+      console.log("API Response: ", response.data); // Log the response data
+      setOrder(response.data); // Assuming response.data contains the order object
       setError('');
     } catch (error) {
+      console.error("Error fetching order:", error);
       setError('Order not found or unauthorized.');
-      setOrderDetails(null);
+      setOrder(null);
     }
   };
 
@@ -27,20 +29,22 @@ const FetchOrderPage = () => {
     const token = localStorage.getItem('token');
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert(response.data.message); // Show success message
-      fetchOrder(); // Fetch order details again to get updated status
+        const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log('Response from completing order:', response.data); // Log the response
+        alert('Order completed successfully.');
+        fetchOrder(); // Fetch order details again to get updated status
     } catch (error) {
-      alert('Failed to complete the order.'); // Handle error
+        alert('Failed to complete the order.');
+        console.error("Error completing order:", error.response ? error.response.data : error.message);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
-  
+};
+  // Handle form submission to fetch order details
   const handleSubmit = (e) => {
     e.preventDefault();
     fetchOrder();
@@ -60,21 +64,22 @@ const FetchOrderPage = () => {
         <button type="submit">Fetch Order</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {orderDetails && (
+      {order && (
         <div>
           <h3>Order Details:</h3>
-          <p>Order Code: {orderDetails.orderCode}</p>
-          <p>Status: {orderDetails.status}</p>
+          <p>Order Code: {order.orderCode}</p>
+          <p>Status: {order.status ? 'Not Completed' : 'Completed'}</p> {/* Updated to reflect boolean status */}
           <h4>Products:</h4>
           <ul>
-            {orderDetails.products.map((product, index) => (
+            {order.products && order.products.map((product, index) => (
               <li key={index}>
                 Product Name: {product.productName}, Quantity: {product.quantity}, Price: {product.price}, Total Price: {product.totalPrice}
               </li>
             ))}
           </ul>
-          <p>Total Order Price: {orderDetails.totalOrderPrice}</p>
-          {orderDetails.status === 'Not Completed' && (
+          <p>Total Order Price: ${order.totalOrderPrice.toFixed(2)}</p>
+
+          {order.status === true && (
             <button onClick={completeOrder} disabled={loading}>
               {loading ? 'Completing...' : 'Complete Order'}
             </button>

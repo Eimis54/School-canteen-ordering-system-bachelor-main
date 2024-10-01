@@ -65,8 +65,8 @@ router.post('/payment-success', async (req, res) => {
     // Step 1: Create the order
     const newOrder = await Order.create({
       UserID: userID,
-      ChildID: child?.id || null, // In case ChildID is optional
-      ChildName: child?.Name || null, // In case ChildName is optional
+      ChildID: child?.id,
+      ChildName: child?.Name,
       OrderCode: orderCode, 
       TotalPrice: totalAmount,
       TotalCalories: totalCalories,

@@ -52,6 +52,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/admin/roles', rolesRoutes);
 app.use('/api/admin/menus', adminMenuRoutes);
@@ -62,7 +63,6 @@ app.use('/api/photo', photosRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/deals', dealsRoutes);
 app.use('/api/children', childrenRoutes);
-app.use('/api/cart', cartRoutes);
 app.use('/api/payment', paymentRoutes);
 
 

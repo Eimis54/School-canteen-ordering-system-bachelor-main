@@ -19,14 +19,16 @@ import AdminPhotoManager from './components/AdminPhotoManager';
 import ShoppingCart from './components/ShoppingCart';
 import OrderSection from './components/OrderSection';
 import SuccessPage from './components/Success';
-import FetchOrderPage from './components/FetchOrderPage'; // Add this line
+import FetchOrderPage from './components/FetchOrderPage'; 
 import './App.css';
+import axios from "axios";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -44,30 +46,29 @@ const App = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data);
-        setIsLoggedIn(true);
-      } else {
-        console.error('Failed to fetch user data:', response.status);
-      }
+      const data = await response.json();
+      setUserRole(data.isAdmin ? 'Admin' : data.isCashier ? 'Cashier' : 'User');
     } catch (error) {
-      console.error('Failed to fetch user data:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error fetching user data:', error);
     }
   };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+  
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete('http://localhost:3001/api/cart/clearOnLogout', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setIsLoggedIn(false);
+      setUser(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("cartID");
+      localStorage.removeItem('userId');
+      localStorage.removeItem('isLoggedIn');
+    } catch (error) {
+      console.error("Error while logging out:", error);
+    }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Router>
@@ -75,50 +76,81 @@ const App = () => {
 
       <div className="container mt-4">
         <Routes>
-          <Route path="/" element={<LoggedInPage />} />
-          <Route path="/about" element={<Products />} />
-          <Route
-            path="/login"
-            element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
-          />
-          <Route
-            path="/register"
-            element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Register />}
-          />
-          <Route path="/loggedInPage" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <LoggedInPage user={user} />
-            </ProtectedRoute>
+          {/* Home route: 
+              - Cashier is redirected to fetch-order 
+              - Admins and Users are taken to their logged-in page */}
+        <Route path="/" element={
+  isLoggedIn 
+    ? (userRole === 'Cashier' 
+      ? <Navigate to="/fetch-order" /> 
+      : <LoggedInPage user={user} />)
+    : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
+} />
+
+
+          {/* Login route: 
+              - Cashier is redirected to fetch-order 
+              - Admins and Users are taken to their logged-in page */}
+          <Route path="/login" element={
+            isLoggedIn 
+              ? <Navigate to={userRole === 'Cashier' ? "/fetch-order" : "/loggedInPage"} /> 
+              : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
           } />
-          <Route path="/order" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <OrderSection cart={cart} setCart={setCart} />
-            </ProtectedRoute>
+
+          {/* Register route: non-logged-in users */}
+          <Route path="/register" element={
+            isLoggedIn 
+              ? <Navigate to="/loggedInPage" /> 
+              : <Register />
           } />
-          <Route path="/cart" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <ShoppingCart cart={cart} />
-            </ProtectedRoute>
-          } />
-          <Route path="/account" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <AccountManagement />
-            </ProtectedRoute>
-          } />
-          <Route path="/your-children" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <ChildrenManagement />
+
+          {/* Fetch Order Route for Cashier */}
+          <Route path="/fetch-order" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Cashier']} userRole={userRole}>
+              <FetchOrderPage />
             </ProtectedRoute>
           } />
 
-          
-          <Route path="/success" element={
-            <SuccessPage userID={user?.id} />
-          } />
+          {/* Routes for Admins and Users (but not Cashiers) */}
+          {['Admin', 'User'].includes(userRole) && (
+            <>
+              <Route path="/loggedInPage" element={
+                <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin', 'User']} userRole={userRole}>
+                  <LoggedInPage user={user} />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/order" element={
+                <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin', 'User']} userRole={userRole}>
+                  <OrderSection cart={cart} setCart={setCart} />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/cart" element={
+                <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin', 'User']} userRole={userRole}>
+                  <ShoppingCart cart={cart} />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/account" element={
+                <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin', 'User']} userRole={userRole}>
+                  <AccountManagement />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/your-children" element={
+                <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin', 'User']} userRole={userRole}>
+                  <ChildrenManagement />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/success" element={<SuccessPage userID={user?.id} />} />
+            </>
+          )}
 
           {/* Admin Routes */}
           <Route path="/admin" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn} isAdmin={user?.isAdmin}>
+            <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin']} userRole={userRole}>
               <AdminDashboard />
             </ProtectedRoute>
           }>
@@ -127,7 +159,8 @@ const App = () => {
             <Route path="menu" element={<MenuAdministration />} />
             <Route path="photos" element={<AdminPhotoManager />} />
           </Route>
-          <Route path="/fetch-order" element={<FetchOrderPage />} />
+
+          {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Products',  // Correct model name for products
+        model: 'Product',  // Correct model name for products
         key: 'ProductID',   // Ensure the key is correct
       },
       field: 'ProductID',
@@ -43,7 +43,17 @@ module.exports = (sequelize, DataTypes) => {
     CartID: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      field: 'CartID',
+      field: 'CartID', 
+      unique: true,
+    },
+    UserID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'UserID',
+      },
+      field: 'UserID',
     },
     createdAt: {
       type: DataTypes.DATE,

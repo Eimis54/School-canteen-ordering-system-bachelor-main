@@ -18,7 +18,8 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 
     const isAdmin = user.RoleID === 2;
-    res.json({ ...user.toJSON(), isAdmin });
+    const isCashier = user.RoleID ===3;
+    res.json({ ...user.toJSON(), isCashier, isAdmin});
   } catch (error) {
     console.error('Failed to fetch user data:', error);
     res.status(500).json({ error: 'Server error' });

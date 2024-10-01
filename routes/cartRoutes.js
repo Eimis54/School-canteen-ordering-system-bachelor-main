@@ -125,5 +125,18 @@ router.delete('/remove/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to remove cart item' });
   }
 });
+router.delete('/clearOnLogout', authenticateToken, async (req, res) => {
+  try {
+    const UserID = req.user.id;
+
+    // Delete all items from the cart for the logged-in user
+    await db.CartItem.destroy({ where: { UserID } });
+
+    res.json({ message: 'Cart cleared successfully!' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to clear cart' });
+  }
+});
 
 module.exports = router;

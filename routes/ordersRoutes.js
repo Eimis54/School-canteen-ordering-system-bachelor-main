@@ -3,11 +3,6 @@ const { Order, MenuItem, Product, OrderItem } = require('../models');
 const { authenticateToken } = require('../middleware/auth.js');
 const router = express.Router();
 
-// Utility function to generate a random OrderCode
-const generateOrderCode = () => {
-  return 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-};
-
 // Fetch all orders for the authenticated user
 router.get('/', authenticateToken, async (req, res) => {
   try {
@@ -25,38 +20,35 @@ router.get('/tofetch/:orderCode', authenticateToken, async (req, res) => {
   const { orderCode } = req.params;
 
   try {
-    // Find the order using the OrderCode
     const order = await Order.findOne({
-      where: { OrderCode: orderCode },
-      include: [{
-        model: OrderItem,
-        as: 'orderItems',
-        attributes: ['ProductID', 'Quantity', 'Price'],
-        include: [{
-          model: Product, // Change this according to your model name for products
-          as: 'product',
-          attributes: ['ProductName'], // Assuming ProductName is the name of the field in products table
-        }],
-      }],
+      where: { orderCode }, // Ensure this matches the column name in your database
     });
 
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
-    const statusText = order.Status === 1 ? 'Completed' : 'Not Completed';
-    // Prepare the response data
-    const products = order.orderItems.map(item => ({
-      productName: item.product.ProductName, // Get the product name
+
+    const orderItems = await OrderItem.findAll({
+      where: { OrderID: order.OrderID },
+      include: [{
+        model: Product,
+        as: 'product',
+        attributes: ['ProductName'],
+      }],
+    });
+
+    const products = orderItems.map(item => ({
+      productName: item.product.ProductName,
       quantity: item.Quantity,
       price: item.Price,
       totalPrice: item.Quantity * item.Price,
     }));
 
     res.json({
-      orderCode: order.OrderCode,
+      orderCode: order.OrderCode, // Ensure this is the correct key for order code
       products,
       totalOrderPrice: products.reduce((total, item) => total + item.totalPrice, 0),
-      status: statusText,
+      status: order.Status, // Return the raw status value (0 or 1)
     });
   } catch (error) {
     console.error('Error fetching order details:', error);
@@ -85,19 +77,24 @@ router.get('/display/:userID', async (req, res) => {
 });
 router.put('/complete/:orderCode', authenticateToken, async (req, res) => {
   const { orderCode } = req.params;
+  console.log("Order Code received: ", orderCode); // Log the order code
+  console.log("User ID: ", req.user.id); // Log the User ID to ensure you're checking the right order
 
   try {
     const order = await Order.findOne({ 
       where: { OrderCode: orderCode, UserID: req.user.id } 
     });
+    
+    console.log("Order found: ", order); // Log if the order is found
 
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    // Update the status to true (completed)
-    order.Status = true; // Change to true instead of 1
+    // Update the status to completed
+    order.Status = 0; // Change this based on your logic (1 for completed)
     await order.save();
+    console.log("Order status updated to completed");
 
     res.json({ message: 'Order status updated to completed' });
   } catch (error) {
@@ -105,6 +102,7 @@ router.put('/complete/:orderCode', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to update order status' });
   }
 });
+
 router.get('/details/:orderID', authenticateToken, async (req, res) => {
   const { orderID } = req.params;
 

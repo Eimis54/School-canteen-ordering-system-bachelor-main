@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     Status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
+      defaultValue: true,
       field: 'Status',
     },
     TotalCalories: {
