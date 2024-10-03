@@ -21,8 +21,7 @@ const Login = ({ setIsLoggedIn, setUser }) => {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         localStorage.setItem('userId', data.UserID);
-        setIsLoggedIn(true);
-  
+        
         const userResponse = await fetch('http://localhost:3001/api/user', {
           headers: {
             Authorization: `Bearer ${data.token}`,
@@ -31,6 +30,7 @@ const Login = ({ setIsLoggedIn, setUser }) => {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           setUser(userData);
+          setIsLoggedIn(true);
         }
   
         navigate('/loggedInPage');

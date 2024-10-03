@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      field: 'OrderCode',
+      field: 'ordercode',
     },
     ChildName: {
       type: DataTypes.STRING(20),

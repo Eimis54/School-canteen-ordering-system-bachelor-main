@@ -81,18 +81,19 @@ router.put('/complete/:orderCode', authenticateToken, async (req, res) => {
   console.log("User ID: ", req.user.id); // Log the User ID to ensure you're checking the right order
 
   try {
-    const order = await Order.findOne({ 
-      where: { OrderCode: orderCode, UserID: req.user.id } 
-    });
-    
+    const order = await Order.findOne({
+      where: { OrderCode: orderCode }
+   });
+
     console.log("Order found: ", order); // Log if the order is found
 
     if (!order) {
+      console.log('Order not found for user');
       return res.status(404).json({ error: 'Order not found' });
     }
 
     // Update the status to completed
-    order.Status = 0; // Change this based on your logic (1 for completed)
+    order.Status = 0; // Mark as completed
     await order.save();
     console.log("Order status updated to completed");
 
@@ -102,6 +103,7 @@ router.put('/complete/:orderCode', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to update order status' });
   }
 });
+
 
 router.get('/details/:orderID', authenticateToken, async (req, res) => {
   const { orderID } = req.params;

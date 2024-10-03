@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
-const SuccessPage = () => {
+const Success = () => {
   const [orderCode, setOrderCode] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -103,4 +103,4 @@ const SuccessPage = () => {
   );
 };
 
-export default SuccessPage;
+export default Success;

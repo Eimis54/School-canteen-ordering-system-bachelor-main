@@ -28,6 +28,7 @@ const FetchOrderPage = () => {
   const completeOrder = async () => {
     const token = localStorage.getItem('token');
     setLoading(true);
+    console.log('Order code before completing:', orderCode); // Log the order code
     try {
         const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
             headers: {

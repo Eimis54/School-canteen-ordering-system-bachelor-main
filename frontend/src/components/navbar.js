@@ -10,7 +10,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
   const [showRegister, setShowRegister] = useState(false);
 
   const toggleProfile = () => setShowProfile(!showProfile);
-  
+
   const openLogin = () => {
     setShowLogin(true);
     setShowRegister(false);
@@ -28,13 +28,11 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
       </div>
       <div className="navbar-menu">
         <div className="navbar-end">
-          {isLoggedIn && (
-            <div className="navbar-item">
-              <Link to="/cart" className="cart-button">Cart</Link>
-            </div>
-          )}
-          {isLoggedIn ? (
+          {isLoggedIn && !user?.isCashier && (  // Hide all other links for cashiers
             <>
+              <div className="navbar-item">
+                <Link to="/cart" className="cart-button">Cart</Link>
+              </div>
               {user && user.isAdmin && (
                 <div className="navbar-item">
                   <Link to="/admin">Admin Dashboard</Link>
@@ -58,7 +56,15 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 </ul>
               </div>
             </>
-          ) : (
+          )}
+
+          {isLoggedIn && user?.isCashier && (  // Show only logout button for cashiers
+            <div className="navbar-item">
+              <button className="logout-btn" onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+
+          {!isLoggedIn && (
             <>
               <div className="navbar-item" onClick={openLogin}>Login</div>
               <div className="navbar-item" onClick={openRegister}>Register</div>
@@ -69,7 +75,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 </div>
                 <div className="form-container">
                   {showLogin && <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
-                  {showRegister && <Register onRegisterSuccess={openLogin} />} {/* Pass the openLogin function */}
+                  {showRegister && <Register onRegisterSuccess={openLogin} />}
                 </div>
               </div>
             </>

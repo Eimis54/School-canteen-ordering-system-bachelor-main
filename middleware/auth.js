@@ -27,5 +27,17 @@ const isAdmin = async (req, res, next) => {
     res.sendStatus(500);
   }
 };
+const isCashier = async (req, res, next) => {
+  try {
+    const user = await db.User.findByPk(req.user.id);
+    if (user && user.RoleID === 3) {
+      next();
+    } else {
+      res.sendStatus(403);
+    }
+  } catch (err) {
+    res.sendStatus(500);
+  }
+};
 
-module.exports = { authenticateToken, isAdmin };
+module.exports = { authenticateToken, isAdmin, isCashier };
