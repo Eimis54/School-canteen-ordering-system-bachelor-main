@@ -18,7 +18,7 @@ const ChildrenManagement = () => {
   const fetchChildren = async () => {
     try {
       const token = localStorage.getItem('token');
-      const userID = localStorage.getItem('userId'); // Ensure this is correct
+      const userID = localStorage.getItem('userId');
 
       if (!userID) {
         setError('UserID is not available. Please log in again.');

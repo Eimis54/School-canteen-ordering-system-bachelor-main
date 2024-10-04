@@ -2,7 +2,6 @@ const express = require('express');
 const { ProductCategory } = require('../models');
 const router = express.Router();
 
-// Create a new product category
 router.post('/', async (req, res) => {
   try {
     const { CategoryName } = req.body;
@@ -24,7 +23,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update an existing product category
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,7 +47,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete a product category
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;

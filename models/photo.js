@@ -27,16 +27,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       createdAt: {
         type: DataTypes.DATE,
-        field: 'createdAt', // Ensure the field name matches the database column name
+        field: 'createdAt',
     },
     updatedAt: {
         type: DataTypes.DATE,
-        field: 'updatedAt', // Ensure the field name matches the database column name
+        field: 'updatedAt',
       }
     }, {
-        tableName: 'photos', // Specify the actual table name
-        timestamps: true, // This will automatically handle `createdAt` and `updatedAt`
-        underscored: false, // Use camelCase for column names as in the model
+        tableName: 'photos',
+        timestamps: true, 
+        underscored: false,
     });
   
     Photo.associate = function(models) {

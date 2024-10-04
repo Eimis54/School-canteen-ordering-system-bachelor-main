@@ -1,12 +1,9 @@
-// routes/dealsRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, isAdmin } = require('../middleware/auth.js');
 const { Deal } = require('../models');
 const { Sequelize, sequelize } = require('../models');
 
-// Create a new deal
 router.post('/', authenticateToken, isAdmin, async (req, res) => {
   const { title, description, photoUrl } = req.body;
 
@@ -25,7 +22,6 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Update a deal
 router.put('/:DealID', authenticateToken, isAdmin, async (req, res) => {
   const { DealID } = req.params;
   const { title, description, photoUrl } = req.body;
@@ -46,7 +42,6 @@ router.put('/:DealID', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Fetch all deals
 router.get('/', async (req, res) => {
   try {
     const deals = await Deal.findAll();
@@ -57,7 +52,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Fetch a single deal by ID
 router.get('/:DealID', async (req, res) => {
   const DealID = req.params.DealID;
   if (!DealID) {
@@ -76,7 +70,6 @@ router.get('/:DealID', async (req, res) => {
   }
 });
 
-// Fetch public deals
 router.get('/public', async (req, res) => {
   try {
     const deals = await Deal.findAll({ where: { isPublic: true } });
@@ -87,7 +80,6 @@ router.get('/public', async (req, res) => {
   }
 });
 
-// Delete a deal
 router.delete('/:DealID', authenticateToken, isAdmin, async (req, res) => {
   const { DealID } = req.params;
   try {
@@ -103,7 +95,6 @@ router.delete('/:DealID', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Feature or unfeature a deal
 router.put('/:DealID/feature', async (req, res) => {
   const { DealID } = req.params;
   const { isFeatured } = req.body;

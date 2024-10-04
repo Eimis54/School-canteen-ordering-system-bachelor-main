@@ -11,7 +11,7 @@
   color: white;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  cursor: pointer; /* Ensure items are clickable */
+  cursor: pointer;
 }
 
 .navbar-menu {
@@ -28,20 +28,20 @@
 .register-sidebar {
   position: fixed;
   top: 0;
-  right: -300px; /* Start off-screen */
+  right: -300px;
   height: 100%;
   width: 300px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease;
-  color: black; /* Ensure the text color is visible */
-  overflow-y: auto; /* Allow scrolling if content is too long */
+  color: black;
+  overflow-y: auto;
 }
 
 .profile-sidebar.active,
 .login-sidebar.active,
 .register-sidebar.active {
-  right: 0; /* Slide in */
+  right: 0;
 }
 
 .sidebar-header {
@@ -104,7 +104,7 @@
 }
 
 .form-container input {
-  width: calc(100% - 2rem); /* Full width minus padding */
+  width: calc(100% - 2rem);
   padding: 0.5rem;
   margin-bottom: 1rem;
 }
@@ -119,7 +119,7 @@
 }
 .cart-button {
   font-size: 1rem;
-  color: #fff; /* Adjust color to fit your design */
+  color: #fff;
   text-decoration: none;
   padding: 0.5rem 1rem;
   border: 1px solid #fff;
@@ -129,6 +129,6 @@
 
 .cart-button:hover {
   background-color: #fff;
-  color: #000; /* Adjust color to fit your design */
+  color: #000;
 }
 

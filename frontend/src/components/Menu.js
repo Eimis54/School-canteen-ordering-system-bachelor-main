@@ -8,7 +8,7 @@ const Menu = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/menu/mainmenu"); // Fetch the public menu
+        const response = await fetch("http://localhost:3001/api/menu/mainmenu");
         const data = await response.json();
         setMenu(data);
         console.log(data);
@@ -58,7 +58,7 @@ return (
           <h3>{day}</h3>
           {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
             <div key={categoryName} className="menu-category">
-              <h4>{categoryName}</h4> {/* Display CategoryName */}
+              <h4>{categoryName}</h4>
               <ul>
                 {categorizedMenuItems[day][categoryName].map((item, idx) => (
                   <li key={idx}>

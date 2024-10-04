@@ -14,14 +14,13 @@ const ShoppingCart = () => {
       try {
         const token = localStorage.getItem("token");
         const CartID = localStorage.getItem('cartID');
-  
-        // Check if CartID is available
+
         if (!CartID) {
-          setCart([]); // Clear cart
-          setError(""); // Clear any previous errors
-          return; // Exit early
+          setCart([]);
+          setError("");
+          return;
         }
-  
+
         const response = await axios.get("http://localhost:3001/api/cart", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,10 +32,9 @@ const ShoppingCart = () => {
         setCart(response.data.cartItems);
       } catch (error) {
         console.error(error);
-        // Set a general error message here if needed
       }
     };
-  
+
     fetchCartData();
   }, []);
 
@@ -44,12 +42,12 @@ const ShoppingCart = () => {
     setIsLoading(true);
     try {
       const stripe = await stripePromise;
-      const userId = localStorage.getItem("userId"); // Pass userId for checkout
+      const userId = localStorage.getItem("userId");
       const response = await axios.post('http://localhost:3001/api/payment/create-checkout-session', {
-        cartItems: cart,  // Pass the cart items
-        userId: userId,   // Pass the userId here
+        cartItems: cart,
+        userId: userId,
       });
-  
+
       const sessionId = response.data.id;
       const { error } = await stripe.redirectToCheckout({ sessionId });
       if (error) {
@@ -62,7 +60,6 @@ const ShoppingCart = () => {
       setIsLoading(false);
     }
   };
-  
 
   const totalPrice = cart.reduce((acc, cartItem) =>
     acc + (cartItem.Price * cartItem.Quantity), 
@@ -82,14 +79,14 @@ const ShoppingCart = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      // Remove the item from the state after successful deletion
+
       setCart((prevCart) => prevCart.filter(item => item.CartItemID !== id));
     } catch (error) {
       console.error("Failed to remove item from cart:", error);
       setError('Failed to remove item from cart');
     }
   };
-  
+
   return (
     <div className="shopping-cart">
       <h1>Shopping Cart</h1>
@@ -103,7 +100,7 @@ const ShoppingCart = () => {
             <th>Price</th>
             <th>Calories</th>
             <th>Total</th>
-            <th>Action</th> {/* Added column for actions */}
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -117,7 +114,7 @@ const ShoppingCart = () => {
                 <td>{cartItem.Calories}</td>
                 <td>{(cartItem.Price * cartItem.Quantity)} Eur.</td>
                 <td>
-                  <button onClick={() => removeItemFromCart(cartItem.CartItemID)}>Remove</button> {/* Remove button */}
+                  <button onClick={() => removeItemFromCart(cartItem.CartItemID)}>Remove</button>
                 </td>
               </tr>
             ))
@@ -128,15 +125,21 @@ const ShoppingCart = () => {
           )}
         </tbody>
       </table>
-      <div className="cart-summary">
-        <p><strong>Total Price:</strong> {totalPrice} Eur.</p>
-        <p><strong>Total Calories:</strong> {totalCalories}</p>
-      </div>
+      {cart.length > 0 && (
+        <div className="cart-summary">
+          <p><strong>Total Price:</strong> {totalPrice} Eur.</p>
+          <p><strong>Total Calories:</strong> {totalCalories}</p>
+        </div>
+      )}
       <div className="checkout-button">
         {isLoading ? <div>Loading...</div> : (
-          <button onClick={handleCheckout} className="btn" disabled={cart.length === 0}>
-            Proceed to Checkout
-          </button>
+          cart.length > 0 ? (
+            <button onClick={handleCheckout} className="btn">
+              Proceed to Checkout
+            </button>
+          ) : (
+            <p>The cart is empty, add items to proceed to checkout.</p>
+          )
         )}
       </div>
     </div>

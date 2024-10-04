@@ -1,11 +1,10 @@
 const { Sequelize } = require('sequelize');
 
-// Update these values with your actual database credentials
 const database = 'school_canteen';
 const username = 'root';
 const password = 'password';
 const host = 'localhost';
-const dialect = 'mysql'; // or 'sqlite', 'postgres', 'mssql'
+const dialect = 'mysql';
 
 const sequelize = new Sequelize(database, username, password, {
   host: host,
@@ -17,7 +16,6 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// Import and initialize models
 db.User = require('./models/user')(sequelize, Sequelize.DataTypes);
 db.Order = require('./models/order')(sequelize, Sequelize.DataTypes);
 db.OrderDetail = require('./models/orderDetail')(sequelize, Sequelize.DataTypes);
@@ -30,10 +28,6 @@ db.Menu = require('./models/menu')(sequelize, Sequelize.DataTypes);
 db.MenuItem = require('./models/menuitems')(sequelize, Sequelize.DataTypes);
 db.CartItem = require('./models/cartitem')(sequelize, Sequelize.DataTypes);
 db.OrderItem = require('./models/orderitem')(sequelize, Sequelize.DataTypes);
-
-
-
-// Add other models here and establish associations as needed
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

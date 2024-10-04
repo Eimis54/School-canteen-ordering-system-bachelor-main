@@ -5,7 +5,7 @@ const API_BASE_URL = 'http://localhost:3001';
 
 const AdminPhotoManager = () => {
   const [photos, setPhotos] = useState([]);
-  const [products, setProducts] = useState([]); // State for storing products
+  const [products, setProducts] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [productId, setProductId] = useState('');
   const [altText, setAltText] = useState('');
@@ -14,7 +14,7 @@ const AdminPhotoManager = () => {
 
   useEffect(() => {
     fetchPhotos();
-    fetchProducts(); // Fetch products on component mount
+    fetchProducts();
   }, []);
 
   const fetchPhotos = async () => {
@@ -38,7 +38,7 @@ const AdminPhotoManager = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setProducts(response.data); // Store products in state
+      setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -62,7 +62,7 @@ const AdminPhotoManager = () => {
     setLoading(true);
     const formData = new FormData();
     formData.append('photo', selectedFile);
-    formData.append('productId', productId); // Use the selected product ID
+    formData.append('productId', productId);
     formData.append('altText', altText);
 
     try {
@@ -73,7 +73,7 @@ const AdminPhotoManager = () => {
         },
       });
       fetchPhotos();
-      setErrorMessage(''); // Clear any previous error messages
+      setErrorMessage('');
     } catch (error) {
       console.error('Error uploading photo:', error);
       setErrorMessage('Failed to upload photo.');
@@ -95,7 +95,7 @@ const AdminPhotoManager = () => {
         }
       });
       fetchPhotos();
-      setErrorMessage(''); // Clear any previous error messages
+      setErrorMessage('');
     } catch (error) {
       console.error('Error deleting photo:', error);
       setErrorMessage('Failed to delete photo.');
@@ -104,13 +104,13 @@ const AdminPhotoManager = () => {
 
   const handleProductChange = (e) => {
     const selectedProductId = e.target.value;
-    setProductId(selectedProductId); // Update state with selected product ID
+    setProductId(selectedProductId);
   };
 
   return (
     <div>
       <h2>Photo Manager</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Display error message */}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <input type="file" onChange={handleFileChange} />
       <select value={productId} onChange={handleProductChange}>
         <option value="">Select Product</option>

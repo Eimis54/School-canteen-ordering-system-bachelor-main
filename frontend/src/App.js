@@ -8,6 +8,7 @@ import Products from './components/products';
 import ProtectedRoute from './components/ProtectedRoute';
 import AccountManagement from './components/AccountManagement';
 import PaymentHistory from './components/PaymentHistory';
+import OrderDetails from './components/OrderDetails';
 import ChildrenManagement from './components/ChildrenManagement';
 import Help from './components/Help';
 import FAQ from './components/FAQ';
@@ -126,6 +127,16 @@ const App = () => {
               <ChildrenManagement />
             </ProtectedRoute>
           } />
+          <Route path="/payment-history" element={
+    <ProtectedRoute isLoggedIn={isLoggedIn}>
+      <PaymentHistory />
+    </ProtectedRoute>
+  } />
+  <Route path="/order-details/:orderId" element={
+    <ProtectedRoute isLoggedIn={isLoggedIn}>
+      <OrderDetails />
+    </ProtectedRoute>
+  } />
 
           <Route path="/fetch-order" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>

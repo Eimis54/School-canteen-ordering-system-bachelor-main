@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Product',  // Correct model name for products
-        key: 'ProductID',   // Ensure the key is correct
+        model: 'Product',
+        key: 'ProductID',
       },
       field: 'ProductID',
     },
@@ -68,11 +68,10 @@ module.exports = (sequelize, DataTypes) => {
       field: 'updatedAt',
     },
   }, {
-    timestamps: true,  // Automatically handle `createdAt` and `updatedAt`
-    tableName: 'cartitems',  // Ensure the table name is correct
+    timestamps: true,
+    tableName: 'cartitems',
   });
 
-  // Define associations
   CartItem.associate = (models) => {
     CartItem.belongsTo(models.Product, { foreignKey: 'ProductID', as: 'product' });
     CartItem.belongsTo(models.Children, { foreignKey: 'ChildID', as: 'child' });

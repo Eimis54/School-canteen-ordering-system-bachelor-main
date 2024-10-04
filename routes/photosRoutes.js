@@ -3,9 +3,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { authenticateToken, isAdmin } = require('../middleware/auth');
-const { Photo } = require('../models'); // Adjust according to your model setup
+const { Photo } = require('../models');
 
-// Setup multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -16,8 +15,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-
-// Add new photo
 router.post('/', authenticateToken, isAdmin, upload.single('photo'), async (req, res) => {
   const { productId, altText } = req.body;
   const photoUrl = req.file ? req.file.path : undefined;
@@ -35,7 +32,6 @@ router.post('/', authenticateToken, isAdmin, upload.single('photo'), async (req,
   }
 });
 
-// Update photo
 router.put('/:photoId', authenticateToken, isAdmin, upload.single('photo'), async (req, res) => {
   const { photoId } = req.params;
   const { productId, altText } = req.body;
@@ -56,7 +52,6 @@ router.put('/:photoId', authenticateToken, isAdmin, upload.single('photo'), asyn
   }
 });
 
-// Delete photo
 router.delete('/:photoId', authenticateToken, async (req, res) => {
   const { photoId } = req.params;
 
@@ -74,7 +69,6 @@ router.delete('/:photoId', authenticateToken, async (req, res) => {
   }
 });
 
-// Get all photos
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const photos = await Photo.findAll();
@@ -85,7 +79,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Get photos by product ID
 router.get('/product/:productId', authenticateToken, async (req, res) => {
   try {
     const photos = await Photo.findAll({ where: { ProductID: req.params.productId } });

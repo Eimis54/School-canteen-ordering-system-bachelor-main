@@ -4,58 +4,58 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
-      field: 'UserID'  // Matches 'UserID' in your database
+      field: 'UserID'
     },
     RoleID: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'RoleID',  // Matches 'RoleID' in your database
+      field: 'RoleID',
       references: {
-        model: 'Roles', // Name of the Role table
+        model: 'Roles',
         key: 'RoleID'
       }
     },
     Name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      field: 'Name'  // Matches 'Name' in your database
+      field: 'Name'  
     },
     Surname: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      field: 'Surname'  // Matches 'Surname' in your database
+      field: 'Surname'  
     },
     Email: {
       type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
-      field: 'Email'  // Matches 'Email' in your database
+      field: 'Email'  
     },
     PasswordHash: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: 'PasswordHash'  // Matches 'PasswordHash' in your database
+      field: 'PasswordHash'  
     },
     PhoneNumber: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      field: 'PhoneNumber'  // Matches 'PhoneNumber' in your database
+      field: 'PhoneNumber'  
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'createdAt'  // Matches 'createdAt' in your database
+      field: 'createdAt'  
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'updatedAt'  // Matches 'updatedAt' in your database
+      field: 'updatedAt'  
     }
   }, {
-    tableName: 'users',  // Ensure this matches your table name
-    timestamps: true     // Sequelize will handle createdAt and updatedAt columns
+    tableName: 'users',  
+    timestamps: true     
   });
 
   User.associate = function(models) {

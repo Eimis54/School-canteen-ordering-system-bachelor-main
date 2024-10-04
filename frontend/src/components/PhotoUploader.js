@@ -1,5 +1,3 @@
-// PhotoUploader.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -30,7 +28,7 @@ const handleUpload = async () => {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    // Assuming the server returns the uploaded photo data in response.data
+    
     onPhotoSelect(response.data);
     setFile(null);
     setAltText('');

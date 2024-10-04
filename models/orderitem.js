@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'Orders', // Name of the target model
-                key: 'OrderID', // Key in the target model
+                model: 'Orders',
+                key: 'OrderID',
             },
             field: 'OrderID',
         },
@@ -19,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'Products', // Name of the target model
-                key: 'ProductID', // Key in the target model
+                model: 'Products',
+                key: 'ProductID',
             },
             field: 'ProductID',
         },

@@ -11,9 +11,9 @@ const ProductEditor = ({ productId }) => {
   return (
     <div>
       <h2>Product Editor</h2>
-      {/* Form to edit product details */}
+
       <PhotoUploader productId={productId} onPhotoSelect={handlePhotoSelect} />
-      {/* Display selected photos */}
+
       <div>
         {selectedPhotos.map(photo => (
           <img key={photo.photoId} src={photo.photoUrl} alt={photo.altText} />

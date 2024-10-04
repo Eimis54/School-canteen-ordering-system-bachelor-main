@@ -145,11 +145,10 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
     }
   };
   const handleCancel = () => {
-    // Reset form data
+
     setFormData({ title: '', description: '', photoUrl: '' });
     setCurrentDealId(null);
     
-    // Call onCancel prop function
     if (typeof onCancel === 'function') {
       onCancel();
     }

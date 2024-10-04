@@ -59,13 +59,11 @@ const Register = ({ onRegisterSuccess }) => {
       console.log('Registration successful:', response.data);
       setSuccess('Registration successful. Please log in.');
 
-      // Clear form fields
       setName('');
       setSurname('');
       setEmail('');
       setPassword('');
 
-      // Switch to the login form after successful registration
       if (onRegisterSuccess) {
         onRegisterSuccess();
       }

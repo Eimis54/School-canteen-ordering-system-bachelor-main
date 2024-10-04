@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Product, ProductCategory } = require('../models'); // Adjust the path if necessary
+const { Product, ProductCategory } = require('../models');
 const { authenticateToken, isAdmin } = require('../middleware/auth.js');
 
-// Create a new product
 router.post('/admin/products', authenticateToken, isAdmin, async (req, res) => {
   const { name, description, price, categoryId } = req.body;
   
@@ -20,7 +19,6 @@ router.post('/admin/products', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Get all products
 router.get('/products', async (req, res) => {
   try {
     const products = await Product.findAll();
@@ -31,7 +29,6 @@ router.get('/products', async (req, res) => {
   }
 });
 
-// Get a single product by ID
 router.get('/products/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -69,7 +66,7 @@ router.put('/admin/products/:id', authenticateToken, isAdmin, async (req, res) =
     res.status(500).json({ error: 'Failed to update product' });
   }
 });
-// Delete a product
+
 router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;
 
@@ -85,7 +82,6 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Create a new product category
 router.post('/admin/productcategories', authenticateToken, isAdmin, async (req, res) => {
   const { name, description } = req.body;
 
@@ -102,7 +98,6 @@ router.post('/admin/productcategories', authenticateToken, isAdmin, async (req, 
   }
 });
 
-// Get all product categories 
 router.get('/productcategories', async (req, res) => {
   try {
     const categories = await ProductCategory.findAll();
@@ -113,7 +108,6 @@ router.get('/productcategories', async (req, res) => {
   }
 });
 
-// Get a single product category by ID
 router.get('/productcategories/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -127,7 +121,6 @@ router.get('/productcategories/:id', async (req, res) => {
   }
 });
 
-// Update a product category
 router.put('/admin/productcategories/:id', authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
@@ -147,7 +140,6 @@ router.put('/admin/productcategories/:id', authenticateToken, isAdmin, async (re
   }
 });
 
-// Delete a product category
 router.delete('/admin/productcategories/:id', authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;
 

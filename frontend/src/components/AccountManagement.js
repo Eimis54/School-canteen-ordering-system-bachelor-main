@@ -68,7 +68,7 @@ const AccountManagement = () => {
   };
 
   const validatePhoneNumber = (phoneNumber) => {
-    const phoneRegex = /^\+\d{11}$/; // + followed by 11 digits
+    const phoneRegex = /^\+\d{11}$/;
     return phoneRegex.test(phoneNumber);
   };
 
@@ -148,11 +148,9 @@ const AccountManagement = () => {
             setPasswordMessage('Password changed successfully');
             setPasswordMessageType('success');
         } else {
-            // Check the structure of the error response
             const errorData = await response.json();
             console.error('Failed to change password:', response.status, errorData);
 
-            // Determine the error message to display
             const errorMessage = errorData.message || errorData.error || 'Unknown error';
             setPasswordMessage(`Failed to change password: ${errorMessage}`);
             setPasswordMessageType('error');

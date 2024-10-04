@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       createdAt: {
         type: DataTypes.DATE,
-        field: 'createdAt', // Ensure the field name matches the database column name
+        field: 'createdAt',
     },
       updatedAt: {
         type: DataTypes.DATE,
-        field: 'updatedAt', // Ensure the field name matches the database column name
+        field: 'updatedAt', 
     }
 }, {
       tableName: 'menuitems',

@@ -11,7 +11,7 @@ const CarouselComponent = () => {
         const response = await fetch('http://localhost:3001/api/deals');
         if (response.ok) {
           const dealsData = await response.json();
-          // Filter deals to only include those that are featured
+        
           const featuredDeals = dealsData.filter(deal => deal.isFeatured);
           setDeals(featuredDeals);
         } else {

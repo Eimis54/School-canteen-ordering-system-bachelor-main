@@ -1,11 +1,9 @@
-
 const express = require("express");
 const router = express.Router();
 const { Menu, MenuItem, Product } = require("../models");
 const { authenticateToken, isAdmin } = require("../middleware/auth.js");
 const { ProductCategory } = require("../db.js");
 
-// Route to create or update a menu
 router.post("/", authenticateToken, isAdmin, async (req, res) => {
   const { DayOfWeek, IsPublic, MenuItems } = req.body;
 
@@ -13,14 +11,13 @@ router.post("/", authenticateToken, isAdmin, async (req, res) => {
     let menu = await Menu.findOne({ where: { DayOfWeek } });
 
     if (menu) {
-      // Update existing menu
+  
       await menu.update({ IsPublic });
     } else {
-      // Create new menu
+   
       menu = await Menu.create({ DayOfWeek, IsPublic });
     }
 
-    // Clear existing menu items and add new ones
     await MenuItem.destroy({ where: { MenuID: menu.MenuID } });
     if (MenuItems && MenuItems.length > 0) {
       const items = MenuItems.map((item) => ({
@@ -36,7 +33,6 @@ router.post("/", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Route to get all menus
 router.get("/", async (req, res) => {
   try {
     const menus = await Menu.findAll({
@@ -102,8 +98,6 @@ router.get("/publicmenu", async (req, res) => {
   }
 });
 
-
-// Route to get a specific menu by dayOfWeek
 router.get("/:dayOfWeek", async (req, res) => {
   const { dayOfWeek } = req.params;
 
@@ -128,7 +122,6 @@ router.get("/:dayOfWeek", async (req, res) => {
   }
 });
 
-// Route to apply a preset menu to a specific day
 router.post("/apply-preset", authenticateToken, isAdmin, async (req, res) => {
   const { PresetMenuID, DayOfWeek } = req.body;
 
@@ -138,7 +131,6 @@ router.post("/apply-preset", authenticateToken, isAdmin, async (req, res) => {
     if (!presetMenu)
       return res.status(404).json({ error: "Preset menu not found" });
 
-    // Create or update menu for the given day
     let menu = await Menu.findOne({ where: { DayOfWeek } });
 
     if (menu) {
@@ -147,7 +139,6 @@ router.post("/apply-preset", authenticateToken, isAdmin, async (req, res) => {
       menu = await Menu.create({ DayOfWeek, IsPublic: true });
     }
 
-    // Clear existing menu items and copy preset items
     await MenuItem.destroy({ where: { MenuID: menu.MenuID } });
     const items = presetMenu.MenuItems.map((item) => ({
       MenuID: menu.MenuID,
@@ -162,7 +153,6 @@ router.post("/apply-preset", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Route to delete a menu by ID
 router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;
 
@@ -177,7 +167,6 @@ router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// Route to toggle the visibility of a menu
 router.patch(
   "/toggle-visibility/:id",
   authenticateToken,
@@ -187,11 +176,10 @@ router.patch(
     const { IsPublic } = req.body;
 
     try {
-      // Find the menu by ID
+
       const menu = await Menu.findByPk(id);
       if (!menu) return res.status(404).json({ error: "Menu not found" });
 
-      // Update the visibility status
       await menu.update({ IsPublic });
 
       res.json(menu);

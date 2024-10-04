@@ -3,7 +3,6 @@ const router = express.Router();
 const { authenticateToken } = require('../middleware/auth.js');
 const { Children } = require('../models');
 
-// Get all children for authenticated user
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const children = await Children.findAll({ where: { UserID: req.user.id } });
@@ -14,7 +13,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Add a new child
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const { Name, Surname, Grade } = req.body;
@@ -31,7 +29,6 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Update a child
 router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -51,7 +48,6 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Delete a child
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;

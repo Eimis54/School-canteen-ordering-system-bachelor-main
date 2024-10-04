@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Assuming db is your database connection
+const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
 router.post('/add', authenticateToken, async (req, res) => {
   try {
-    const { ChildID, Items, CartID } = req.body; // Receive CartID with ChildID and items
+    const { ChildID, Items, CartID } = req.body;
     const UserID = req.user.id;
 
-    // Ensure that CartID is provided, or generate a new one (if you're handling this server-side)
     if (!CartID) {
       return res.status(400).json({ message: 'CartID is required' });
     }
@@ -19,11 +18,10 @@ router.post('/add', authenticateToken, async (req, res) => {
       Quantity: item.Quantity,
       Price: item.Price,
       Calories: item.Calories,
-      ChildID,  // Associate ChildID with each item
-      CartID,   // Add the same CartID to each item
+      ChildID,
+      CartID,
     }));
 
-    // Use bulkCreate to insert multiple items
     await db.CartItem.bulkCreate(cartItems);
 
     res.status(201).json({ message: 'Items added to cart successfully!' });
@@ -42,8 +40,8 @@ router.get('/', authenticateToken, async (req, res) => {
     const cartItems = await db.CartItem.findAll({
       where: whereClause,
       include: [
-        { model: db.Children, as: 'child', attributes: ['Name'] }, // Fetch child name
-        { model: db.Product, as: 'product', attributes: ['ProductName'] } // Fetch product name
+        { model: db.Children, as: 'child', attributes: ['Name'] },
+        { model: db.Product, as: 'product', attributes: ['ProductName'] }
       ]
     });
 
@@ -62,8 +60,7 @@ router.post('/create', authenticateToken, async (req, res) => {
   try {
     const UserID = req.user.id;
 
-    // Generate a new CartID (you could use a unique value, e.g., from a UUID generator or auto-increment)
-    const newCartID = Math.floor(Math.random() * 1000000); // Example random CartID
+    const newCartID = Math.floor(Math.random() * 1000000);
     res.json({ CartID: newCartID });
   } catch (err) {
     console.error(err);
@@ -76,7 +73,6 @@ router.delete('/clear/:cartID', authenticateToken, async (req, res) => {
     const { cartID } = req.params;
     const UserID = req.user.id;
 
-    // Delete all items from the cart
     await db.CartItem.destroy({ where: { CartID: cartID, UserID } });
 
     res.json({ message: 'Cart cleared successfully!' });
@@ -88,7 +84,7 @@ router.delete('/clear/:cartID', authenticateToken, async (req, res) => {
 
 router.put('/update/:id', authenticateToken, async (req, res) => {
   try {
-    const { id } = req.params; // CartItemID
+    const { id } = req.params;
     const { Quantity } = req.body;
 
     const item = await db.CartItem.findByPk(id);
@@ -107,10 +103,9 @@ router.put('/update/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Remove an item from the cart
 router.delete('/remove/:id', authenticateToken, async (req, res) => {
   try {
-    const { id } = req.params; // CartItemID
+    const { id } = req.params;
 
     const item = await db.CartItem.findByPk(id);
 
@@ -129,7 +124,6 @@ router.delete('/clearOnLogout', authenticateToken, async (req, res) => {
   try {
     const UserID = req.user.id;
 
-    // Delete all items from the cart for the logged-in user
     await db.CartItem.destroy({ where: { UserID } });
 
     res.json({ message: 'Cart cleared successfully!' });

@@ -6,7 +6,6 @@ const { authenticateToken, isAdmin } = require('../middleware/auth.js');
 
 const router = express.Router();
 
-// Get current user details
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
@@ -26,7 +25,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Get current user's account details
 router.get('/account', authenticateToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
@@ -42,7 +40,6 @@ router.get('/account', authenticateToken, async (req, res) => {
   }
 });
 
-// Update user details
 router.put('/account', authenticateToken, async (req, res) => {
   try {
     const { name, surname, email, phoneNumber } = req.body;
@@ -62,7 +59,6 @@ router.put('/account', authenticateToken, async (req, res) => {
   }
 });
 
-// Change password
 router.put('/account/password', authenticateToken, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -71,13 +67,11 @@ router.put('/account/password', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Validate current password
     const isMatch = await bcrypt.compare(currentPassword, user.PasswordHash);
     if (!isMatch) {
       return res.status(400).json({ error: 'Current password is incorrect' });
     }
 
-    // Hash new password and update
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.PasswordHash = hashedPassword;
     await user.save();
@@ -89,7 +83,6 @@ router.put('/account/password', authenticateToken, async (req, res) => {
   }
 });
 
-// Admin routes
 router.get('/admin/users/:userId/orders', authenticateToken, isAdmin, async (req, res) => {
   const { userId } = req.params;
   try {

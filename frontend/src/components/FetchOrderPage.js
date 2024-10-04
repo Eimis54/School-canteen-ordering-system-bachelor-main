@@ -15,8 +15,8 @@ const FetchOrderPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("API Response: ", response.data); // Log the response data
-      setOrder(response.data); // Assuming response.data contains the order object
+      console.log("API Response: ", response.data);
+      setOrder(response.data);
       setError('');
     } catch (error) {
       console.error("Error fetching order:", error);
@@ -28,16 +28,16 @@ const FetchOrderPage = () => {
   const completeOrder = async () => {
     const token = localStorage.getItem('token');
     setLoading(true);
-    console.log('Order code before completing:', orderCode); // Log the order code
+    console.log('Order code before completing:', orderCode);
     try {
         const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log('Response from completing order:', response.data); // Log the response
+        console.log('Response from completing order:', response.data);
         alert('Order completed successfully.');
-        fetchOrder(); // Fetch order details again to get updated status
+        fetchOrder();
     } catch (error) {
         alert('Failed to complete the order.');
         console.error("Error completing order:", error.response ? error.response.data : error.message);
@@ -45,7 +45,6 @@ const FetchOrderPage = () => {
         setLoading(false);
     }
 };
-  // Handle form submission to fetch order details
   const handleSubmit = (e) => {
     e.preventDefault();
     fetchOrder();
@@ -69,7 +68,7 @@ const FetchOrderPage = () => {
         <div>
           <h3>Order Details:</h3>
           <p>Order Code: {order.orderCode}</p>
-          <p>Status: {order.status ? 'Not Completed' : 'Completed'}</p> {/* Updated to reflect boolean status */}
+          <p>Status: {order.status ? 'Not Completed' : 'Completed'}</p>
           <h4>Products:</h4>
           <ul>
             {order.products && order.products.map((product, index) => (

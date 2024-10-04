@@ -4,35 +4,35 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            field: 'MenuID', // Ensure the field name matches the database column name
+            field: 'MenuID',
         },
         DayOfWeek: {
             type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'),
             allowNull: false,
-            field: 'DayOfWeek', // Ensure the field name matches the database column name
+            field: 'DayOfWeek',
         },
         IsPublic: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
-            field: 'IsPublic', // Ensure the field name matches the database column name
+            field: 'IsPublic',
         },
         createdAt: {
             type: DataTypes.DATE,
-            field: 'createdAt', // Ensure the field name matches the database column name
+            field: 'createdAt',
         },
         updatedAt: {
             type: DataTypes.DATE,
-            field: 'updatedAt', // Ensure the field name matches the database column name
+            field: 'updatedAt',
         }
     }, {
-        tableName: 'menus', // Specify the actual table name
-        timestamps: true, // This will automatically handle `createdAt` and `updatedAt`
-        underscored: false, // Use camelCase for column names as in the model
+        tableName: 'menus', 
+        timestamps: true, 
+        underscored: false, 
     });
 
     Menu.associate = function(models) {
         Menu.hasMany(models.MenuItem, {
-            foreignKey: 'MenuID', // Ensure this matches the foreign key column in the MenuItem model
+            foreignKey: 'MenuID', 
             as: 'MenuItems',
             onDelete: 'CASCADE',
         });

@@ -6,7 +6,7 @@ const OrderSection = () => {
   const [children, setChildren] = useState([]);
   const [selectedChild, setSelectedChild] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
-  const [cart, setCart] = useState([]);  // Define cart here
+  const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -67,18 +67,16 @@ const OrderSection = () => {
     try {
       const token = localStorage.getItem("token");
   
-      // Get or create CartID for the user
       let CartID = localStorage.getItem('cartID');
       if (!CartID) {
-        // Generate a new CartID (handled by your backend or locally)
+
         const cartResponse = await axios.post('http://localhost:3001/api/cart/create', {}, {
           headers: { Authorization: `Bearer ${token}` }
         });
         CartID = cartResponse.data.CartID;
-        localStorage.setItem('cartID', CartID); // Save CartID to local storage for subsequent use
+        localStorage.setItem('cartID', CartID);
       }
   
-      // Prepare cart items with CartID and the selected child
       const cartItems = selectedItems.map(item => ({
         ProductID: item.ProductID,
         Quantity: item.Quantity,
@@ -86,11 +84,10 @@ const OrderSection = () => {
         Calories: item.Calories,
       }));
   
-      // Send items to the backend with the ChildID and CartID
       await axios.post("http://localhost:3001/api/cart/add", {
         ChildID: selectedChild,
         Items: cartItems,
-        CartID, // Send CartID along with the items
+        CartID,
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -111,7 +108,6 @@ const OrderSection = () => {
       <h2>Add to Cart</h2>
       {error && <div style={{ color: 'red' }}>{error}</div>}
       
-      {/* Select Child */}
       <div>
         <label>Select Child:</label>
         <select onChange={(e) => setSelectedChild(e.target.value)} value={selectedChild}>
@@ -128,7 +124,6 @@ const OrderSection = () => {
         </select>
       </div>
       
-      {/* Display Menu */}
       {menu ? (
         <div>
           <h3>Menu for {menu.DayOfWeek}</h3>
@@ -150,7 +145,6 @@ const OrderSection = () => {
         <p>Loading menu...</p>
       )}
       
-      {/* Add to Cart Button */}
       <button onClick={handleAddToCart}>Add to Cart</button>
       
     </div>

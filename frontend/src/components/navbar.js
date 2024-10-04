@@ -28,7 +28,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
       </div>
       <div className="navbar-menu">
         <div className="navbar-end">
-          {isLoggedIn && !user?.isCashier && (  // Hide all other links for cashiers
+          {isLoggedIn && !user?.isCashier && (
             <>
               <div className="navbar-item">
                 <Link to="/cart" className="cart-button">Cart</Link>
@@ -58,7 +58,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
             </>
           )}
 
-          {isLoggedIn && user?.isCashier && (  // Show only logout button for cashiers
+          {isLoggedIn && user?.isCashier && (
             <div className="navbar-item">
               <button className="logout-btn" onClick={handleLogout}>Logout</button>
             </div>

@@ -7,12 +7,12 @@ const Success = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const location = useLocation();
-  const isProcessingRef = useRef(false); // Track processing state
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     const handleOrderSuccess = async () => {
-      if (isProcessingRef.current) return; // Prevent duplicate calls
-      isProcessingRef.current = true; // Set to true to indicate processing has started
+      if (isProcessingRef.current) return;
+      isProcessingRef.current = true;
       setLoading(true);
 
       const params = new URLSearchParams(location.search);
@@ -28,19 +28,19 @@ const Success = () => {
       if (!userID || !cartID) {
         setError('User ID or Cart ID is missing. Please check your payment history.');
         setLoading(false);
-        isProcessingRef.current = false; // Reset processing state
+        isProcessingRef.current = false;
         return;
       }
     
       if (!session_id) {
         setError('Session ID not found. Please ensure you completed the payment.');
         setLoading(false);
-        isProcessingRef.current = false; // Reset processing state
+        isProcessingRef.current = false;
         return;
       }
     
       try {
-        // Make the API request to process the payment
+
         const response = await axios.post('http://localhost:3001/api/payment/payment-success', {
           session_id,
           userID,
@@ -49,36 +49,32 @@ const Success = () => {
     
         console.log('Response from payment-success:', response.data);
     
-        // Check if the response is a success
+
         if (response.data.success) {
-          setOrderCode(response.data.orderCode); // Set the order code
+          setOrderCode(response.data.orderCode);
           console.log('Order code set to:', response.data.orderCode);
           
-          // Clear any previous error message after a successful order
           setError(''); 
     
-          // Clear cartID from localStorage after successful processing
           localStorage.removeItem('cartID'); 
           
-          return; // Stop further code execution after success
+          return;
         } else {
-          // Handle any error messages returned from the backend
+
           setError(response.data.error || 'Order processing failed. Please try again.');
         }
     
       } catch (error) {
-        // Log the error details
+
         console.error('Error during order processing:', error.response ? error.response.data : error);
-        
-        // Display a friendly error message to the user
+      
         setError('Failed to process order. Please try again later.');
       } finally {
         setLoading(false);
-        isProcessingRef.current = false; // Reset processing state
+        isProcessingRef.current = false;
       }
     };
-    
-    // Call handleOrderSuccess when the component mounts or location.search changes
+
     handleOrderSuccess();
     
   }, [location.search]);

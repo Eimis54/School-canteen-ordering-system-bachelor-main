@@ -73,7 +73,7 @@ const MenuAdministration = () => {
         Calories: productToAdd.Calories,
       };
       setMenuItems(prevItems => [...prevItems, newItem]);
-      setErrorMessage(''); // Clear error message on successful addition
+      setErrorMessage('');
     } else {
       setErrorMessage(`Product '${productToAdd?.ProductName}' is already in the menu or invalid.`);
     }
@@ -105,7 +105,6 @@ const MenuAdministration = () => {
     }
   };
 
-// Function to toggle menu visibility
 const handlePublicToggle = async (menuId) => {
   try {
     const token = localStorage.getItem('token');
@@ -114,10 +113,8 @@ const handlePublicToggle = async (menuId) => {
       return;
     }
 
-    // Find the currently public menu, if any
     const currentPublicMenu = menus.find(menu => menu.IsPublic);
 
-    // Update the status of the currently public menu to private if there's another public menu
     if (currentPublicMenu && currentPublicMenu.MenuID !== menuId) {
       await axios.patch(
         `/api/menu/toggle-visibility/${currentPublicMenu.MenuID}`, 
@@ -126,7 +123,6 @@ const handlePublicToggle = async (menuId) => {
       );
     }
 
-    // Update the selected menu's public status
     const selectedMenu = menus.find(menu => menu.MenuID === menuId);
     if (!selectedMenu) {
       console.error('Selected menu not found');
@@ -141,14 +137,12 @@ const handlePublicToggle = async (menuId) => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    // Update local state
     const updatedMenus = menus.map(menu =>
       menu.MenuID === menuId ? { ...menu, IsPublic: updatedStatus } : menu
     );
 
     setMenus(updatedMenus);
 
-    // Optionally update selectedMenu if it's the one being toggled
     if (selectedMenu.MenuID === menuId) {
       setSelectedMenu({ ...selectedMenu, IsPublic: updatedStatus });
     }
@@ -190,7 +184,7 @@ const handlePublicToggle = async (menuId) => {
       Price: parseFloat(selectedProduct.Price)
     };
   
-    console.log('Editing product:', updatedProduct); // Debugging line
+    console.log('Editing product:', updatedProduct);
   
     try {
       const token = localStorage.getItem('token');
@@ -205,12 +199,12 @@ const handlePublicToggle = async (menuId) => {
         },
       });
   
-      console.log('API response:', response); // Debugging line
+      console.log('API response:', response);
   
       alert('Product updated successfully');
-      setSelectedProduct(null); // Clear selected product after submission
-      const refreshedProducts = await axios.get('/api/products/products'); // Refresh products
-      setProducts(refreshedProducts.data); // Update products state
+      setSelectedProduct(null);
+      const refreshedProducts = await axios.get('/api/products/products');
+      setProducts(refreshedProducts.data);
     } catch (error) {
       console.error('Error updating product:', error.response ? error.response.data : error.message);
     }
@@ -219,7 +213,6 @@ const handlePublicToggle = async (menuId) => {
   const handleAddCategory = async (e) => {
     e.preventDefault();
   
-    // Check if the category already exists
     const existingCategory = categories.find(cat => cat.CategoryName.toLowerCase() === newCategory.CategoryName.toLowerCase());
   
     if (existingCategory) {
@@ -241,10 +234,10 @@ const handlePublicToggle = async (menuId) => {
       });
   
       alert('Category added successfully');
-      setNewCategory({ CategoryName: '' }); // Clear form after submission
-      const response = await axios.get('/api/products/productcategories'); // Refresh categories
+      setNewCategory({ CategoryName: '' });
+      const response = await axios.get('/api/products/productcategories');
       setCategories(response.data);
-      setErrorMessage(''); // Clear any previous error message
+      setErrorMessage('');
     } catch (error) {
       console.error('Error adding category:', error.response ? error.response.data : error.message);
       setErrorMessage('Failed to add category. Please try again.');
@@ -269,7 +262,7 @@ const handlePublicToggle = async (menuId) => {
       });
   
       alert('Product deleted successfully');
-      const response = await axios.get('/api/products/products'); // Refresh products
+      const response = await axios.get('/api/products/products');
       setProducts(response.data);
     } catch (error) {
       console.error('Error deleting product:', error.response ? error.response.data : error.message);
@@ -279,7 +272,6 @@ const handlePublicToggle = async (menuId) => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    // Check if the product name already exists
     const existingProduct = products.find(product => product.ProductName.toLowerCase() === newProduct.ProductName.toLowerCase());
     if (existingProduct) {
         setErrorMessage(`A product with the name '${newProduct.ProductName}' already exists.`);
@@ -300,10 +292,10 @@ const handlePublicToggle = async (menuId) => {
         });
 
         alert('Product added successfully');
-        setNewProduct({ ProductName: '', Price: '', CategoryID: '', Calories: '' }); // Clear form after submission
-        const response = await axios.get('/api/products/products'); // Refresh products
+        setNewProduct({ ProductName: '', Price: '', CategoryID: '', Calories: '' });
+        const response = await axios.get('/api/products/products');
         setProducts(response.data);
-        setErrorMessage(''); // Clear any previous error message
+        setErrorMessage('');
     } catch (error) {
         console.error('Error adding product:', error.response ? error.response.data : error.message);
         setErrorMessage('Failed to add product. Please try again.');
@@ -311,12 +303,12 @@ const handlePublicToggle = async (menuId) => {
   };
 
   const handleDeleteCategory = async (categoryID) => {
-    console.log('Deleting category:', categoryID); // Debugging line
+    console.log('Deleting category:', categoryID);
   
     const productsInCategory = products.filter(product => product.CategoryID === categoryID);
     
     if (productsInCategory.length > 0) {
-      console.log('Products in category:', productsInCategory); // Debugging line
+      console.log('Products in category:', productsInCategory);
       setErrorMessage('Cannot delete category because there are products associated with it.');
       return;
     }
@@ -341,7 +333,7 @@ const handlePublicToggle = async (menuId) => {
       alert('Category deleted successfully');
       const response = await axios.get('/api/products/productcategories');
       setCategories(response.data);
-      setErrorMessage(''); // Clear error message after successful deletion
+      setErrorMessage('');
   
     } catch (error) {
       console.error('Error deleting category:', error.response ? error.response.data : error.message);
@@ -368,8 +360,8 @@ const handlePublicToggle = async (menuId) => {
       });
 
       alert('Category updated successfully');
-      setSelectedCategory(null); // Clear selected category after submission
-      const response = await axios.get('/api/products/productcategories'); // Refresh categories
+      setSelectedCategory(null);
+      const response = await axios.get('/api/products/productcategories');
       setCategories(response.data);
     } catch (error) {
       console.error('Error updating category:', error.response ? error.response.data : error.message);
@@ -386,14 +378,14 @@ const handlePublicToggle = async (menuId) => {
     <div className="menu-admin-container">
       <h2>Menu Administration</h2>
   
-      {/* Section Toggle Buttons */}
+      {/* Mygtukai */}
       <div className="section-buttons">
         <button onClick={() => setActiveSection('menus')}>Menus</button>
         <button onClick={() => setActiveSection('categories')}>Categories</button>
         <button onClick={() => setActiveSection('products')}>Products</button>
       </div>
   
-      {/* Menus Section */}
+      {/* Menu dalis */}
       {activeSection === 'menus' && (
         <div className="menus-section">
           <div className="menu-selection">
@@ -473,7 +465,8 @@ const handlePublicToggle = async (menuId) => {
           )}
         </div>
       )}
-  
+      
+   {/* Kategoriju dalis */}
   {activeSection === 'categories' && (
   <div className="category-management">
     <h3>Add New Category</h3>
@@ -491,7 +484,6 @@ const handlePublicToggle = async (menuId) => {
       <button type="submit">Add Category</button>
     </form>
 
-    {/* Display error message here */}
     {errorMessage && (
       <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>
         {errorMessage}
@@ -533,7 +525,7 @@ const handlePublicToggle = async (menuId) => {
     )}
   </div>
 )}
-      {/* Products Section */}
+      {/* Produktu dalis */}
       {activeSection === 'products' && (
         <div className="product-management">
           <h3>Add New Product</h3>
