@@ -16,7 +16,6 @@ const PaymentHistory = () => {
 
       try {
         const response = await axios.get(`http://localhost:3001/api/orders/history/${userId}`);
-        console.log('Fetched orders:', response.data);
         setOrders(response.data);
       } catch (error) {
         setError('Failed to load payment history.');

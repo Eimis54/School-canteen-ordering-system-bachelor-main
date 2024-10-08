@@ -46,13 +46,11 @@ const UserAdministration = () => {
 
   const fetchRoles = async () => {
     try {
-      console.log('Fetching roles...');
       const response = await axios.get('http://localhost:3001/api/admin/roles', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      console.log('Roles fetched:', response.data);
       if (response.status === 200) {
         setRoles(response.data);
       } else {
@@ -68,7 +66,7 @@ const UserAdministration = () => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const response = await axios.delete(`http://localhost:3001/api/user/${userId}`, {
+      const response = await axios.delete(`http://localhost:3001/api/user/admin/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

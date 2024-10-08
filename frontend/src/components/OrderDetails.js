@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import LanguageContext from '../LanguageContext';
 
 const OrderDetails = () => {
+  const {language} = useContext(LanguageContext);
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
@@ -13,7 +15,7 @@ const OrderDetails = () => {
         const response = await axios.get(`http://localhost:3001/api/orders/specific/${orderId}`);
         setOrder(response.data);
       } catch (error) {
-        setError('Failed to load order details.');
+        setError(language.FailedToLoadOrderDetails);
       }
     };
 
@@ -25,21 +27,21 @@ const OrderDetails = () => {
   }
 
   if (!order) {
-    return <p>Loading...</p>;
+    return <p>{language.Loading}</p>;
   }
 
   return (
     <div>
-      <h2>Order Details</h2>
-      <p>Order Code: {order.OrderCode}</p>
-      <p>Total Price: {order.TotalPrice} Eur.</p>
-      <h3>Ordered Products:</h3>
+      <h2>{language.OrderDetails}</h2>
+      <p>{language.OrderCode}: {order.OrderCode}</p>
+      <p>{language.TotalPrice}: {order.TotalPrice} Eur.</p>
+      <h3>{language.OrderedProducts}:</h3>
       <ul>
         {order.orderItems.map(item => (
           <li key={item.OrderItemID}>
-            <p>Product: {item.product.ProductName}</p> 
-            <p>Price: ${item.Price}</p>
-            <p>Quantity: {item.Quantity}</p>
+            <p>{language.Product}: {item.product.ProductName}</p> 
+            <p>{language.Price}: {item.Price} Eur.</p>
+            <p>{language.Quantity}: {item.Quantity}</p>
           </li>
         ))}
       </ul>

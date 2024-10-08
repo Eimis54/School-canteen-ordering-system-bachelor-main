@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './AccountManagement.css';
+import LanguageContext from '../LanguageContext';
 
 const AccountManagement = () => {
+  const { language } = useContext(LanguageContext);
   const [userDetails, setUserDetails] = useState({
     userId: '', 
     name: '',
@@ -23,6 +25,8 @@ const AccountManagement = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
     fetchUserDetails();
@@ -46,10 +50,10 @@ const AccountManagement = () => {
           phoneNumber: data.PhoneNumber,
         });
       } else {
-        console.error('Failed to fetch user details:', response.status);
+        console.error(language.FailedToFetchUserDetails, response.status);
       }
     } catch (error) {
-      console.error('Failed to fetch user details:', error);
+      console.error(language.FailedToFetchUserDetails, error);
     }
   };
 
@@ -71,13 +75,25 @@ const AccountManagement = () => {
     const phoneRegex = /^\+\d{11}$/;
     return phoneRegex.test(phoneNumber);
   };
-
+  const validateEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      setEmailError(language.EmailError);
+      return false;
+    } else {
+      setEmailError('');
+      return true;
+    }
+  };
+  
   const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
+    if (!validateEmail(userDetails.email)) {
+      return;
+    }
 
-    // Validate phone number
     if (!validatePhoneNumber(userDetails.phoneNumber)) {
-      setAccountMessage('Invalid phone number format. It should be in the format +3706*******');
+      setAccountMessage(language.InvalidPhoneNumber);
       setAccountMessageType('error');
       return;
     }
@@ -101,17 +117,17 @@ const AccountManagement = () => {
           email: data.Email,
           phoneNumber: data.PhoneNumber,
         });
-        setAccountMessage('User details updated successfully');
+        setAccountMessage(language.UserDetailsSuccess);
         setAccountMessageType('success');
       } else {
         const errorData = await response.json();
-        console.error('Failed to update user details:', errorData);
-        setAccountMessage(`Failed to update user details: ${errorData.message}`);
+        console.error(language.UserFailedDetails, errorData);
+        setAccountMessage(`${language.UserFailedDetails} ${errorData.message}`);
         setAccountMessageType('error');
       }
     } catch (error) {
-      console.error('Failed to update user details:', error);
-      setAccountMessage('Failed to update user details');
+      console.error(language.UserFailedDetails, error);
+      setAccountMessage(language.UserFailedDetails);
       setAccountMessageType('error');
     }
   };
@@ -119,12 +135,12 @@ const AccountManagement = () => {
   const handlePasswordChangeSubmit = async (e) => {
     e.preventDefault();
     if (!validatePassword()) {
-        setPasswordMessage('Password must be at least 8 characters, including 1 uppercase letter, 1 lowercase letter, and 1 special symbol');
+        setPasswordMessage(language.PasswordMustBeAtleast);
         setPasswordMessageType('error');
         return;
     }
     if (passwordDetails.newPassword !== passwordDetails.confirmPassword) {
-        setPasswordMessage('New passwords do not match');
+        setPasswordMessage(language.NewPasswordNoMatch);
         setPasswordMessageType('error');
         return;
     }
@@ -145,33 +161,33 @@ const AccountManagement = () => {
 
         if (response.ok) {
             setPasswordDetails({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            setPasswordMessage('Password changed successfully');
+            setPasswordMessage(language.PasswordChangedSuccess);
             setPasswordMessageType('success');
         } else {
             const errorData = await response.json();
-            console.error('Failed to change password:', response.status, errorData);
+            console.error(language.FailedToChangePass, response.status, errorData);
 
             const errorMessage = errorData.message || errorData.error || 'Unknown error';
-            setPasswordMessage(`Failed to change password: ${errorMessage}`);
+            setPasswordMessage(`${language.FailedToChangePass} ${errorMessage}`);
             setPasswordMessageType('error');
         }
     } catch (error) {
-        console.error('Failed to change password:', error);
-        setPasswordMessage('Failed to change password: Network error or server is down');
+        console.error(language.FailedToChangePass, error);
+        setPasswordMessage(language.FailedToChangePassNetwork);
         setPasswordMessageType('error');
     }
 };
 
   return (
     <div className="container">
-      <h2 className="title">Account Management</h2>
+      <h2 className="title">{language.AccountManagement}</h2>
       {accountMessage && <div className={`message ${accountMessageType}`}>{accountMessage}</div>}
-      <form className="form" onSubmit={handleUserDetailsSubmit}>
+      <form className="form" noValidate onSubmit={handleUserDetailsSubmit}>
         <input
           type="text"
           name="name"
           className="input"
-          placeholder="Enter name"
+          placeholder={language.EnterName}
           value={userDetails.name}
           onChange={handleUserDetailsChange}
         />
@@ -179,7 +195,7 @@ const AccountManagement = () => {
           type="text"
           name="surname"
           className="input"
-          placeholder="Enter surname"
+          placeholder={language.EnterSurname}
           value={userDetails.surname}
           onChange={handleUserDetailsChange}
         />
@@ -187,21 +203,22 @@ const AccountManagement = () => {
           type="email"
           name="email"
           className="input"
-          placeholder="Enter email"
+          placeholder={language.EnterEmail}
           value={userDetails.email}
           onChange={handleUserDetailsChange}
         />
+       {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
         <input
           type="text"
           name="phoneNumber"
           className="input"
-          placeholder="Enter phone number"
+          placeholder={language.EnterPhoneNumber}
           value={userDetails.phoneNumber}
           onChange={handleUserDetailsChange}
         />
-        <button type="submit" className="button">Update Details</button>
+        <button type="submit" className="button">{language.UpdateDetails}</button>
       </form>
-      <h2 className="title">Change Password</h2>
+      <h2 className="title">{language.ChangePassword}</h2>
       {passwordMessage && <div className={`message ${passwordMessageType}`}>{passwordMessage}</div>}
       <form className="form" onSubmit={handlePasswordChangeSubmit}>
         <div className="password-container">
@@ -209,7 +226,7 @@ const AccountManagement = () => {
             type={showCurrentPassword ? "text" : "password"}
             name="currentPassword"
             className="input"
-            placeholder="Enter current password"
+            placeholder={language.EnterCurrentPassword}
             value={passwordDetails.currentPassword}
             onChange={handlePasswordDetailsChange}
           />
@@ -225,7 +242,7 @@ const AccountManagement = () => {
             type={showNewPassword ? "text" : "password"}
             name="newPassword"
             className="input"
-            placeholder="Enter new password"
+            placeholder={language.EnterNewPassword}
             value={passwordDetails.newPassword}
             onChange={handlePasswordDetailsChange}
           />
@@ -241,7 +258,7 @@ const AccountManagement = () => {
             type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
             className="input"
-            placeholder="Confirm new password"
+            placeholder={language.ConfirmNewPassword}
             value={passwordDetails.confirmPassword}
             onChange={handlePasswordDetailsChange}
           />
@@ -252,7 +269,7 @@ const AccountManagement = () => {
             {showConfirmPassword ? "🙈" : "👁️"}
           </span>
         </div>
-        <button type="submit" className="button">Change Password</button>
+        <button type="submit" className="button">{language.ChangePassword}</button>
       </form>
     </div>
   );

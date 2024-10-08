@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LanguageContext from '../LanguageContext';
 
-const Login = ({ setIsLoggedIn, setUser }) => {
+const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
+  const {language}=useContext(LanguageContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,38 +34,45 @@ const Login = ({ setIsLoggedIn, setUser }) => {
           setUser(userData);
           setIsLoggedIn(true);
         }
-  
-        navigate('/loggedInPage');
       } else {
         const errorData = await response.json();
         setError(errorData.error);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Error occurred. Please try again later.');
+      console.error(language.LoginError, error);
+      setError(language.ErrorOccured);
     }
   };
+
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
+  };
+
   return (
     <div>
-      <h2>Login</h2>
+      <h2>{language.login}</h2>
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
-        <label>Email:</label>
+        <label>{language.Email}:</label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <br />
-        <label>Password:</label>
+        <label>{language.Password}:</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <br />
-        <button type="submit">Login</button>
+        <button type="submit">{language.login}</button>
       </form>
+      <p>
+        <button onClick={handleForgotPassword}>{language.ForgotPasswordQ}</button>
+      </p>
     </div>
   );
 };

@@ -131,4 +131,9 @@
   background-color: #fff;
   color: #000;
 }
-
+.flagbtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}

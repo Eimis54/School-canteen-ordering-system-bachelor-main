@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import LanguageContext from '../LanguageContext';
 
 const API_BASE_URL = 'http://localhost:3001';
 
 const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
+  const {language}=useContext(LanguageContext);
   const [deals, setDeals] = useState([]);
   const [currentDealId, setCurrentDealId] = useState(null);
   const [formData, setFormData] = useState({
@@ -26,7 +28,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       const response = await axios.get(`${API_BASE_URL}/api/deals`);
       setDeals(response.data);
     } catch (error) {
-      setError('Failed to fetch deals');
+      setError(language.FailedToFetchDeals);
     }
   };
 
@@ -44,7 +46,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       });
       setCurrentDealId(DealID);
     } catch (error) {
-      setError('Failed to fetch deal');
+      setError(language.FailedToFetchDeals);
     }
   };
 
@@ -63,7 +65,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       );
       fetchDeals();
     } catch (error) {
-      setError('Failed to update deal');
+      setError(language.FailedToUpdateDeal);
     } finally {
       setLoading(false);
     }
@@ -78,7 +80,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       });
       setPhotos(response.data);
     } catch (error) {
-      setError('Failed to fetch photos');
+      setError(language.FailedToFetchPhotos);
     }
   };
 
@@ -116,7 +118,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
         onCancel();
       }
     } catch (error) {
-      setError('Error occurred. Please try again later.');
+      setError(language.ErrorOccured);
     } finally {
       setLoading(false);
     }
@@ -139,7 +141,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       setCurrentDealId(null);
       fetchDeals();
     } catch (error) {
-      setError('Failed to delete deal');
+      setError(language.FailedToDeleteDeal);
     } finally {
       setLoading(false);
     }
@@ -164,34 +166,36 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
 
   return (
     <div>
-      <h2>{currentDealId ? 'Edit Deal' : 'Create Deal'}</h2>
+      <h2>{currentDealId ? language.EditDeal : language.CreateDeal}</h2>
       {error && <div style={{ color: 'red' }}>{error}</div>}
       <form onSubmit={handleSave}>
         <div>
-          <label>Title</label>
+          <label>{language.Title}</label>
           <input
             type="text"
             name="title"
+            placeholder={language.Title}
             value={formData.title}
             onChange={handleChange}
             required
           />
         </div>
         <div>
-          <label>Description</label>
+          <label>{language.Description}</label>
           <textarea
             name="description"
+            placeholder={language.Description}
             value={formData.description}
             onChange={handleChange}
           />
         </div>
         <div>
-          <label>Photo</label>
+          <label>{language.Photo}</label>
           <select name="photoUrl" value={formData.photoUrl} onChange={handlePhotoSelect}>
-  <option value="">Select a photo</option>
+  <option value="">{language.SelectAPhoto}</option>
   {photos.map((photo) => (
     <option key={photo.PhotoID} value={photo.PhotoURL}>
-      {photo.AltText || 'No description'}
+      {photo.AltText || language.NoDescription}
     </option>
   ))}
 </select>
@@ -202,27 +206,27 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
                   ? formData.photoUrl
                   : `${API_BASE_URL}/${formData.photoUrl.replace(/\\/g, '/')}`
               } 
-              alt="Selected" 
+              alt={language.Selected} 
               style={{ maxWidth: '200px', marginTop: '10px' }} 
             />
           }
         </div>
         <button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : (currentDealId ? 'Update' : 'Create')}
+          {loading ? language.Saving : (currentDealId ? language.Update : language.Create)}
         </button>
         {currentDealId && (
           <button type="button" onClick={() => handleDelete(currentDealId)} disabled={loading}>
-            {loading ? 'Deleting...' : 'Delete'}
+            {loading ? language.Deleting : language.Delete}
           </button>
         )}
         <button type="button" onClick={handleCancel}>
-          Cancel
+          {language.Cancel}
         </button>
       </form>
 
-      <h2>Deal List</h2>
+      <h2>{language.DealList}</h2>
       {deals.length === 0 ? (
-        <p>No deals found</p>
+        <p>{language.NoDealsFound}</p>
       ) : (
         <ul>
           {deals.map(deal => (
@@ -243,11 +247,11 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
                     checked={deal.isFeatured}
                     onChange={() => toggleFeatured(deal.DealID, deal.isFeatured)}
                   />
-                  Display in Carousel
+                  {language.DisplayInCarousel}
                 </label>
               </div>
-              <button onClick={() => handleEdit(deal.DealID)}>Edit</button>
-              <button onClick={() => handleDelete(deal.DealID)}>Delete</button>
+              <button onClick={() => handleEdit(deal.DealID)}>{language.Edit}</button>
+              <button onClick={() => handleDelete(deal.DealID)}>{language.Delete}</button>
             </li>
           ))}
         </ul>

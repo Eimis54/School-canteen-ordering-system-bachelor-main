@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import './MenuAdministration.css';
+import LanguageContext from '../LanguageContext';
 
 axios.defaults.baseURL = 'http://localhost:3001';
 
 const MenuAdministration = () => {
+  const {language}=useContext(LanguageContext);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [menus, setMenus] = useState([]);
@@ -25,7 +27,7 @@ const MenuAdministration = () => {
         const response = await axios.get('/api/products/products');
         setProducts(response.data);
       } catch (error) {
-        console.error('Error fetching products:', error.response ? error.response.data : error.message);
+        console.error(language.ErrorFetchingProducts, error.response ? error.response.data : error.message);
       }
     };
 
@@ -34,7 +36,7 @@ const MenuAdministration = () => {
         const response = await axios.get('/api/products/productcategories');
         setCategories(response.data);
       } catch (error) {
-        console.error('Error fetching categories:', error.response ? error.response.data : error.message);
+        console.error(language.ErrorFetchingCategories, error.response ? error.response.data : error.message);
       }
     };
 
@@ -43,7 +45,7 @@ const MenuAdministration = () => {
         const response = await axios.get('/api/menu');
         setMenus(response.data);
       } catch (error) {
-        console.error('Error fetching menus:', error.response ? error.response.data : error.message);
+        console.error(language.ErrorFetchingMenu, error.response ? error.response.data : error.message);
       }
     };
 
@@ -75,7 +77,10 @@ const MenuAdministration = () => {
       setMenuItems(prevItems => [...prevItems, newItem]);
       setErrorMessage('');
     } else {
-      setErrorMessage(`Product '${productToAdd?.ProductName}' is already in the menu or invalid.`);
+      const productName = productToAdd?.ProductName || '';
+      const errorTemplate = language.ProductAlreadyExists;
+      const errorMessage = errorTemplate.replace('{productName}', productName);
+      setErrorMessage(errorMessage);
     }
   };
 
@@ -99,9 +104,9 @@ const MenuAdministration = () => {
         },
       });
 
-      alert('Menu updated successfully');
+      alert(language.MenuUpdatedSuccessfully);
     } catch (error) {
-      console.error('Error updating menu:', error.response ? error.response.data : error.message);
+      console.error(language.ErrorUpdatingMenu, error.response ? error.response.data : error.message);
     }
   };
 
@@ -125,7 +130,7 @@ const handlePublicToggle = async (menuId) => {
 
     const selectedMenu = menus.find(menu => menu.MenuID === menuId);
     if (!selectedMenu) {
-      console.error('Selected menu not found');
+      console.error(language.SelectedMenuNotFound);
       return;
     }
 
@@ -146,16 +151,20 @@ const handlePublicToggle = async (menuId) => {
     if (selectedMenu.MenuID === menuId) {
       setSelectedMenu({ ...selectedMenu, IsPublic: updatedStatus });
     }
+    const day = selectedMenu.DayOfWeek;
+    const status = updatedStatus ? language.StatusPublic : language.StatusPrivate; 
+    const messageTemplate = language.MenuStatusMessage;
+    const alertMessage = messageTemplate
+      .replace('{day}', day)
+      .replace('{status}', status);
 
-    alert(`Menu for ${selectedMenu.DayOfWeek} is now ${updatedStatus ? 'public' : 'private'}`);
+    alert(alertMessage);
 
   } catch (error) {
-    console.error('Error updating menu public status:', error.response ? error.response.data : error.message);
+    console.error(language.ErrorUpdatingMenuPublicStatus, error.response ? error.response.data : error.message);
   }
 };
 
-
-  
   const handleNewCategoryChange = (e) => {
     const { name, value } = e.target;
     setNewCategory(prevCategory => ({
@@ -174,7 +183,7 @@ const handlePublicToggle = async (menuId) => {
 
   const handleEditProduct = async () => {
     if (!selectedProduct) {
-      console.error('No product selected');
+      console.error(language.NoProductSelected);
       return;
     }
   
@@ -183,8 +192,6 @@ const handlePublicToggle = async (menuId) => {
       Calories: parseFloat(selectedProduct.Calories),
       Price: parseFloat(selectedProduct.Price)
     };
-  
-    console.log('Editing product:', updatedProduct);
   
     try {
       const token = localStorage.getItem('token');
@@ -199,14 +206,12 @@ const handlePublicToggle = async (menuId) => {
         },
       });
   
-      console.log('API response:', response);
-  
-      alert('Product updated successfully');
+      alert(language.ProductUpdatedSuccessfully);
       setSelectedProduct(null);
       const refreshedProducts = await axios.get('/api/products/products');
       setProducts(refreshedProducts.data);
     } catch (error) {
-      console.error('Error updating product:', error.response ? error.response.data : error.message);
+      console.error(language.ErrorUpdatingProduct, error.response ? error.response.data : error.message);
     }
   };
 
@@ -216,7 +221,9 @@ const handlePublicToggle = async (menuId) => {
     const existingCategory = categories.find(cat => cat.CategoryName.toLowerCase() === newCategory.CategoryName.toLowerCase());
   
     if (existingCategory) {
-      setErrorMessage(`Category '${newCategory.CategoryName}' already exists.`);
+      const errorMessageTemplate = language.CategoryAlreadyExists;
+      const errorMessage = errorMessageTemplate.replace('{categoryName}', newCategory.CategoryName);
+      setErrorMessage(errorMessage);
       return;
     }
   
@@ -233,18 +240,18 @@ const handlePublicToggle = async (menuId) => {
         },
       });
   
-      alert('Category added successfully');
+      alert(language.CategoryAddSuccess);
       setNewCategory({ CategoryName: '' });
       const response = await axios.get('/api/products/productcategories');
       setCategories(response.data);
       setErrorMessage('');
     } catch (error) {
-      console.error('Error adding category:', error.response ? error.response.data : error.message);
-      setErrorMessage('Failed to add category. Please try again.');
+      console.error(language.ErrorAddingCategory, error.response ? error.response.data : error.message);
+      setErrorMessage(language.FailedToAddCategoryTryAgain);
     }
   };  
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) {
+    if (!window.confirm(language.AreYouSureWantToDeleteProduct)) {
       return;
     }
   
@@ -261,11 +268,11 @@ const handlePublicToggle = async (menuId) => {
         },
       });
   
-      alert('Product deleted successfully');
+      alert(language.ProductDeletedSuccess);
       const response = await axios.get('/api/products/products');
       setProducts(response.data);
     } catch (error) {
-      console.error('Error deleting product:', error.response ? error.response.data : error.message);
+      console.error(language.ErrorDeletingProduct, error.response ? error.response.data : error.message);
     }
   };
 
@@ -274,7 +281,9 @@ const handlePublicToggle = async (menuId) => {
 
     const existingProduct = products.find(product => product.ProductName.toLowerCase() === newProduct.ProductName.toLowerCase());
     if (existingProduct) {
-        setErrorMessage(`A product with the name '${newProduct.ProductName}' already exists.`);
+      const errorMessageTemplate = language.ProductAlreadyExistsA;
+      const errorMessage = errorMessageTemplate.replace('{productName}', newProduct.ProductName);
+        setErrorMessage(errorMessage);
         return;
     }
 
@@ -291,29 +300,27 @@ const handlePublicToggle = async (menuId) => {
             },
         });
 
-        alert('Product added successfully');
+        alert(language.ProductAddedSuccess);
         setNewProduct({ ProductName: '', Price: '', CategoryID: '', Calories: '' });
         const response = await axios.get('/api/products/products');
         setProducts(response.data);
         setErrorMessage('');
     } catch (error) {
-        console.error('Error adding product:', error.response ? error.response.data : error.message);
-        setErrorMessage('Failed to add product. Please try again.');
+        console.error(language.ErrorAddingProduct, error.response ? error.response.data : error.message);
+        setErrorMessage(language.FailedToAddProduct);
     }
   };
 
   const handleDeleteCategory = async (categoryID) => {
-    console.log('Deleting category:', categoryID);
   
     const productsInCategory = products.filter(product => product.CategoryID === categoryID);
     
     if (productsInCategory.length > 0) {
-      console.log('Products in category:', productsInCategory);
-      setErrorMessage('Cannot delete category because there are products associated with it.');
+      setErrorMessage(language.CannotDeleteCategory);
       return;
     }
   
-    if (!window.confirm('Are you sure you want to delete this category?')) {
+    if (!window.confirm(language.AreYouSureWantDeleteCategory)) {
       return;
     }
   
@@ -330,19 +337,19 @@ const handlePublicToggle = async (menuId) => {
         },
       });
   
-      alert('Category deleted successfully');
+      alert(language.CategoryDeleteSuccess);
       const response = await axios.get('/api/products/productcategories');
       setCategories(response.data);
       setErrorMessage('');
   
     } catch (error) {
-      console.error('Error deleting category:', error.response ? error.response.data : error.message);
-      setErrorMessage('Failed to delete category. Please try again.');
+      console.error(language.ErrorDeletingCategory, error.response ? error.response.data : error.message);
+      setErrorMessage(language.FailedToDeleteCategory);
     }
   };
   const handleEditCategory = async () => {
     if (!selectedCategory || !selectedCategory.CategoryID) {
-      console.error('No category selected');
+      console.error(language.NoCategorySelected);
       return;
     }
 
@@ -359,12 +366,12 @@ const handlePublicToggle = async (menuId) => {
         },
       });
 
-      alert('Category updated successfully');
+      alert(language.CategoryUpdateSuccess);
       setSelectedCategory(null);
       const response = await axios.get('/api/products/productcategories');
       setCategories(response.data);
     } catch (error) {
-      console.error('Error updating category:', error.response ? error.response.data : error.message);
+      console.error(language.ErrorUpdatingCategory, error.response ? error.response.data : error.message);
     }
   };
 
@@ -376,20 +383,20 @@ const handlePublicToggle = async (menuId) => {
 
   return (
     <div className="menu-admin-container">
-      <h2>Menu Administration</h2>
+      <h2>{language.MenuAdministration}</h2>
   
       {/* Mygtukai */}
       <div className="section-buttons">
-        <button onClick={() => setActiveSection('menus')}>Menus</button>
-        <button onClick={() => setActiveSection('categories')}>Categories</button>
-        <button onClick={() => setActiveSection('products')}>Products</button>
+        <button onClick={() => setActiveSection('menus')}>{language.Menus}</button>
+        <button onClick={() => setActiveSection('categories')}>{language.Categories}</button>
+        <button onClick={() => setActiveSection('products')}>{language.Products}</button>
       </div>
   
       {/* Menu dalis */}
       {activeSection === 'menus' && (
         <div className="menus-section">
           <div className="menu-selection">
-            <h3>Select a Menu to Edit</h3>
+            <h3>{language.SelectMenuToEdit}</h3>
             <ul className="menu-list">
               {menus.map(menu => (
                 <li key={menu.MenuID} className="menu-item">
@@ -397,7 +404,7 @@ const handlePublicToggle = async (menuId) => {
                     {menu.DayOfWeek}
                   </button>
                   <label className="public-toggle-label">
-  Public:
+  {language.Public}:
   <input
     type="checkbox"
     checked={menu.IsPublic || false}
@@ -412,9 +419,9 @@ const handlePublicToggle = async (menuId) => {
   
           {selectedMenu && (
             <div className="menu-editor">
-              <h3>Editing Menu for {selectedMenu.DayOfWeek}</h3>
+              <h3>{language.EditingMenuFor} {selectedMenu.DayOfWeek}</h3>
   
-              <h4>Menu Items by Category</h4>
+              <h4>{language.MenuItemsbyCategory}</h4>
               {categorizedMenuItems.length ? (
                 categorizedMenuItems.map(category => (
                   <div key={category.CategoryID}>
@@ -423,35 +430,35 @@ const handlePublicToggle = async (menuId) => {
                       {category.products.length ? (
                         category.products.map(item => (
                           <li key={item.ProductID}>
-                            {item.ProductName} - ${item.Price} - {item.Calories} calories
-                            <button onClick={() => handleRemoveMenuItem(item.ProductID)}>Remove</button>
+                            {item.ProductName} - {item.Price} Eur. - {item.Calories} {language.Calories}
+                            <button onClick={() => handleRemoveMenuItem(item.ProductID)}>{language.Remove}</button>
                           </li>
                         ))
                       ) : (
-                        <li>No products available</li>
+                        <li>{language.NoProductsAvailable}</li>
                       )}
                     </ul>
                   </div>
                 ))
               ) : (
-                <div>No categories available</div>
+                <div>{language.NoCategoriesAvailable}</div>
               )}
   
               <div className="add-menu-item">
-                <h4>Add Items to Menu</h4>
+                <h4>{language.AddItemsToMenu}</h4>
                 <select onChange={(e) => {
                   const productID = parseInt(e.target.value);
                   const selectedProduct = products.find(p => p.ProductID === productID);
                   setProductToAdd(selectedProduct);
                 }}>
-                  <option value="">Select Product</option>
+                  <option value="">{language.SelectProduct}</option>
                   {products.map(product => (
                     <option key={product.ProductID} value={product.ProductID}>
                       {product.ProductName}
                     </option>
                   ))}
                 </select>
-                <button onClick={handleAddMenuItem}>Add Item to Menu</button>
+                <button onClick={handleAddMenuItem}>{language.AddItemsToMenu}</button>
               </div>
   
               {errorMessage && (
@@ -460,7 +467,7 @@ const handlePublicToggle = async (menuId) => {
                 </div>
               )}
   
-              <button onClick={handleSaveMenu}>Save Menu</button>
+              <button onClick={handleSaveMenu}>{language.SaveMenu}</button>
             </div>
           )}
         </div>
@@ -469,19 +476,20 @@ const handlePublicToggle = async (menuId) => {
    {/* Kategoriju dalis */}
   {activeSection === 'categories' && (
   <div className="category-management">
-    <h3>Add New Category</h3>
+    <h3>{language.AddNewCategory}</h3>
     <form onSubmit={handleAddCategory}>
       <label>
-        Category Name:
+        {language.CategoryName}
         <input
           type="text"
           name="CategoryName"
+          placeholder={language.CategoryName}
           value={newCategory.CategoryName}
           onChange={handleNewCategoryChange}
           required
         />
       </label>
-      <button type="submit">Add Category</button>
+      <button type="submit">{language.AddCategory}</button>
     </form>
 
     {errorMessage && (
@@ -490,19 +498,19 @@ const handlePublicToggle = async (menuId) => {
       </div>
     )}
 
-    <h3>Manage Categories</h3>
+    <h3>{language.ManageCategories}</h3>
     {categories.length ? (
       <ul>
         {categories.map(category => (
           <li key={category.CategoryID}>
             {category.CategoryName}
-            <button onClick={() => setSelectedCategory(category)}>Edit</button>
-            <button onClick={() => handleDeleteCategory(category.CategoryID)}>Delete</button>
+            <button onClick={() => setSelectedCategory(category)}>{language.Edit}</button>
+            <button onClick={() => handleDeleteCategory(category.CategoryID)}>{language.Delete}</button>
           </li>
         ))}
       </ul>
     ) : (
-      <div>No categories available</div>
+      <div>{language.NoCategoriesAvailable}</div>
     )}
     
     {selectedCategory && (
@@ -511,16 +519,17 @@ const handlePublicToggle = async (menuId) => {
         handleEditCategory();
       }}>
         <label>
-          Category Name:
+          {language.CategoryName}
           <input
             type="text"
+            placeholder={language.CategoryName}
             value={selectedCategory.CategoryName}
             onChange={(e) => setSelectedCategory({ ...selectedCategory, CategoryName: e.target.value })}
             required
           />
         </label>
-        <button type="submit">Save Changes</button>
-        <button type="button" onClick={() => setSelectedCategory(null)}>Cancel</button>
+        <button type="submit">{language.SaveChanges}</button>
+        <button type="button" onClick={() => setSelectedCategory(null)}>{language.Cancel}</button>
       </form>
     )}
   </div>
@@ -528,7 +537,7 @@ const handlePublicToggle = async (menuId) => {
       {/* Produktu dalis */}
       {activeSection === 'products' && (
         <div className="product-management">
-          <h3>Add New Product</h3>
+          <h3>{language.AddNewProduct}</h3>
           {errorMessage && (
             <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>
               {errorMessage}
@@ -536,34 +545,37 @@ const handlePublicToggle = async (menuId) => {
           )}
           <form onSubmit={handleAddProduct}>
             <label>
-              Product Name:
+              {language.ProductName}
               <input
                 type="text"
                 name="ProductName"
+                placeholder={language.ProductName}
                 value={newProduct.ProductName}
                 onChange={handleNewProductChange}
                 required
               />
             </label>
             <label>
-              Price:
+              {language.Price}:
               <input
                 type="number"
                 name="Price"
+                placeholder={language.Price}
                 value={newProduct.Price}
                 onChange={handleNewProductChange}
                 required
               />
             </label>
             <label>
-              Category:
+              {language.Category}:
               <select
                 name="CategoryID"
+                placeholder={language.Category}
                 value={newProduct.CategoryID}
                 onChange={handleNewProductChange}
                 required
               >
-                <option value="">Select Category</option>
+                <option value="">{language.SelectCategory}</option>
                 {categories.map(category => (
                   <option key={category.CategoryID} value={category.CategoryID}>
                     {category.CategoryName}
@@ -572,27 +584,28 @@ const handlePublicToggle = async (menuId) => {
               </select>
             </label>
             <label>
-              Calories:
+              {language.Calories}:
               <input
                 type="number"
                 name="Calories"
+                placeholder={language.Calories}
                 value={newProduct.Calories}
                 onChange={handleNewProductChange}
                 required
               />
             </label>
-            <button type="submit">Add Product</button>
+            <button type="submit">{language.AddProduct}</button>
           </form>
   
-          <h3>Manage Products</h3>
+          <h3>{language.ManageProducts}</h3>
           {products.map((product) => (
             <div key={product.ProductID}>
               <h3>{product.ProductName}</h3>
-              <p>Price: {product.Price} Eur.</p>
-              <p>Calories: {product.Calories}</p>
-              <p>Category: {categories.find(cat => cat.CategoryID === product.CategoryID)?.CategoryName || 'Unknown'}</p>
-              <button onClick={() => setSelectedProduct(product)}>Edit</button>
-              <button onClick={() => handleDeleteProduct(product.ProductID)}>Delete</button>
+              <p>{language.Price}: {product.Price} Eur.</p>
+              <p>{language.Calories}: {product.Calories}</p>
+              <p>{language.Category}: {categories.find(cat => cat.CategoryID === product.CategoryID)?.CategoryName || language.Unknown}</p>
+              <button onClick={() => setSelectedProduct(product)}>{language.Edit}</button>
+              <button onClick={() => handleDeleteProduct(product.ProductID)}>{language.Delete}</button>
             </div>
           ))}
           
@@ -602,7 +615,7 @@ const handlePublicToggle = async (menuId) => {
               handleEditProduct();
             }}>
               <label>
-                Product Name:
+                {language.ProductName}
                 <input
                   type="text"
                   value={selectedProduct.ProductName}
@@ -611,7 +624,7 @@ const handlePublicToggle = async (menuId) => {
                 />
               </label>
               <label>
-                Price:
+                {language.Price}:
                 <input
                   type="number"
                   value={selectedProduct.Price}
@@ -620,7 +633,7 @@ const handlePublicToggle = async (menuId) => {
                 />
               </label>
               <label>
-                Calories:
+                {language.Calories}:
                 <input
                   type="number"
                   value={selectedProduct.Calories}
@@ -629,13 +642,13 @@ const handlePublicToggle = async (menuId) => {
                 />
               </label>
               <label>
-                Category:
+                {language.Category}:
                 <select
                   value={selectedProduct.CategoryID}
                   onChange={(e) => setSelectedProduct({ ...selectedProduct, CategoryID: e.target.value })}
                   required
                 >
-                  <option value="">Select Category</option>
+                  <option value="">{language.SelectCategory}</option>
                   {categories.map(category => (
                     <option key={category.CategoryID} value={category.CategoryID}>
                       {category.CategoryName}
@@ -643,8 +656,8 @@ const handlePublicToggle = async (menuId) => {
                   ))}
                 </select>
               </label>
-              <button type="submit">Save Changes</button>
-              <button type="button" onClick={() => setSelectedProduct(null)}>Cancel</button>
+              <button type="submit">{language.SaveChanges}</button>
+              <button type="button" onClick={() => setSelectedProduct(null)}>{language.Cancel}</button>
             </form>
           )}
         </div>

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./Menu.css";
+import LanguageContext from "../LanguageContext";
 
 const Menu = () => {
+  const {language}=useContext(LanguageContext);
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -11,10 +13,9 @@ const Menu = () => {
         const response = await fetch("http://localhost:3001/api/menu/mainmenu");
         const data = await response.json();
         setMenu(data);
-        console.log(data);
       } catch (error) {
         console.error(
-          "Error fetching menu:",
+          language.ErrorFetchingMenu,
           error.response ? error.response.data : error.message
         );
       }
@@ -24,10 +25,8 @@ const Menu = () => {
   }, []);
 
   if (!menu) {
-    return <div>Loading...</div>;
+    return <div>{language.Loading}</div>;
   }
-
-// Menu.js
 
 const categorizedMenuItems = {};
 
@@ -48,10 +47,9 @@ menu.forEach((item) => {
   });
 });
 
-console.log(categorizedMenuItems);
 return (
   <div className="menu">
-    <h2>Our Menu</h2>
+    <h2>{language.OurMenu}</h2>
     {Object.keys(categorizedMenuItems).length ? (
       Object.keys(categorizedMenuItems).map((day, index) => (
         <div key={index} className="menu-day">
@@ -77,7 +75,7 @@ return (
         </div>
       ))
     ) : (
-      <div>No menu available</div>
+      <div>{language.NoMenuAvailable}</div>
     )}
   </div>
 );

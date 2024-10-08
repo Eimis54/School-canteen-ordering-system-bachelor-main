@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import LanguageContext from '../LanguageContext';
 
 const FetchOrderPage = () => {
+  const {language} = useContext(LanguageContext);
   const [orderCode, setOrderCode] = useState('');
   const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
@@ -19,8 +21,8 @@ const FetchOrderPage = () => {
       setOrder(response.data);
       setError('');
     } catch (error) {
-      console.error("Error fetching order:", error);
-      setError('Order not found or unauthorized.');
+      console.error(language.ErrorFetchingOrder, error);
+      setError(language.OrderNotFoundOrUnauthorized);
       setOrder(null);
     }
   };
@@ -28,19 +30,18 @@ const FetchOrderPage = () => {
   const completeOrder = async () => {
     const token = localStorage.getItem('token');
     setLoading(true);
-    console.log('Order code before completing:', orderCode);
     try {
         const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log('Response from completing order:', response.data);
-        alert('Order completed successfully.');
+        console.log(language.ResponseFromCompletingOrder, response.data);
+        alert(language.OrderCompletedSuccessfully);
         fetchOrder();
     } catch (error) {
-        alert('Failed to complete the order.');
-        console.error("Error completing order:", error.response ? error.response.data : error.message);
+        alert(language.FailedToCompleteTheOrder);
+        console.error(language.ErrorCompletingOrder, error.response ? error.response.data : error.message);
     } finally {
         setLoading(false);
     }
@@ -52,36 +53,36 @@ const FetchOrderPage = () => {
 
   return (
     <div>
-      <h2>Fetch Order by Order Code</h2>
+      <h2>{language.FetchbyOrderCode}</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={orderCode}
           onChange={(e) => setOrderCode(e.target.value)}
-          placeholder="Enter Order Code"
+          placeholder={language.EnterOrderCode}
           required
         />
-        <button type="submit">Fetch Order</button>
+        <button type="submit">{language.FetchOrder}</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {order && (
         <div>
-          <h3>Order Details:</h3>
-          <p>Order Code: {order.orderCode}</p>
-          <p>Status: {order.status ? 'Not Completed' : 'Completed'}</p>
-          <h4>Products:</h4>
+          <h3>{language.OrderDetails}</h3>
+          <p>{language.OrderCode} {order.orderCode}</p>
+          <p>{language.Status} {order.status ? language.NotCompleted : language.Completed}</p>
+          <h4>{language.Products}</h4>
           <ul>
             {order.products && order.products.map((product, index) => (
               <li key={index}>
-                Product Name: {product.productName}, Quantity: {product.quantity}, Price: {product.price}, Total Price: {product.totalPrice}
+                {language.ProductName} {product.productName}, {language.Quantity} {product.quantity}, {language.Price} {product.price}, {language.TotalPrice} {product.totalPrice}
               </li>
             ))}
           </ul>
-          <p>Total Order Price: ${order.totalOrderPrice.toFixed(2)}</p>
+          <p>{language.TotalOrderPrice} {order.totalOrderPrice} Eur.</p>
 
           {order.status === true && (
             <button onClick={completeOrder} disabled={loading}>
-              {loading ? 'Completing...' : 'Complete Order'}
+              {loading ? language.Completing : language.CompleteOrder}
             </button>
           )}
         </div>

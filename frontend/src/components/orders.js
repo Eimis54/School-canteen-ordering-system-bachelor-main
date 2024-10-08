@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import LanguageContext from '../LanguageContext';
 
 const LoggedInPage = ({ user }) => {
+  const {language} = useContext(LanguageContext);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,10 +24,10 @@ const LoggedInPage = ({ user }) => {
         const data = await response.json();
         setOrders(data);
       } else {
-        console.error('Failed to fetch orders:', response.status);
+        console.error(language.FailedToFetchOrders, response.status);
       }
     } catch (error) {
-      console.error('Failed to fetch orders:', error);
+      console.error(language.FailedToFetchOrders, error);
     } finally {
       setLoading(false);
     }
@@ -34,27 +36,27 @@ const LoggedInPage = ({ user }) => {
   return (
     <div>
       {loading ? (
-        <p>Loading...</p>
+        <p>{language.Loading}</p>
       ) : user ? (
         <div>
-          <h2>Welcome, {user.Name}!</h2>
-          <h3>Your Orders:</h3>
+          <h2>{language.Welcome}, {user.Name}!</h2>
+          <h3>{language.YourOrders}:</h3>
           <ul>
             {orders.map((order) => (
               <li key={order.OrderID}>
-                Order ID: {order.OrderID}, 
-                Total Price: {order.TotalPrice}, 
-                Total Calories: {order.TotalCalories},
+                {language.OrderID}: {order.OrderID}, 
+                {language.TotalPrice}: {order.TotalPrice}, 
+                {language.TotalCalories}: {order.TotalCalories},
                 <span style={{ color: order.Status ? 'red' : 'green' }}> 
-                Status: {order.Status ? 'Not Done' : 'Done'}, 
+                {language.Status}: {order.Status ? language.NotDone : language.Done}, 
                 </span>
-                Order Date: {new Date(order.OrderDate).toLocaleDateString()}
+                {language.OrderDate}: {new Date(order.OrderDate).toLocaleDateString()}
               </li>
             ))}
           </ul>
         </div>
       ) : (
-        <p>No user data available</p>
+        <p>{language.NoUserDataAvailable}</p>
       )}
     </div>
   );

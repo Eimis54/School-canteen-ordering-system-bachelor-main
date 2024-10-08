@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import LanguageContext from '../LanguageContext';
 
 const ChildrenManagement = () => {
+  const {language} = useContext(LanguageContext);
   const [children, setChildren] = useState([]);
   const [newChildName, setNewChildName] = useState('');
   const [newChildSurname, setNewChildSurname] = useState('');
@@ -21,7 +23,7 @@ const ChildrenManagement = () => {
       const userID = localStorage.getItem('userId');
 
       if (!userID) {
-        setError('UserID is not available. Please log in again.');
+        setError(language.UserIDNotAvailableLogIn);
         return;
       }
   
@@ -35,17 +37,17 @@ const ChildrenManagement = () => {
         const data = await response.json();
         setChildren(data);
       } else {
-        setError('Failed to fetch children');
+        setError(language.FailedToFetchChildren);
       }
     } catch (error) {
-      setError('Failed to fetch children');
+      setError(language.FailedToFetchChildren);
     }
   };
 
   const handleAddChild = async (event) => {
     event.preventDefault();
     if (!newChildName || !newChildSurname || !newChildGrade) {
-      setError('Please fill in all fields');
+      setError(language.FillAllFields);
       return;
     }
     try {
@@ -53,7 +55,7 @@ const ChildrenManagement = () => {
       const userID = localStorage.getItem('userId');
 
       if (!userID) {
-        setError('UserID is not available. Please log in again.');
+        setError(language.UserIDNotAvailableLogIn);
         return;
       }
 
@@ -77,10 +79,10 @@ const ChildrenManagement = () => {
         setNewChildGrade('');
         setError('');
       } else {
-        setError('Failed to add child');
+        setError(language.FailedToAddChild);
       }
     } catch (error) {
-      setError('Failed to add child');
+      setError(language.FailedToAddChild);
     }
   };
 
@@ -88,7 +90,7 @@ const ChildrenManagement = () => {
     event.preventDefault();
 
     if (editingChildId === null) {
-      setError('Child ID is not set');
+      setError(language.ChildIDNotSet);
       return;
     }
 
@@ -110,14 +112,14 @@ const ChildrenManagement = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to edit child');
+        throw new Error(language.FailedToEditChild);
       }
 
       const updatedChild = await response.json();
       fetchChildren();
       setEditingChildId(null);
     } catch (error) {
-      setError('Failed to edit child');
+      setError(language.FailedToEditChild);
     }
   };
 
@@ -133,22 +135,22 @@ const ChildrenManagement = () => {
       if (response.ok) {
         fetchChildren();
       } else {
-        setError('Failed to delete child');
+        setError(language.FailedToDeleteChild);
       }
     } catch (error) {
-      setError('Failed to delete child');
+      setError(language.FailedToDeleteChild);
     }
   };
 
   return (
     <div>
-      <h2>Your Children</h2>
+      <h2>{language.YourChildren}</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <ul>
         {children.length > 0 ? (
           children.map((child) => (
             <li key={child.id}>
-              {child.Name} {child.Surname} - Grade: {child.Grade}
+              {child.Name} {child.Surname} - {language.Grade}: {child.Grade}
               {editingChildId !== child.id ? (
                 <>
                   <button onClick={() => {
@@ -156,62 +158,62 @@ const ChildrenManagement = () => {
                     setEditSurname(child.Surname);
                     setEditGrade(child.Grade);
                     setEditingChildId(child.id);
-                  }}>Edit</button>
-                  <button onClick={() => handleDeleteChild(child.id)}>Delete</button>
+                  }}>{language.Edit}</button>
+                  <button onClick={() => handleDeleteChild(child.id)}>{language.Delete}</button>
                 </>
               ) : (
                 <form onSubmit={handleEditChild}>
                   <input
                     type="text"
-                    placeholder="Edit name"
+                    placeholder={language.EditChildName}
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                   />
                   <input
                     type="text"
-                    placeholder="Edit surname"
+                    placeholder={language.EditChildSurname}
                     value={editSurname}
                     onChange={(e) => setEditSurname(e.target.value)}
                   />
                   <select value={editGrade} onChange={(e) => setEditGrade(e.target.value)}>
-                    <option value="" disabled>Select grade</option>
+                    <option value="" disabled>{language.Selectgrade}</option>
                     {[...Array(12).keys()].map((i) => (
                       <option key={i + 1} value={i + 1}>
                         {i + 1}
                       </option>
                     ))}
                   </select>
-                  <button type="submit">Update Child</button>
+                  <button type="submit">{language.UpdateChild}</button>
                 </form>
               )}
             </li>
           ))
         ) : (
-          <p>No children found.</p>
+          <p>{language.NoChildrenFound}</p>
         )}
       </ul>
       <form onSubmit={handleAddChild}>
         <input
           type="text"
-          placeholder="Enter name"
+          placeholder={language.EnterChildName}
           value={newChildName}
           onChange={(e) => setNewChildName(e.target.value)}
         />
         <input
           type="text"
-          placeholder="Enter surname"
+          placeholder={language.EnterChildSurname}
           value={newChildSurname}
           onChange={(e) => setNewChildSurname(e.target.value)}
         />
         <select value={newChildGrade} onChange={(e) => setNewChildGrade(e.target.value)}>
-          <option value="" disabled>Select grade</option>
+          <option value="" disabled>{language.Selectgrade}</option>
           {[...Array(12).keys()].map((i) => (
             <option key={i + 1} value={i + 1}>
               {i + 1}
             </option>
           ))}
         </select>
-        <button type="submit">Add Child</button>
+        <button type="submit">{language.AddChild}</button>
       </form>
     </div>
   );

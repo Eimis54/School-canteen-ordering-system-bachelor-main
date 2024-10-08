@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => { 
   const User = sequelize.define('User', {
     UserID: {
       type: DataTypes.INTEGER,
@@ -18,44 +18,65 @@ module.exports = (sequelize, DataTypes) => {
     Name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      field: 'Name'  
+      field: 'Name'
     },
     Surname: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      field: 'Surname'  
+      field: 'Surname'
     },
     Email: {
       type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
-      field: 'Email'  
+      field: 'Email'
     },
     PasswordHash: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: 'PasswordHash'  
+      field: 'PasswordHash'
+    },
+    verificationCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'verificationCode'
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'isVerified'
     },
     PhoneNumber: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      field: 'PhoneNumber'  
+      field: 'PhoneNumber'
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'resetPasswordToken'
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'resetPasswordExpires'
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'createdAt'  
+      field: 'createdAt'
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'updatedAt'  
+      field: 'updatedAt'
     }
   }, {
-    tableName: 'users',  
-    timestamps: true     
+    tableName: 'users',
+    timestamps: true
   });
 
   User.associate = function(models) {

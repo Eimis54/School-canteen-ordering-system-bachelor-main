@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import LanguageContext from '../LanguageContext';
 
 const API_BASE_URL = 'http://localhost:3001';
 
@@ -11,6 +12,7 @@ const AdminPhotoManager = () => {
   const [altText, setAltText] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const {language} = useContext(LanguageContext);
 
   useEffect(() => {
     fetchPhotos();
@@ -24,10 +26,9 @@ const AdminPhotoManager = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      console.log('Fetched photos:', response.data);
       setPhotos(response.data);
     } catch (error) {
-      console.error('Error fetching photos:', error);
+      console.error(language.ErrorFetchingPhotos, error);
     }
   };
 
@@ -40,7 +41,7 @@ const AdminPhotoManager = () => {
       });
       setProducts(response.data);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error(language.ErrorFetchingProducts, error);
     }
   };
 
@@ -50,12 +51,12 @@ const AdminPhotoManager = () => {
 
   const handleUpload = async () => {
     if (!productId) {
-      setErrorMessage('Please select a product.');
+      setErrorMessage(language.SelectProduct);
       return;
     }
 
     if (!selectedFile) {
-      console.error('File is required');
+      console.error(language.FileIsRequired);
       return;
     }
     
@@ -75,8 +76,8 @@ const AdminPhotoManager = () => {
       fetchPhotos();
       setErrorMessage('');
     } catch (error) {
-      console.error('Error uploading photo:', error);
-      setErrorMessage('Failed to upload photo.');
+      console.error(language.ErrorUploadingPhoto, error);
+      setErrorMessage(language.FailedToUploadPhoto);
     } finally {
       setLoading(false);
     }
@@ -84,7 +85,7 @@ const AdminPhotoManager = () => {
 
   const handleDelete = async (photoId) => {
     if (!Number.isInteger(Number(photoId))) {
-      setErrorMessage('Invalid Photo ID. It must be an integer.');
+      setErrorMessage(language.InvalidPhotoID);
       return;
     }
 
@@ -97,8 +98,8 @@ const AdminPhotoManager = () => {
       fetchPhotos();
       setErrorMessage('');
     } catch (error) {
-      console.error('Error deleting photo:', error);
-      setErrorMessage('Failed to delete photo.');
+      console.error(language.ErrorDeletingPhoto, error);
+      setErrorMessage(language.FailedToDeletePhoto);
     }
   };
 
@@ -109,11 +110,11 @@ const AdminPhotoManager = () => {
 
   return (
     <div>
-      <h2>Photo Manager</h2>
+      <h2>{language.PhotoManager}</h2>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <input type="file" onChange={handleFileChange} />
       <select value={productId} onChange={handleProductChange}>
-        <option value="">Select Product</option>
+        <option value="">{language.SelectProduct}</option>
         {products.map(product => (
           <option key={product.ProductID} value={product.ProductID}>
             {product.ProductName}
@@ -122,23 +123,23 @@ const AdminPhotoManager = () => {
       </select>
       <input
         type="text"
-        placeholder="Alt Text"
+        placeholder={language.AltText}
         value={altText}
         onChange={(e) => setAltText(e.target.value)}
       />
-      <button onClick={handleUpload}>Upload Photo</button>
-      {loading && <p>Uploading...</p>}
+      <button onClick={handleUpload}>{language.UploadPhoto}</button>
+      {loading && <p>{language.Uploading}</p>}
       <div>
-        <h3>Existing Photos</h3>
+        <h3>{language.ExistingPhotos}</h3>
         {photos.map((photo) => (
           <div key={photo.PhotoID}>
             {photo.PhotoURL ? (
-              <img src={`${API_BASE_URL}/${photo.PhotoURL}`} alt={photo.AltText || 'Photo'} width="100" />
+              <img src={`${API_BASE_URL}/${photo.PhotoURL}`} alt={photo.AltText || language.Photo} width="100" />
             ) : (
-              <p>No image available</p>
+              <p>language.NoImage</p>
             )}
-            <p>{photo.AltText || 'No description'}</p>
-            <button onClick={() => handleDelete(photo.PhotoID)}>Delete</button>
+            <p>{photo.AltText || language.NoDescription}</p>
+            <button onClick={() => handleDelete(photo.PhotoID)}>{language.Delete}</button>
           </div>
         ))}
       </div>

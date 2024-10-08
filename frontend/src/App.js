@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Login from './components/login';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import Register from './components/register';
+import VerifyEmail from './components/VerifyEmail';
 import LoggedInPage from './components/loggedInPage';
 import Products from './components/products';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -22,6 +25,7 @@ import OrderSection from './components/OrderSection';
 import SuccessPage from './components/Success';
 import FetchOrderPage from './components/FetchOrderPage'; 
 import NonLoggedInPage from './components/nonLoggedInPage';
+import { LanguageProvider } from './LanguageContext';
 import './App.css';
 import axios from "axios";
 
@@ -82,6 +86,7 @@ const App = () => {
   
 
   return (
+    <LanguageProvider>
     <Router>
       <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} user={user} setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
 
@@ -98,10 +103,14 @@ const App = () => {
             path="/login"
             element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
           />
+           <Route path="/forgot-password" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <ForgotPassword />} />
+          <Route path="/reset-password/:token" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <ResetPassword />} />
           <Route
             path="/register"
             element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Register />}
           />
+           <Route path="/verify-email/:userID" element={<VerifyEmail />} />
+
           <Route path="/loggedInPage" element={
             <ProtectedRoute isLoggedIn={isLoggedIn} isCashier={user?.isCashier}>
               <LoggedInPage user={user} />
@@ -164,6 +173,7 @@ const App = () => {
         </Routes>
       </div>
     </Router>
+    </ LanguageProvider>
   );
 };
 export default App;

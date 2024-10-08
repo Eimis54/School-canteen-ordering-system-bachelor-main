@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import LanguageContext from '../LanguageContext';
 
-const nonLoggedInPage = () => {
+const NonLoggedInPage = () => {
+  const {language} = useContext(LanguageContext);
   return (
     <div>
-      <h1>Welcome</h1>
-      <p>Please log in</p>
+      <h1>{language.Welcome}</h1>
+      <p>{language.PleaseLogIn}</p>
     </div>
   );
 };
 
-export default nonLoggedInPage;
+export default NonLoggedInPage;

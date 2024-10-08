@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import LanguageContext from '../LanguageContext';
 
 const Home = () => {
+  const {language}=useContext(LanguageContext);
   return (
     <div>
-      <h1>Welcome to the School Canteen Ordering System</h1>
-      <p>This is the homepage. Please log in to place your orders or view products.</p>
+      <h1>{language.WelcometotheSchoolCanteenOrderingSystem}</h1>
+      <p>{language.ThisIsHomePage}</p>
     </div>
   );
 };

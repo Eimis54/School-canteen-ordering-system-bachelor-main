@@ -21,9 +21,6 @@ const Success = () => {
       const userID = localStorage.getItem('userId');
       const cartID = localStorage.getItem('cartID');
     
-      console.log('User ID from local storage:', userID);
-      console.log('Cart ID from local storage:', cartID);
-    
       // Check for missing IDs
       if (!userID || !cartID) {
         setError('User ID or Cart ID is missing. Please check your payment history.');
@@ -47,12 +44,8 @@ const Success = () => {
           userCartId: cartID,
         });
     
-        console.log('Response from payment-success:', response.data);
-    
-
         if (response.data.success) {
           setOrderCode(response.data.orderCode);
-          console.log('Order code set to:', response.data.orderCode);
           
           setError(''); 
     
@@ -82,8 +75,6 @@ const Success = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  console.log('Current error state:', error);
 
   return (
     <div>
