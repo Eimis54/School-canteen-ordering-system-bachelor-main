@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import LanguageContext from '../LanguageContext';
 
 const Success = () => {
+  const {language}=useContext(LanguageContext);
   const [orderCode, setOrderCode] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -20,17 +22,16 @@ const Success = () => {
     
       const userID = localStorage.getItem('userId');
       const cartID = localStorage.getItem('cartID');
-    
-      // Check for missing IDs
+
       if (!userID || !cartID) {
-        setError('User ID or Cart ID is missing. Please check your payment history.');
+        setError(language.UserIDOrCartIDMissing);
         setLoading(false);
         isProcessingRef.current = false;
         return;
       }
     
       if (!session_id) {
-        setError('Session ID not found. Please ensure you completed the payment.');
+        setError(language.SessionIDNotFound);
         setLoading(false);
         isProcessingRef.current = false;
         return;
@@ -54,14 +55,14 @@ const Success = () => {
           return;
         } else {
 
-          setError(response.data.error || 'Order processing failed. Please try again.');
+          setError(response.data.error || language.OrderProccessingFailed);
         }
     
       } catch (error) {
 
-        console.error('Error during order processing:', error.response ? error.response.data : error);
+        console.error(language.ErrorDuringOrderProccessing, error.response ? error.response.data : error);
       
-        setError('Failed to process order. Please try again later.');
+        setError(language.FailedToProcessOrder);
       } finally {
         setLoading(false);
         isProcessingRef.current = false;
@@ -73,7 +74,7 @@ const Success = () => {
   }, [location.search]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{language.Loading}</div>;
   }
 
   return (
@@ -82,8 +83,8 @@ const Success = () => {
         <div style={{ color: 'red' }}>{error}</div>
       ) : (
         <div>
-          <h1>Order Successful!</h1>
-          <p>Your order code is: <strong>{orderCode}</strong></p>
+          <h1>{language.OrderSuccessful}</h1>
+          <p>{language.YourOrderCodeIs}: <strong>{orderCode}</strong></p>
         </div>
       )}
     </div>

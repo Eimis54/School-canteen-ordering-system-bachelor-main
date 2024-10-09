@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import LanguageContext from '../LanguageContext';
 
-const Register = ({ onRegisterSuccess }) => { // Accept onRegisterSuccess as a prop
+const Register = ({ onRegisterSuccess }) => {
+  const {language}=useContext(LanguageContext);
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
@@ -11,9 +13,9 @@ const Register = ({ onRegisterSuccess }) => { // Accept onRegisterSuccess as a p
   const [success, setSuccess] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
-  const [userID, setUserID] = useState(null); // Store userID for verification
+  const [userID, setUserID] = useState(null);
 
-  const navigate = useNavigate(); // Create navigate instance
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
@@ -33,17 +35,17 @@ const Register = ({ onRegisterSuccess }) => { // Accept onRegisterSuccess as a p
     setSuccess('');
 
     if (!name || !surname || !email || !password) {
-      setError('All fields are required.');
+      setError(language.AllFieldsAreRequired);
       return;
     }
 
     if (!validateEmail(email)) {
-      setError('Invalid email format.');
+      setError(language.InvalidEmailForm);
       return;
     }
 
     if (!validatePassword(password)) {
-      setError('Password must be at least 6 characters long, have a special character, and at least one uppercase letter.');
+      setError(language.PasswordMustBeAtleast);
       return;
     }
 
@@ -54,21 +56,19 @@ const Register = ({ onRegisterSuccess }) => { // Accept onRegisterSuccess as a p
         email,
         password,
       });
-      setSuccess('Registration successful. A verification code has been sent to your email.');
-      setUserID(response.data.userID); // Store userID for verification
-      setIsVerifying(true); // Switch to verification mode
+      setSuccess(language.RegistrationSuccess);
+      setUserID(response.data.userID);
+      setIsVerifying(true);
 
-      // Clear form fields
       setName('');
       setSurname('');
       setEmail('');
       setPassword('');
 
-      // Navigate to the verification page after registration
-      navigate('/verify-email'); // Change this route to your verification page
+      navigate('/verify-email');
     } catch (error) {
-      console.error('Registration failed:', error.response ? error.response.data : error.message);
-      setError(error.response ? error.response.data.error : 'Registration failed, please try again.');
+      console.error(language.RegistrationFailed, error.response ? error.response.data : error.message);
+      setError(error.response ? error.response.data.error : language.RegistrationFailed);
     }
   };
 
@@ -79,48 +79,47 @@ const Register = ({ onRegisterSuccess }) => { // Accept onRegisterSuccess as a p
         verificationCode,
       });
   
-      // Pass the success message when opening the login
-      onRegisterSuccess('Email verification successful. You can now log in.');
+      onRegisterSuccess(language.EmailVerificationSuccess);
       setIsVerifying(false);
     } catch (error) {
-      console.error('Verification failed:', error.response ? error.response.data : error.message);
-      setError(error.response ? error.response.data.error : 'Verification failed, please try again.');
+      console.error(language.VerificationFailed, error.response ? error.response.data : error.message);
+      setError(error.response ? error.response.data.error : language.VerificationFailed);
     }
   };
   
   return (
     <div>
-      <h2>Register</h2>
+      <h2>{language.Register}</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
 
       {!isVerifying ? (
         <form onSubmit={handleSubmit}>
-          <label>Name:</label>
+          <label>{language.Name}:</label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
           <br />
-          <label>Surname:</label>
+          <label>{language.Surname}:</label>
           <input type="text" value={surname} onChange={(e) => setSurname(e.target.value)} />
           <br />
-          <label>Email:</label>
+          <label>{language.Email}:</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <br />
-          <label>Password:</label>
+          <label>{language.Password}:</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <br />
-          <button type="submit">Register</button>
+          <button type="submit">{language.Register}</button>
         </form>
       ) : (
         <div>
-          <h3>Verify Your Email</h3>
-          <p>We've sent a verification code to your email. Please enter it below:</p>
+          <h3>{language.VerifyYourEmail}</h3>
+          <p>{language.WeHaveSendVerification}:</p>
           <input
             type="text"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
-            placeholder="Enter verification code"
+            placeholder={language.EnterVerificationCode}
           />
-          <button onClick={handleVerification}>Verify Email</button>
+          <button onClick={handleVerification}>{language.VerifyEmail}</button>
         </div>
       )}
     </div>

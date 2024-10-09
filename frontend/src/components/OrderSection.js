@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import LanguageContext from "../LanguageContext";
 
 const OrderSection = () => {
+  const {language}=useContext(LanguageContext);
   const [menu, setMenu] = useState(null);
   const [children, setChildren] = useState([]);
   const [selectedChild, setSelectedChild] = useState("");
@@ -15,7 +17,7 @@ const OrderSection = () => {
         const response = await axios.get("http://localhost:3001/api/menu/publicmenu");
         setMenu(response.data);
       } catch (error) {
-        setError("Failed to fetch menu");
+        setError(language.FailedToFetchMenu);
         console.error(error);
       }
     };
@@ -33,7 +35,7 @@ const OrderSection = () => {
         });
         setChildren(response.data);
       } catch (error) {
-        setError("Failed to fetch children");
+        setError(language.FailedToFetchChildren);
         console.error(error);
       }
     };
@@ -57,11 +59,11 @@ const OrderSection = () => {
     e.preventDefault();
   
     if (!selectedChild) {
-      return alert("Please select a child!");
+      return alert(language.PleaseSelectAChild);
     }
   
     if (selectedItems.length === 0) {
-      return alert("No items selected for cart.");
+      return alert(language.NoItemsSelectedForCart);
     }
   
     try {
@@ -94,24 +96,24 @@ const OrderSection = () => {
         },
       });
   
-      alert("Items added to cart successfully!");
+      alert(language.ItemsAddedToCartSuccess);
       setSelectedChild("");
       setSelectedItems([]);
     } catch (error) {
-      setError("Failed to add to cart");
+      setError(language.FailedToAddToCart);
       console.error(error);
     }
   };
   
   return (
     <div>
-      <h2>Add to Cart</h2>
+      <h2>{language.AddToCart}</h2>
       {error && <div style={{ color: 'red' }}>{error}</div>}
       
       <div>
-        <label>Select Child:</label>
+        <label>{language.SelectChild}:</label>
         <select onChange={(e) => setSelectedChild(e.target.value)} value={selectedChild}>
-          <option value="">Select</option>
+          <option value="">{language.Select}</option>
           {children.length > 0 ? (
             children.map(child => (
               <option key={child.id} value={child.id}>
@@ -119,14 +121,14 @@ const OrderSection = () => {
               </option>
             ))
           ) : (
-            <option value="">No children available</option>
+            <option value="">{language.NoChildrenAvailable}</option>
           )}
         </select>
       </div>
       
       {menu ? (
         <div>
-          <h3>Menu for {menu.DayOfWeek}</h3>
+          <h3>{language.MenuFor} {menu.DayOfWeek}</h3>
           {menu.MenuItems.map(item => (
             <div key={item.Product.ProductID}>
               <label htmlFor={`item-${item.Product.ProductID}`}>
@@ -142,10 +144,10 @@ const OrderSection = () => {
           ))}
         </div>
       ) : (
-        <p>Loading menu...</p>
+        <p>{language.LoadingMenu}</p>
       )}
       
-      <button onClick={handleAddToCart}>Add to Cart</button>
+      <button onClick={handleAddToCart}>{language.AddToCart}</button>
       
     </div>
   );

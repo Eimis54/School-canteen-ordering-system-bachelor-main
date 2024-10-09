@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import EditDeal from './DealAdministration';
+import LanguageContext from '../LanguageContext';
 
 const UserAdministration = () => {
+  const {language}=useContext(LanguageContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,10 +37,10 @@ const UserAdministration = () => {
       if (response.status === 200) {
         setUsers(response.data);
       } else {
-        setError('Failed to fetch users');
+        setError(language.FailedToFetchUsers);
       }
     } catch (error) {
-      setError('Error occurred. Please try again later.');
+      setError(language.ErrorOccured);
     } finally {
       setLoading(false);
     }
@@ -54,16 +56,16 @@ const UserAdministration = () => {
       if (response.status === 200) {
         setRoles(response.data);
       } else {
-        setError('Failed to fetch roles');
+        setError(language.FailedToFetchRoles);
       }
     } catch (error) {
-      console.error('Error occurred while fetching roles:', error);
-      setError('Error occurred. Please try again later.');
+      console.error(language.FailedToFetchRoles, error);
+      setError(language.ErrorOccured);
     }
   };
 
   const handleDelete = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) return;
+    if (!window.confirm(language.WantToDeleteUser)) return;
 
     try {
       const response = await axios.delete(`http://localhost:3001/api/user/admin/users/${userId}`, {
@@ -75,10 +77,10 @@ const UserAdministration = () => {
       if (response.status === 200) {
         setUsers(users.filter(user => user.UserID !== userId));
       } else {
-        setError('Failed to delete user');
+        setError(language.FailedToDeleteUser);
       }
     } catch (error) {
-      setError('Error occurred. Please try again later.');
+      setError(language.ErrorOccured);
     }
   };
 
@@ -110,10 +112,10 @@ const UserAdministration = () => {
         setEditingUser(null);
         setFormData({ name: '', surname: '', email: '', roleID: 1 });
       } else {
-        setError('Failed to update user');
+        setError(language.FailedToUpdateUser);
       }
     } catch (error) {
-      setError('Error occurred. Please try again later.');
+      setError(language.ErrorOccured);
     }
   };
 
@@ -129,11 +131,11 @@ const UserAdministration = () => {
         setOrders(response.data);
         setShowOrders(true);
       } else {
-        setError('Failed to fetch user orders');
+        setError(language.FailedToFetchUserOrders);
       }
     } catch (error) {
-      console.error('Error occurred while fetching orders:', error);
-      setError('Error occurred. Please try again later.');
+      console.error(language.ErrorOccured, error);
+      setError(language.ErrorOccured);
     }
   };
 
@@ -142,26 +144,26 @@ const UserAdministration = () => {
     setFormData({ name: '', surname: '', email: '', roleID: 1 });
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{language.Loading}</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <div>
-      <h2>User Administration</h2>
+      <h2>{language.UserAdministration}</h2>
       {showOrders && (
         <div>
-          <h3>User Orders</h3>
+          <h3>{language.UserOrders}</h3>
           {orders.length === 0 ? (
-            <p>No existing orders</p>
+            <p>{language.NoExistingOrders}</p>
           ) : (
             <table>
               <thead>
                 <tr>
-                  <th>OrderID</th>
-                  <th>TotalPrice</th>
-                  <th>TotalCalories</th>
-                  <th>Status</th>
-                  <th>OrderDate</th>
+                  <th>{language.OrderID}</th>
+                  <th>{language.TotalPrice}</th>
+                  <th>{language.TotalCalories}</th>
+                  <th>{language.Status}</th>
+                  <th>{language.OrderDate}</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,18 +179,18 @@ const UserAdministration = () => {
               </tbody>
             </table>
           )}
-          <button onClick={() => setShowOrders(false)}>Close Orders</button>
+          <button onClick={() => setShowOrders(false)}>{language.CloseOrders}</button>
         </div>
       )}
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
+            <th>{language.Name}</th>
+            <th>{language.Surname}</th>
+            <th>{language.Email}</th>
+            <th>{language.Role}</th>
+            <th>{language.Actions}</th>
           </tr>
         </thead>
         <tbody>
@@ -198,11 +200,11 @@ const UserAdministration = () => {
               <td>{user.Name}</td>
               <td>{user.Surname}</td>
               <td>{user.Email}</td>
-              <td>{roles.find(role => role.RoleID === user.RoleID)?.RoleName || 'Unknown'}</td>
+              <td>{roles.find(role => role.RoleID === user.RoleID)?.RoleName || language.Unknown}</td>
               <td>
-                <button onClick={() => handleDelete(user.UserID)}>Delete</button>
-                <button onClick={() => handleEdit(user)}>Edit</button>
-                <button onClick={() => handleViewOrders(user.UserID)}>View Orders</button>
+                <button onClick={() => handleDelete(user.UserID)}>{language.Delete}</button>
+                <button onClick={() => handleEdit(user)}>{language.Edit}</button>
+                <button onClick={() => handleViewOrders(user.UserID)}>{language.ViewOrders}</button>
               </td>
             </tr>
           ))}
@@ -210,10 +212,10 @@ const UserAdministration = () => {
       </table>
       {editingUser && (
         <div>
-          <h3>Edit User</h3>
+          <h3>{language.EditUser}</h3>
           <form onSubmit={handleSave}>
             <label>
-              Name:
+              {language.Name}:
               <input
                 type="text"
                 value={formData.name}
@@ -221,7 +223,7 @@ const UserAdministration = () => {
               />
             </label>
             <label>
-              Surname:
+              {language.Surname}:
               <input
                 type="text"
                 value={formData.surname}
@@ -229,7 +231,7 @@ const UserAdministration = () => {
               />
             </label>
             <label>
-              Email:
+              {language.Email}:
               <input
                 type="email"
                 value={formData.email}
@@ -237,7 +239,7 @@ const UserAdministration = () => {
               />
             </label>
             <label>
-              Role:
+              {language.Role}:
               <select
                 value={formData.roleID}
                 onChange={e => setFormData({ ...formData, roleID: parseInt(e.target.value, 10) })}
@@ -247,8 +249,8 @@ const UserAdministration = () => {
                 ))}
               </select>
             </label>
-            <button type="submit">Save</button>
-            <button type="button" onClick={handleCancelEdit}>Cancel</button>
+            <button type="submit">{language.Save}</button>
+            <button type="button" onClick={handleCancelEdit}>{language.Cancel}</button>
           </form>
 
         </div>

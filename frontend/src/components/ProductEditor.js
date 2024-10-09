@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PhotoUploader from './PhotoUploader';
+import LanguageContext from '../LanguageContext';
 
 const ProductEditor = ({ productId }) => {
+  const {language}=useContext(LanguageContext);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
 
   const handlePhotoSelect = (photoData) => {
@@ -10,7 +12,7 @@ const ProductEditor = ({ productId }) => {
 
   return (
     <div>
-      <h2>Product Editor</h2>
+      <h2>{language.ProductEditor}</h2>
 
       <PhotoUploader productId={productId} onPhotoSelect={handlePhotoSelect} />
 

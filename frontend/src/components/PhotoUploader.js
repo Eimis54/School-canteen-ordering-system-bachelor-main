@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import LanguageContext from '../LanguageContext';
 
 const PhotoUploader = ({ productId, onPhotoSelect }) => {
+  const {language} = useContext(LanguageContext);
   const [file, setFile] = useState(null);
 const [altText, setAltText] = useState('');
 const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ const handleUpload = async () => {
     setFile(null);
     setAltText('');
   } catch (err) {
-    setError('Failed to upload photo');
+    setError(language.FailedToUploadPhoto);
   } finally {
     setLoading(false);
   }
@@ -41,10 +43,10 @@ const handleUpload = async () => {
 
 return (
   <div>
-    <h3>Upload Photo</h3>
+    <h3>{language.UploadPhoto}</h3>
     <input type="file" onChange={handleFileChange} />
     <input type="text" value={altText} onChange={handleAltTextChange} placeholder="Alt Text" />
-    <button onClick={handleUpload} disabled={!file || loading}>Upload</button>
+    <button onClick={handleUpload} disabled={!file || loading}>{language.Upload}</button>
     {error && <div>{error}</div>}
   </div>
 );

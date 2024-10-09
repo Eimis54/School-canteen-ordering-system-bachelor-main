@@ -93,7 +93,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
         <img src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png" alt='' width={35} height={20} />
       </button>
               <div className="navbar-item" onClick={openLogin}>{language.login}</div>
-              <div className="navbar-item" onClick={openRegister}>{language.register}</div>
+              <div className="navbar-item" onClick={openRegister}>{language.Register}</div>
               <div className={`profile-sidebar ${showLogin || showRegister ? 'active' : ''}`}>
                 <div className="sidebar-header">
                   <div className="sidebar-title">{showLogin ? 'Login' : 'Register'}</div>

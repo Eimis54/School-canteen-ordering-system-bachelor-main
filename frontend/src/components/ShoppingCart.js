@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
+import LanguageContext from '../LanguageContext';
 
 const stripePromise = loadStripe('pk_test_51PyCDDP2jQQJ6HBU8yTrRI8wJHtjkWNYeSP0SxxBL1cMUwZqtK3pWtfRHEszlPzl0BGLgtkyONg8QOPSywBVyaPj00TZexruIG'); // Replace with your Stripe public key
 
 const ShoppingCart = () => {
+  const {language}=useContext(LanguageContext);
   const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +56,7 @@ const ShoppingCart = () => {
         console.error("Stripe error:", error);
       }
     } catch (error) {
-      setError('Failed to proceed to checkout');
+      setError(language.FailedToCheckout);
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -82,25 +84,25 @@ const ShoppingCart = () => {
 
       setCart((prevCart) => prevCart.filter(item => item.CartItemID !== id));
     } catch (error) {
-      console.error("Failed to remove item from cart:", error);
-      setError('Failed to remove item from cart');
+      console.error(language.FailedToRemoveItemFromCart, error);
+      setError(language.FailedToRemoveItemFromCart);
     }
   };
 
   return (
     <div className="shopping-cart">
-      <h1>Shopping Cart</h1>
+      <h1>{language.ShoppingCart}</h1>
       {error && <div style={{ color: 'red' }}>{error}</div>}
       <table className="cart-table">
         <thead>
           <tr>
-            <th>Child</th>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Calories</th>
-            <th>Total</th>
-            <th>Action</th>
+            <th>{language.Child}</th>
+            <th>{language.Product}</th>
+            <th>{language.Quantity}</th>
+            <th>{language.Price}</th>
+            <th>{language.Calories}</th>
+            <th>{language.Total}</th>
+            <th>{language.Action}</th>
           </tr>
         </thead>
         <tbody>
@@ -114,31 +116,31 @@ const ShoppingCart = () => {
                 <td>{cartItem.Calories}</td>
                 <td>{(cartItem.Price * cartItem.Quantity)} Eur.</td>
                 <td>
-                  <button onClick={() => removeItemFromCart(cartItem.CartItemID)}>Remove</button>
+                  <button onClick={() => removeItemFromCart(cartItem.CartItemID)}>{language.Remove}</button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="7">Your cart is empty.</td>
+              <td colSpan="7">{language.YourCartIsEmpty}.</td>
             </tr>
           )}
         </tbody>
       </table>
       {cart.length > 0 && (
         <div className="cart-summary">
-          <p><strong>Total Price:</strong> {totalPrice} Eur.</p>
-          <p><strong>Total Calories:</strong> {totalCalories}</p>
+          <p><strong>{language.TotalPrice}:</strong> {totalPrice} Eur.</p>
+          <p><strong>{language.TotalCalories}:</strong> {totalCalories}</p>
         </div>
       )}
       <div className="checkout-button">
-        {isLoading ? <div>Loading...</div> : (
+        {isLoading ? <div>{language.Loading}</div> : (
           cart.length > 0 ? (
             <button onClick={handleCheckout} className="btn">
-              Proceed to Checkout
+              {language.ProceedToCheckout}
             </button>
           ) : (
-            <p>The cart is empty, add items to proceed to checkout.</p>
+            <p>{language.TheCartIsEmpty}.</p>
           )
         )}
       </div>
