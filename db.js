@@ -1,8 +1,9 @@
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-const database = 'school_canteen';
-const username = 'root';
-const password = 'password';
+const database = process.env.REACT_APP_DB_NAME;
+const username = process.env.REACT_APP_DB_USERNAME;
+const password = process.env.REACT_APP_DB_PASSWORD;
 const host = 'localhost';
 const dialect = 'mysql';
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
 import LanguageContext from '../LanguageContext';
 
-const stripePromise = loadStripe('pk_test_51PyCDDP2jQQJ6HBU8yTrRI8wJHtjkWNYeSP0SxxBL1cMUwZqtK3pWtfRHEszlPzl0BGLgtkyONg8QOPSywBVyaPj00TZexruIG'); // Replace with your Stripe public key
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_API_KEY_FRONTEND);
 
 const ShoppingCart = () => {
   const {language}=useContext(LanguageContext);
