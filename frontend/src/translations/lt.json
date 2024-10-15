@@ -269,10 +269,18 @@
     "Actions":"Veiksmai",
     "ViewOrders":"Peržiūrėti Užsakymus",
     "EditUser":"Redaguoti naudotoją",
-    "Save":"Išsaugoti"
+    "Save":"Išsaugoti",
 
-
-
+    "USER_NOT_FOUND": "Vartotojas nerastas",
+    "EMAIL_NOT_VERIFIED": "Prašome patvirtinti savo el. paštą prieš prisijungiant.",
+    "INVALID_CREDENTIALS": "Neteisingi prisijungimo duomenys",
+    "SERVER_ERROR": "Serverio klaida",
+    "CurrentPasswordIncorrect": "Dabartinis slaptažodis yra neteisingas.",
+    "Monday": "Pirmadienis",
+  "Tuesday": "Antradienis",
+  "Wednesday": "Trečiadienis",
+  "Thursday": "Ketvirtadienis",
+  "Friday": "Penktadienis"
 
 
 

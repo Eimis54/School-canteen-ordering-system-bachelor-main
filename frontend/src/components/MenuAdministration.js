@@ -401,7 +401,7 @@ const handlePublicToggle = async (menuId) => {
               {menus.map(menu => (
                 <li key={menu.MenuID} className="menu-item">
                   <button onClick={() => handleMenuSelection(menu.MenuID)}>
-                    {menu.DayOfWeek}
+                    {language[menu.DayOfWeek] || menu.DayOfWeek}
                   </button>
                   <label className="public-toggle-label">
   {language.Public}:
@@ -419,8 +419,8 @@ const handlePublicToggle = async (menuId) => {
   
           {selectedMenu && (
             <div className="menu-editor">
-              <h3>{language.EditingMenuFor} {selectedMenu.DayOfWeek}</h3>
-  
+              <h3>{language.EditingMenuFor} {language[selectedMenu.DayOfWeek] || selectedMenu.DayOfWeek}</h3>
+              
               <h4>{language.MenuItemsbyCategory}</h4>
               {categorizedMenuItems.length ? (
                 categorizedMenuItems.map(category => (

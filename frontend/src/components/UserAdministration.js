@@ -172,7 +172,12 @@ const UserAdministration = () => {
                     <td>{order.OrderID}</td>
                     <td>{order.TotalPrice}</td>
                     <td>{order.TotalCalories}</td>
-                    <td>{order.Status}</td>
+                    <td>
+                {order.status === 0 ? language.Completed : 
+                 order.status === 1 ? language.NotCompleted :
+                 null
+                }
+            </td>
                     <td>{order.OrderDate}</td>
                   </tr>
                 ))}

@@ -23,7 +23,8 @@ const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         localStorage.setItem('userId', data.UserID);
-        
+  
+        // Fetch user data
         const userResponse = await fetch('http://localhost:3001/api/user', {
           headers: {
             Authorization: `Bearer ${data.token}`,
@@ -36,13 +37,14 @@ const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
         }
       } else {
         const errorData = await response.json();
-        setError(errorData.error);
+        setError(language[errorData.errorCode] || language['SERVER_ERROR']);
       }
     } catch (error) {
       console.error(language.LoginError, error);
-      setError(language.ErrorOccured);
+      setError(language['ErrorOccured']);
     }
   };
+  
 
   const handleForgotPassword = () => {
     navigate('/forgot-password');

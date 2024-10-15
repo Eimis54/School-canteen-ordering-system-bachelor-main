@@ -281,7 +281,19 @@
     "Actions":"Actions",
     "ViewOrders":"View Orders",
     "EditUser":"Edit User",
-    "Save":"Save"
+    "Save":"Save",
+
+    
+    "USER_NOT_FOUND": "User not found",
+    "EMAIL_NOT_VERIFIED": "Please verify your email before logging in.",
+    "INVALID_CREDENTIALS": "Invalid credentials",
+    "SERVER_ERROR": "Server error",
+    "CurrentPasswordIncorrect": " Current password is incorrect.",
+    "Monday": "Monday",
+  "Tuesday": "Tuesday",
+  "Wednesday": "Wednesday",
+  "Thursday": "Thursday",
+  "Friday": "Friday"
 
     
 

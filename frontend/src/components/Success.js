@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import LanguageContext from '../LanguageContext';
 
 const Success = () => {
@@ -10,6 +10,9 @@ const Success = () => {
   const [error, setError] = useState('');
   const location = useLocation();
   const isProcessingRef = useRef(false);
+
+  const userID = localStorage.getItem('userId');
+  const isLoggedIn = !!userID;
 
   useEffect(() => {
     const handleOrderSuccess = async () => {
@@ -71,8 +74,11 @@ const Success = () => {
 
     handleOrderSuccess();
     
-  }, [location.search]);
+  }, [location.search, userID, language]);
 
+  if (!isLoggedIn) {
+    return <Navigate to="/nonLoggedInPage" />;
+  }
   if (loading) {
     return <div>{language.Loading}</div>;
   }

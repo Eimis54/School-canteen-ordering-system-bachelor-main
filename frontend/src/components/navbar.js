@@ -32,26 +32,29 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
+        
         <Link to="/" className="navbar-item">eValgykla</Link>
       </div>
+      
       <div className="navbar-menu">
         <div className="navbar-end">
           {isLoggedIn && !user?.isCashier && (
             <>
               <div className="navbar-item">
+                
                 <Link to="/cart" className="cart-button">{language.Cart}</Link>
               </div>
-              {user && user.isAdmin && (
-                <div className="navbar-item">
-                  <Link to="/admin">{language.AdminDashboard}</Link>
-                </div>
-              )}
               <button className='flagbtn' onClick={() => switchLanguage('en')}>
         <img src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png" alt=''  width={35} height={20}/>
       </button>
       <button className='flagbtn' onClick={() => switchLanguage('lt')}>
         <img src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png" alt='' width={35} height={20} />
       </button>
+              {user && user.isAdmin && (
+                <div className="navbar-item">
+                  <Link to="/admin">{language.AdminDashboard}</Link>
+                </div>
+              )}
               <div className="navbar-item" onClick={toggleProfile}>
                 {language.Welcome}, {user ? user.Name : ''}
               </div>

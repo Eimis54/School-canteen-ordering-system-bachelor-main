@@ -145,19 +145,19 @@ const AccountManagement = () => {
         return;
     }
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3001/api/user/account/password', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                userId: userDetails.userId,
-                currentPassword: passwordDetails.currentPassword,
-                newPassword: passwordDetails.newPassword,
-            }),
-        });
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/api/user/account/password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId: userDetails.userId,
+          currentPassword: passwordDetails.currentPassword,
+          newPassword: passwordDetails.newPassword,
+        }),
+      });
 
         if (response.ok) {
             setPasswordDetails({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -167,8 +167,13 @@ const AccountManagement = () => {
             const errorData = await response.json();
             console.error(language.FailedToChangePass, response.status, errorData);
 
-            const errorMessage = errorData.message || errorData.error || 'Unknown error';
-            setPasswordMessage(`${language.FailedToChangePass} ${errorMessage}`);
+            // Check for specific error code and set the message accordingly
+            if (errorData.errorCode === 'CURRENT_PASSWORD_INCORRECT') {
+                setPasswordMessage(language.CurrentPasswordIncorrect); // Set the translated message
+            } else {
+                const errorMessage = errorData.message || errorData.error || 'Unknown error';
+                setPasswordMessage(`${language.FailedToChangePass} ${errorMessage}`);
+            }
             setPasswordMessageType('error');
         }
     } catch (error) {

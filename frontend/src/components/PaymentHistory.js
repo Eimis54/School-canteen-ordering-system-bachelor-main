@@ -4,7 +4,7 @@ import axios from 'axios';
 import LanguageContext from '../LanguageContext';
 
 const PaymentHistory = () => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
 
@@ -20,7 +20,11 @@ const PaymentHistory = () => {
         const response = await axios.get(`http://localhost:3001/api/orders/history/${userId}`);
         setOrders(response.data);
       } catch (error) {
-        setError(language.FailedToLoadPaymentHistory);
+        if (error.response && error.response.status === 404) {
+          setError('');
+        } else {
+          setError(language.FailedToLoadPaymentHistory);
+        }
       }
     };
 

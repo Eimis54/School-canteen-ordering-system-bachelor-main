@@ -4,7 +4,7 @@ import "./Menu.css";
 import LanguageContext from "../LanguageContext";
 
 const Menu = () => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -28,57 +28,57 @@ const Menu = () => {
     return <div>{language.Loading}</div>;
   }
 
-const categorizedMenuItems = {};
+  const categorizedMenuItems = {};
 
-menu.forEach((item) => {
-  categorizedMenuItems[item.DayOfWeek] = {};
-  item.MenuItems.forEach((menuItem) => {
-    const categoryName = menuItem.Product?.ProductCategory?.CategoryName
+  menu.forEach((item) => {
+    categorizedMenuItems[item.DayOfWeek] = {};
+    item.MenuItems.forEach((menuItem) => {
+      const categoryName = menuItem.Product?.ProductCategory?.CategoryName;
 
-    if (categorizedMenuItems[item.DayOfWeek].hasOwnProperty(categoryName)) {
-      categorizedMenuItems[item.DayOfWeek][categoryName].push(
-        menuItem.Product
-      );
-    } else {
-      categorizedMenuItems[item.DayOfWeek][categoryName] = [
-        menuItem.Product,
-      ];
-    }
+      if (categorizedMenuItems[item.DayOfWeek].hasOwnProperty(categoryName)) {
+        categorizedMenuItems[item.DayOfWeek][categoryName].push(
+          menuItem.Product
+        );
+      } else {
+        categorizedMenuItems[item.DayOfWeek][categoryName] = [
+          menuItem.Product,
+        ];
+      }
+    });
   });
-});
 
-return (
-  <div className="menu">
-    <h2>{language.OurMenu}</h2>
-    {Object.keys(categorizedMenuItems).length ? (
-      Object.keys(categorizedMenuItems).map((day, index) => (
-        <div key={index} className="menu-day">
-          <h3>{day}</h3>
-          {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
-            <div key={categoryName} className="menu-category">
-              <h4>{categoryName}</h4>
-              <ul>
-                {categorizedMenuItems[day][categoryName].map((item, idx) => (
-                  <li key={idx}>
-                    <div className="menu-item">
-                      <div className="menu-item-name">{item.ProductName}</div>
-                      <div className="menu-item-description">
-                        {item.Description}
+  return (
+    <div className="menu">
+      <h2>{language.OurMenu}</h2>
+      {Object.keys(categorizedMenuItems).length ? (
+        Object.keys(categorizedMenuItems).map((day, index) => (
+          <div key={index} className="menu-day">
+            <h3>{language[day]}</h3> {/* Use translation for the day */}
+            {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
+              <div key={categoryName} className="menu-category">
+                <h4>{categoryName}</h4>
+                <ul>
+                  {categorizedMenuItems[day][categoryName].map((item, idx) => (
+                    <li key={idx}>
+                      <div className="menu-item">
+                        <div className="menu-item-name">{item.ProductName}</div>
+                        <div className="menu-item-description">
+                          {item.Description}
+                        </div>
+                        <div className="menu-item-price">{item.Price}</div>
                       </div>
-                      <div className="menu-item-price">{item.Price}</div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      ))
-    ) : (
-      <div>{language.NoMenuAvailable}</div>
-    )}
-  </div>
-);
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ))
+      ) : (
+        <div>{language.NoMenuAvailable}</div>
+      )}
+    </div>
+  );
 };
 
 export default Menu;

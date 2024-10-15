@@ -13,15 +13,15 @@ router.get('/', authenticateToken, async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ errorCode: 'USER_NOT_FOUND' });
     }
 
     const isAdmin = user.RoleID === 2;
-    const isCashier = user.RoleID ===3;
-    res.json({ ...user.toJSON(), isCashier, isAdmin});
+    const isCashier = user.RoleID === 3;
+    res.json({ ...user.toJSON(), isCashier, isAdmin });
   } catch (error) {
     console.error('Failed to fetch user data:', error);
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ errorCode: 'SERVER_ERROR' });
   }
 });
 
@@ -69,7 +69,7 @@ router.put('/account/password', authenticateToken, async (req, res) => {
 
     const isMatch = await bcrypt.compare(currentPassword, user.PasswordHash);
     if (!isMatch) {
-      return res.status(400).json({ error: 'Current password is incorrect' });
+      return res.status(400).json({ errorCode: 'CURRENT_PASSWORD_INCORRECT' });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -88,7 +88,7 @@ router.get('/admin/users/:userId/orders', authenticateToken, isAdmin, async (req
   try {
     const orders = await Order.findAll({
       where: { UserID: userId },
-      attributes: ['OrderID', 'TotalPrice', 'TotalCalories', 'Status', 'OrderDate'],
+      attributes: ['OrderID', 'TotalPrice', 'TotalCalories', 'status', 'OrderDate'],
     });
     res.json(orders);
   } catch (error) {

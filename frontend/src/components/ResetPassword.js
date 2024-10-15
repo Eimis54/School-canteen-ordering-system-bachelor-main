@@ -4,19 +4,31 @@ import { useParams } from 'react-router-dom';
 import LanguageContext from '../LanguageContext';
 
 const ResetPassword = () => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const { token } = useParams();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setError(language.PasswordsDontMatch);
       return;
     }
+
+    if (!validatePassword(password)) {
+      setError(language.PasswordMustBeAtleast); // Add a message in your translations
+      return;
+    }
+
     try {
       await axios.post('http://localhost:3001/api/auth/reset-password', {
         token,

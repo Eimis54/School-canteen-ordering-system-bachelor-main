@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Login from './components/login';
@@ -26,7 +26,10 @@ import SuccessPage from './components/Success';
 import FetchOrderPage from './components/FetchOrderPage'; 
 import NonLoggedInPage from './components/nonLoggedInPage';
 import { LanguageProvider } from './LanguageContext';
+import LanguageContext from './LanguageContext';
+
 import './App.css';
+
 import axios from "axios";
 
 const App = () => {
@@ -34,6 +37,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -57,10 +61,13 @@ const App = () => {
         setIsLoggedIn(true);
         localStorage.setItem('isLoggedIn', 'true');
       } else {
-        console.error('Failed to fetch user data:', response.status);
+        setIsLoggedIn(false);
+        setError('Invalid token or user not found');
       }
     } catch (error) {
       console.error('Failed to fetch user data:', error);
+      setIsLoggedIn(false);
+      setError('SERVER_ERROR');
     } finally {
       setLoading(false);
     }
@@ -78,102 +85,53 @@ const App = () => {
       localStorage.removeItem("cartID");
       localStorage.removeItem('userId');
       localStorage.removeItem('isLoggedIn');
-
     } catch (error) {
       console.error("Error while logging out:", error);
     }
   };
-  
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <LanguageProvider>
-    <Router>
-      <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} user={user} setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
-
-      <div className="container mt-4">
-        <Routes>
-          <Route path="/" element={
-            <ProtectedRoute isCashier={user?.isCashier}><LoggedInPage /></ProtectedRoute>} />
-          <Route path="/about" element={<Products />} />
-          <Route
-            path="/nonLoggedInPage"
-            element={!isLoggedIn ? <NonLoggedInPage /> : <Navigate to="/loggedInPage" />}
-          />
-          <Route
-            path="/login"
-            element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
-          />
-           <Route path="/forgot-password" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <ForgotPassword />} />
-          <Route path="/reset-password/:token" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <ResetPassword />} />
-          <Route
-            path="/register"
-            element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Register />}
-          />
-           <Route path="/verify-email/:userID" element={<VerifyEmail />} />
-
-          <Route path="/loggedInPage" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn} isCashier={user?.isCashier}>
-              <LoggedInPage user={user} />
-            </ProtectedRoute>
-          } />
-          <Route path="/order" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <OrderSection cart={cart} setCart={setCart} />
-            </ProtectedRoute>
-          } />
-          <Route path="/cart" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <ShoppingCart cart={cart} />
-            </ProtectedRoute>
-          } />
-          <Route path="/account" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <AccountManagement />
-            </ProtectedRoute>
-          } />
-          <Route path="/your-children" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <ChildrenManagement />
-            </ProtectedRoute>
-          } />
-          <Route path="/payment-history" element={
-    <ProtectedRoute isLoggedIn={isLoggedIn}>
-      <PaymentHistory />
-    </ProtectedRoute>
-  } />
-  <Route path="/order-details/:orderId" element={
-    <ProtectedRoute isLoggedIn={isLoggedIn}>
-      <OrderDetails />
-    </ProtectedRoute>
-  } />
-
-          <Route path="/fetch-order" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <FetchOrderPage />
-            </ProtectedRoute>
-          }/>
-
-          <Route path="/success" element={
-            <SuccessPage userID={user?.id} />
-          } />
-
-          {/* Admin Routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute isLoggedIn={isLoggedIn} isAdmin={user?.isAdmin}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }>
-            <Route path="users" element={<UserAdministration />} />
-            <Route path="deals" element={<DealAdministration />} />
-            <Route path="menu" element={<MenuAdministration />} />
-            <Route path="photos" element={<AdminPhotoManager />} />
-          </Route>
-          <Route path="/nonLoggedInPage" element={<NonLoggedInPage />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
-    </Router>
-    </ LanguageProvider>
+      <Router>
+        <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} user={user} setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
+        <div className="container mt-4">
+          <Routes>
+            <Route path="/" element={<ProtectedRoute isCashier={user?.isCashier}><LoggedInPage /></ProtectedRoute>} />
+            {/* <Route path="/about" element={<Products />} /> */}
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/nonLoggedInPage" element={!isLoggedIn ? <NonLoggedInPage /> : <Navigate to="/loggedInPage" />} />
+            <Route path="/login" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />} />
+            <Route path="/forgot-password" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <ForgotPassword />} />
+            <Route path="/reset-password/:token" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <ResetPassword />} />
+            <Route path="/register" element={isLoggedIn ? <Navigate to="/loggedInPage" /> : <Register />} />
+            <Route path="/verify-email/:userID" element={<VerifyEmail />} />
+            <Route path="/loggedInPage" element={<ProtectedRoute isLoggedIn={isLoggedIn} isCashier={user?.isCashier}><LoggedInPage user={user} /></ProtectedRoute>} />
+            <Route path="/order" element={<ProtectedRoute isLoggedIn={isLoggedIn}><OrderSection cart={cart} setCart={setCart} /></ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute isLoggedIn={isLoggedIn}><ShoppingCart cart={cart} /></ProtectedRoute>} />
+            <Route path="/account" element={<ProtectedRoute isLoggedIn={isLoggedIn}><AccountManagement /></ProtectedRoute>} />
+            <Route path="/your-children" element={<ProtectedRoute isLoggedIn={isLoggedIn}><ChildrenManagement /></ProtectedRoute>} />
+            <Route path="/payment-history" element={<ProtectedRoute isLoggedIn={isLoggedIn}><PaymentHistory /></ProtectedRoute>} />
+            <Route path="/order-details/:orderId" element={<ProtectedRoute isLoggedIn={isLoggedIn}><OrderDetails /></ProtectedRoute>} />
+            <Route path="/fetch-order" element={<ProtectedRoute isLoggedIn={isLoggedIn}><FetchOrderPage /></ProtectedRoute>} />
+            <Route path="/success" element={<SuccessPage userID={user?.id} />} />
+            {/* Admin Routes */}
+            <Route path="/admin" element={<ProtectedRoute isLoggedIn={isLoggedIn} isAdmin={user?.isAdmin}><AdminDashboard /></ProtectedRoute>}>
+              <Route path="users" element={<UserAdministration />} />
+              <Route path="deals" element={<DealAdministration />} />
+              <Route path="menu" element={<MenuAdministration />} />
+              <Route path="photos" element={<AdminPhotoManager />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+      </Router>
+    </LanguageProvider>
   );
 };
+
 export default App;
