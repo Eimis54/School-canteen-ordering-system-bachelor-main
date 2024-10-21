@@ -1,16 +1,16 @@
-const jwt = require('jsonwebtoken');
-const db = require('../db');
+const jwt = require("jsonwebtoken");
+const db = require("../db");
 // require('dotenv').config();
 
-// const secretKey = process.env.REACT_APP_SECRET_KEY;
+const secretKey = process.env.REACT_APP_SECRET_KEY;
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
   if (token == null) return res.sendStatus(401);
 
-  jwt.verify(token, 'your_secret_key', (err, user) => {
+  jwt.verify(token, secretKey, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
     next();

@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { loadStripe } from '@stripe/stripe-js';
-import LanguageContext from '../LanguageContext';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
+import LanguageContext from "../LanguageContext";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_API_KEY_FRONTEND);
 
 const ShoppingCart = () => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +15,7 @@ const ShoppingCart = () => {
     const fetchCartData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const CartID = localStorage.getItem('cartID');
+        const CartID = localStorage.getItem("cartID");
 
         if (!CartID) {
           setCart([]);
@@ -45,10 +45,13 @@ const ShoppingCart = () => {
     try {
       const stripe = await stripePromise;
       const userId = localStorage.getItem("userId");
-      const response = await axios.post('http://localhost:3001/api/payment/create-checkout-session', {
-        cartItems: cart,
-        userId: userId,
-      });
+      const response = await axios.post(
+        "http://localhost:3001/api/payment/create-checkout-session",
+        {
+          cartItems: cart,
+          userId: userId,
+        }
+      );
 
       const sessionId = response.data.id;
       const { error } = await stripe.redirectToCheckout({ sessionId });
@@ -63,13 +66,13 @@ const ShoppingCart = () => {
     }
   };
 
-  const totalPrice = cart.reduce((acc, cartItem) =>
-    acc + (cartItem.Price * cartItem.Quantity), 
+  const totalPrice = cart.reduce(
+    (acc, cartItem) => acc + cartItem.Price * cartItem.Quantity,
     0
   );
 
-  const totalCalories = cart.reduce((acc, cartItem) =>
-    acc + (cartItem.Calories * cartItem.Quantity), 
+  const totalCalories = cart.reduce(
+    (acc, cartItem) => acc + cartItem.Calories * cartItem.Quantity,
     0
   );
 
@@ -82,7 +85,7 @@ const ShoppingCart = () => {
         },
       });
 
-      setCart((prevCart) => prevCart.filter(item => item.CartItemID !== id));
+      setCart((prevCart) => prevCart.filter((item) => item.CartItemID !== id));
     } catch (error) {
       console.error(language.FailedToRemoveItemFromCart, error);
       setError(language.FailedToRemoveItemFromCart);
@@ -92,7 +95,7 @@ const ShoppingCart = () => {
   return (
     <div className="shopping-cart">
       <h1>{language.ShoppingCart}</h1>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <table className="cart-table">
         <thead>
           <tr>
@@ -109,14 +112,20 @@ const ShoppingCart = () => {
           {cart.length > 0 ? (
             cart.map((cartItem) => (
               <tr key={cartItem.CartItemID}>
-                <td>{cartItem.child ? cartItem.child.Name : 'N/A'}</td> 
-                <td>{cartItem.product ? cartItem.product.ProductName : 'N/A'}</td>
+                <td>{cartItem.child ? cartItem.child.Name : "N/A"}</td>
+                <td>
+                  {cartItem.product ? cartItem.product.ProductName : "N/A"}
+                </td>
                 <td>{cartItem.Quantity}</td>
                 <td>{cartItem.Price} Eur.</td>
                 <td>{cartItem.Calories}</td>
-                <td>{(cartItem.Price * cartItem.Quantity)} Eur.</td>
+                <td>{cartItem.Price * cartItem.Quantity} Eur.</td>
                 <td>
-                  <button onClick={() => removeItemFromCart(cartItem.CartItemID)}>{language.Remove}</button>
+                  <button
+                    onClick={() => removeItemFromCart(cartItem.CartItemID)}
+                  >
+                    {language.Remove}
+                  </button>
                 </td>
               </tr>
             ))
@@ -129,19 +138,23 @@ const ShoppingCart = () => {
       </table>
       {cart.length > 0 && (
         <div className="cart-summary">
-          <p><strong>{language.TotalPrice}:</strong> {totalPrice} Eur.</p>
-          <p><strong>{language.TotalCalories}:</strong> {totalCalories}</p>
+          <p>
+            <strong>{language.TotalPrice}:</strong> {totalPrice} Eur.
+          </p>
+          <p>
+            <strong>{language.TotalCalories}:</strong> {totalCalories}
+          </p>
         </div>
       )}
       <div className="checkout-button">
-        {isLoading ? <div>{language.Loading}</div> : (
-          cart.length > 0 ? (
-            <button onClick={handleCheckout} className="btn">
-              {language.ProceedToCheckout}
-            </button>
-          ) : (
-            <p>{language.TheCartIsEmpty}.</p>
-          )
+        {isLoading ? (
+          <div>{language.Loading}</div>
+        ) : cart.length > 0 ? (
+          <button onClick={handleCheckout} className="btn">
+            {language.ProceedToCheckout}
+          </button>
+        ) : (
+          <p>{language.TheCartIsEmpty}.</p>
         )}
       </div>
     </div>
