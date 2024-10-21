@@ -40,7 +40,8 @@ import SuccessPage from "./components/Success";
 import FetchOrderPage from "./components/FetchOrderPage";
 import NonLoggedInPage from "./components/nonLoggedInPage";
 import { LanguageProvider } from "./LanguageContext";
-import backgroundImg from "./assets/backgroundImg.png";
+import backgroundImg from "./assets/backgroundImg.jpg";
+
 
 import axios from "axios";
 
@@ -109,14 +110,6 @@ const App = () => {
   return (
     <LanguageProvider>
       <Router>
-        <Box
-          sx={{
-            backgroundImage: `url('${backgroundImg}')`,
-            backgroundSize: "contain",
-            backgroundPosition: "center",
-            height: "100.5vh",
-          }}
-        >
           <Navbar
             isLoggedIn={isLoggedIn}
             handleLogout={handleLogout}
@@ -124,7 +117,13 @@ const App = () => {
             setIsLoggedIn={setIsLoggedIn}
             setUser={setUser}
           />
-          <Container sx={{ pt: 4 }}>
+           <Box
+      sx={{
+        backgroundImage: `url('${backgroundImg}')`,
+        backgroundSize: "contain",
+        height: "auto",
+      }}
+    >
             <Routes>
               <Route
                 path="/"
@@ -272,8 +271,7 @@ const App = () => {
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
-          </Container>
-        </Box>
+            </Box>
       </Router>
     </LanguageProvider>
   );

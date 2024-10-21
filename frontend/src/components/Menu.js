@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import "./Menu.css";
 import LanguageContext from "../LanguageContext";
+import {
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+  Container,
+} from "@mui/material";
 
 const Menu = () => {
   const { language } = useContext(LanguageContext);
@@ -25,7 +35,14 @@ const Menu = () => {
   }, []);
 
   if (!menu) {
-    return <div>{language.Loading}</div>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <CircularProgress />
+        <Typography variant="h6" sx={{ marginLeft: 2 }}>
+          {language.Loading}
+        </Typography>
+      </Box>
+    );
   }
 
   const categorizedMenuItems = {};
@@ -36,48 +53,48 @@ const Menu = () => {
       const categoryName = menuItem.Product?.ProductCategory?.CategoryName;
 
       if (categorizedMenuItems[item.DayOfWeek].hasOwnProperty(categoryName)) {
-        categorizedMenuItems[item.DayOfWeek][categoryName].push(
-          menuItem.Product
-        );
+        categorizedMenuItems[item.DayOfWeek][categoryName].push(menuItem.Product);
       } else {
-        categorizedMenuItems[item.DayOfWeek][categoryName] = [
-          menuItem.Product,
-        ];
+        categorizedMenuItems[item.DayOfWeek][categoryName] = [menuItem.Product];
       }
     });
   });
 
   return (
-    <div className="menu">
-      <h2>{language.OurMenu}</h2>
+    <Container>
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        {language.OurMenu}
+      </Typography>
       {Object.keys(categorizedMenuItems).length ? (
         Object.keys(categorizedMenuItems).map((day, index) => (
-          <div key={index} className="menu-day">
-            <h3>{language[day]}</h3> {/* Use translation for the day */}
+          <Paper key={index} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+            <Typography variant="h5" gutterBottom>
+              {language[day]} {/* Use translation for the day */}
+            </Typography>
             {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
-              <div key={categoryName} className="menu-category">
-                <h4>{categoryName}</h4>
-                <ul>
+              <Box key={categoryName} sx={{ marginBottom: 2 }}>
+                <Typography variant="h6">{categoryName}</Typography>
+                <List>
                   {categorizedMenuItems[day][categoryName].map((item, idx) => (
-                    <li key={idx}>
-                      <div className="menu-item">
-                        <div className="menu-item-name">{item.ProductName}</div>
-                        <div className="menu-item-description">
-                          {item.Description}
-                        </div>
-                        <div className="menu-item-price">{item.Price}</div>
-                      </div>
-                    </li>
+                    <ListItem key={idx} sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <ListItemText
+                        primary={item.ProductName}
+                        secondary={item.Description}
+                      />
+                      <Typography variant="body1">{item.Price} Eur.</Typography>
+                    </ListItem>
                   ))}
-                </ul>
-              </div>
+                </List>
+              </Box>
             ))}
-          </div>
+          </Paper>
         ))
       ) : (
-        <div>{language.NoMenuAvailable}</div>
+        <Typography align="center">{language.NoMenuAvailable}</Typography>
       )}
-    </div>
+    </Box>
+    </Container>
   );
 };
 

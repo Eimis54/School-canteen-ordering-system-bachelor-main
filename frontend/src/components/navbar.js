@@ -5,12 +5,14 @@ import Login from "./login";
 import Register from "./register";
 import LanguageContext from "../LanguageContext";
 import CloseIcon from "@mui/icons-material/Close";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const { language, switchLanguage } = useContext(LanguageContext);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const toggleProfile = () => setShowProfile(!showProfile);
   const openLogin = () => {
@@ -22,24 +24,16 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
     setShowLogin(false);
   };
 
-  const openVerifyEmail = (message) => {
-    setShowLogin(true);
-    setShowRegister(false);
-    setSuccessMessage(message);
-  };
-  const [successMessage, setSuccessMessage] = useState("");
-
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#a48873",
-        color: "white",
-        padding: "1rem",
-        opacity: 0.9,
-        height: "10vh",
+        backgroundColor: "white",
+        color: "black",
+        padding: "1rem 2rem",
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
       }}
     >
       <Typography
@@ -47,72 +41,48 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
         component={Link}
         to="/"
         sx={{
-          color: "white",
+          color: "black",
           textDecoration: "none",
-          fontSize: "3rem",
+          fontSize: "2rem",
           fontFamily: "Impact",
         }}
       >
         eValgykla
       </Typography>
 
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
         {isLoggedIn && !user?.isCashier && (
           <>
             <Button
               component={Link}
               to="/cart"
               sx={{
-                fontSize: "2rem",
-                color: "white",
+                fontSize: "1rem",
+                color: "black",
                 textDecoration: "none",
                 padding: "0.5rem 1rem",
-                marginLeft: "1rem",
-                fontFamily: "Impact",
                 "&:hover": {
-                  backgroundColor: "#fff",
-                  color: "#000",
+                  backgroundColor: "#f0f0f0",
                 },
               }}
             >
+              <ShoppingCartIcon sx={{ fontSize: "1rem", marginRight: "0.5rem" }} />
               {language.Cart}
             </Button>
-            <IconButton
-              onClick={() => switchLanguage("en")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
-                alt="EN"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <IconButton
-              onClick={() => switchLanguage("lt")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
-                alt="LT"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-
             {user?.isAdmin && (
               <Button
                 component={Link}
                 to="/admin"
                 sx={{
-                  color: "white",
-                  fontFamily: "Impact",
-                  fontSize: "2rem",
-                  border: "1px solid white",
-                  borderRadius: "4px",
+                  color: "black",
+                  padding: "0.5rem 1rem",
                   "&:hover": {
-                    backgroundColor: "#fff",
-                    color: "#000",
+                    backgroundColor: "#f0f0f0",
                   },
                 }}
               >
@@ -120,7 +90,10 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
               </Button>
             )}
 
-            <Button onClick={toggleProfile} sx={{ color: "white" }}>
+            <Button
+              onClick={toggleProfile}
+              sx={{ color: "black", marginLeft: "1rem" }}
+            >
               {language.Welcome}, {user ? user.Name : ""}
             </Button>
 
@@ -130,8 +103,8 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
               onClose={toggleProfile}
               sx={{
                 "& .MuiDrawer-paper": {
-                  width: "300px",
-                  backgroundColor: "#fff",
+                  width: "250px",
+                  backgroundColor: "white",
                   color: "black",
                   boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
                 },
@@ -143,76 +116,47 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   justifyContent: "space-between",
                   alignItems: "center",
                   padding: "1rem",
-                  backgroundColor: "#a48873",
-                  color: "white",
+                  backgroundColor: "#f0f0f0",
                 }}
               >
                 <Typography variant="h6">{language.Profile}</Typography>
-                <IconButton onClick={toggleProfile} sx={{ color: "white" }}>
+                <IconButton onClick={toggleProfile} sx={{ color: "black" }}>
                   <CloseIcon />
                 </IconButton>
               </Box>
-              <Box
-                component="ul"
-                sx={{ listStyleType: "none", padding: 0, margin: 0 }}
-              >
+              <Box component="ul" sx={{ listStyleType: "none", padding: 0, margin: 0 }}>
                 <Button
                   component={Link}
                   to="/account"
-                  sx={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "0.5rem 1rem",
-                    borderBottom: "1px solid #ccc",
-                  }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
                 >
                   {language.Account}
                 </Button>
                 <Button
                   component={Link}
                   to="/payment-history"
-                  sx={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "0.5rem 1rem",
-                    borderBottom: "1px solid #ccc",
-                  }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
                 >
                   {language.PaymentHistory}
                 </Button>
                 <Button
                   component={Link}
                   to="/your-children"
-                  sx={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "0.5rem 1rem",
-                    borderBottom: "1px solid #ccc",
-                  }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
                 >
                   {language.YourChildren}
                 </Button>
                 <Button
                   component={Link}
                   to="/FAQ"
-                  sx={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "0.5rem 1rem",
-                    borderBottom: "1px solid #ccc",
-                  }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
                 >
                   {language.FAQ}
                 </Button>
                 <Button
                   component={Link}
                   to="/Help"
-                  sx={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "0.5rem 1rem",
-                    borderBottom: "1px solid #ccc",
-                  }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
                 >
                   {language.Help}
                 </Button>
@@ -221,7 +165,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   sx={{
                     width: "100%",
                     textAlign: "left",
-                    padding: "0.5rem 1rem",
+                    padding: "1rem",
                     backgroundColor: "#ff4d4f",
                     color: "white",
                     border: "none",
@@ -234,64 +178,12 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
           </>
         )}
 
-        {isLoggedIn && user?.isCashier && (
-          <>
-            <IconButton
-              onClick={() => switchLanguage("en")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
-                alt="EN"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <IconButton
-              onClick={() => switchLanguage("lt")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
-                alt="LT"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <Button onClick={handleLogout} sx={{ color: "white" }}>
-              {language.logout}
-            </Button>
-          </>
-        )}
-
         {!isLoggedIn && (
           <>
-            <IconButton
-              onClick={() => switchLanguage("en")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
-                alt="EN"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <IconButton
-              onClick={() => switchLanguage("lt")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
-                alt="LT"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <Button onClick={openLogin} sx={{ color: "white" }}>
+            <Button onClick={openLogin} sx={{ color: "black", marginLeft: "1rem" }}>
               {language.login}
             </Button>
-            <Button onClick={openRegister} sx={{ color: "white" }}>
+            <Button onClick={openRegister} sx={{ color: "black", marginLeft: "1rem" }}>
               {language.Register}
             </Button>
 
@@ -304,8 +196,8 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
               }}
               sx={{
                 "& .MuiDrawer-paper": {
-                  width: "300px",
-                  backgroundColor: "#fff",
+                  width: "250px",
+                  backgroundColor: "white",
                   color: "black",
                   boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
                 },
@@ -317,35 +209,33 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   justifyContent: "space-between",
                   alignItems: "center",
                   padding: "1rem",
-                  backgroundColor: "#333",
-                  color: "white",
+                  backgroundColor: "#f0f0f0",
                 }}
               >
-                <Typography variant="h6">
-                  {showLogin ? "Login" : "Register"}
-                </Typography>
+                <Typography variant="h6">{showLogin ? language.login : language.Register}</Typography>
                 <IconButton
                   onClick={() => {
                     setShowLogin(false);
                     setShowRegister(false);
                   }}
-                  sx={{ color: "white" }}
+                  sx={{ color: "black" }}
                 >
                   <CloseIcon />
                 </IconButton>
               </Box>
-              <Box className="form-container">
-                {showLogin && (
-                  <Login
-                    setIsLoggedIn={setIsLoggedIn}
-                    setUser={setUser}
-                    successMessage={successMessage}
-                  />
-                )}
-                {showRegister && (
-                  <Register onRegisterSuccess={openVerifyEmail} />
-                )}
-              </Box>
+              {showLogin ? (
+                <Login
+                  onClose={() => setShowLogin(false)}
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUser={setUser}
+                  successMessage={successMessage}
+                  setSuccessMessage={setSuccessMessage}
+                />
+              ) : (
+                <Register
+                  onClose={() => setShowRegister(false)}
+                />
+              )}
             </Drawer>
           </>
         )}
