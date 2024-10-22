@@ -39,8 +39,9 @@ import OrderSection from "./components/OrderSection";
 import SuccessPage from "./components/Success";
 import FetchOrderPage from "./components/FetchOrderPage";
 import NonLoggedInPage from "./components/nonLoggedInPage";
+import Footer from "./components/Footer";
 import { LanguageProvider } from "./LanguageContext";
-import backgroundImg from "./assets/backgroundImg.jpg";
+import backgroundImg from "./assets/backgroundImg4.png";
 
 
 import axios from "axios";
@@ -119,7 +120,7 @@ const App = () => {
           />
            <Box
       sx={{
-        backgroundImage: `url('${backgroundImg}')`,
+        background: "linear-gradient(to right, #FAF7F5 50%, #E8E1DF 70%, #D3CFCB 100%)",
         backgroundSize: "contain",
         height: "auto",
       }}
@@ -270,8 +271,10 @@ const App = () => {
                 <Route path="photos" element={<AdminPhotoManager />} />
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
+
             </Routes>
             </Box>
+            <Footer />
       </Router>
     </LanguageProvider>
   );

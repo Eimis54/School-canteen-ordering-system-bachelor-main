@@ -214,7 +214,7 @@ const OrderSection = () => {
       {menu ? (
         <div>
           <h3>
-            {language.MenuFor} {language[menu.DayOfWeek]}
+            {language.MenuFor}: {language[menu.DayOfWeek]}
           </h3>
           {Object.keys(groupedProducts).map((category) => (
             <div key={category}>

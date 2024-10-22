@@ -28,8 +28,8 @@ const CarouselComponent = () => {
   return (
     <Box
       sx={{
-        width: "100%", // Full width
-        height: "80%", // Height relative to parent
+        width: "80%", // Full width
+        height: "60%", // Height relative to parent
         position: "relative",
         overflow: "hidden",
       }}
@@ -56,7 +56,7 @@ const CarouselComponent = () => {
                 height: "100%",
                 objectFit: "cover",
                 display: "block",
-                borderRadius: "20px"
+                borderRadius: "20px",
               }}
               onError={(e) =>
                 console.error("Image failed to load:", e.target.src)

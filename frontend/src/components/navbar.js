@@ -34,6 +34,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
         color: "black",
         padding: "1rem 2rem",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+        borderBottom: "2px solid grey"
       }}
     >
       <Typography
@@ -120,6 +121,28 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 }}
               >
                 <Typography variant="h6">{language.Profile}</Typography>
+                <IconButton
+              onClick={() => switchLanguage("en")}
+              sx={{ padding: 0 }}
+            >
+              <img
+                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
+                alt="EN"
+                width={35}
+                height={20}
+              />
+            </IconButton>
+            <IconButton
+              onClick={() => switchLanguage("lt")}
+              sx={{ padding: 0 }}
+            >
+              <img
+                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
+                alt="LT"
+                width={35}
+                height={20}
+              />
+            </IconButton>
                 <IconButton onClick={toggleProfile} sx={{ color: "black" }}>
                   <CloseIcon />
                 </IconButton>
@@ -128,35 +151,35 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 <Button
                   component={Link}
                   to="/account"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
                 >
                   {language.Account}
                 </Button>
                 <Button
                   component={Link}
                   to="/payment-history"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
                 >
                   {language.PaymentHistory}
                 </Button>
                 <Button
                   component={Link}
                   to="/your-children"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
                 >
                   {language.YourChildren}
                 </Button>
                 <Button
                   component={Link}
                   to="/FAQ"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
                 >
                   {language.FAQ}
                 </Button>
                 <Button
                   component={Link}
                   to="/Help"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem" }}
+                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
                 >
                   {language.Help}
                 </Button>

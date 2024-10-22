@@ -131,7 +131,7 @@
 
     "ErrorFetchingMenu":"Error fetching menu",
     "Loading":"Loading...",
-    "OurMenu":"Our Menu",
+    "OurMenu":"Menu",
     "NoMenuAvailable":"No Menu Available",
     "ErrorFetchingCategories":"Error fetching categories",
     "ProductAlreadyExists": "Product '{productName}' is already in the menu or invalid.",

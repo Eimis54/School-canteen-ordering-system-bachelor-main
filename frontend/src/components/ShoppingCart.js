@@ -2,6 +2,19 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import LanguageContext from "../LanguageContext";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  CircularProgress,
+  Container,
+} from "@mui/material";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_API_KEY_FRONTEND);
 
@@ -93,71 +106,84 @@ const ShoppingCart = () => {
   };
 
   return (
-    <div className="shopping-cart">
-      <h1>{language.ShoppingCart}</h1>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <table className="cart-table">
-        <thead>
-          <tr>
-            <th>{language.Child}</th>
-            <th>{language.Product}</th>
-            <th>{language.Quantity}</th>
-            <th>{language.Price}</th>
-            <th>{language.Calories}</th>
-            <th>{language.Total}</th>
-            <th>{language.Action}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cart.length > 0 ? (
-            cart.map((cartItem) => (
-              <tr key={cartItem.CartItemID}>
-                <td>{cartItem.child ? cartItem.child.Name : "N/A"}</td>
-                <td>
-                  {cartItem.product ? cartItem.product.ProductName : "N/A"}
-                </td>
-                <td>{cartItem.Quantity}</td>
-                <td>{cartItem.Price} Eur.</td>
-                <td>{cartItem.Calories}</td>
-                <td>{cartItem.Price * cartItem.Quantity} Eur.</td>
-                <td>
-                  <button
-                    onClick={() => removeItemFromCart(cartItem.CartItemID)}
-                  >
-                    {language.Remove}
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="7">{language.YourCartIsEmpty}.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      {cart.length > 0 && (
-        <div className="cart-summary">
-          <p>
-            <strong>{language.TotalPrice}:</strong> {totalPrice} Eur.
-          </p>
-          <p>
-            <strong>{language.TotalCalories}:</strong> {totalCalories}
-          </p>
-        </div>
-      )}
-      <div className="checkout-button">
-        {isLoading ? (
-          <div>{language.Loading}</div>
-        ) : cart.length > 0 ? (
-          <button onClick={handleCheckout} className="btn">
-            {language.ProceedToCheckout}
-          </button>
-        ) : (
-          <p>{language.TheCartIsEmpty}.</p>
+    <Container maxWidth="lg" sx={{ padding: 4 }}>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          backgroundColor: "#FAF7F5", // Light background for the notepad
+          borderRadius: 2,
+          boxShadow: 2,
+          padding: 4,
+          border: "1px solid #C0C0C0", // Subtle border to resemble notebook
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          {language.ShoppingCart}
+        </Typography>
+        {error && <Typography color="error">{error}</Typography>}
+        <TableContainer>
+          <Table sx={{ border: "1px solid #C0C0C0" }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>{language.Child}</TableCell>
+                <TableCell>{language.Product}</TableCell>
+                <TableCell>{language.Quantity}</TableCell>
+                <TableCell>{language.Price}</TableCell>
+                <TableCell>{language.Calories}</TableCell>
+                <TableCell>{language.Total}</TableCell>
+                <TableCell>{language.Action}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {cart.length > 0 ? (
+                cart.map((cartItem) => (
+                  <TableRow key={cartItem.CartItemID}>
+                    <TableCell>{cartItem.child ? cartItem.child.Name : "N/A"}</TableCell>
+                    <TableCell>{cartItem.product ? cartItem.product.ProductName : "N/A"}</TableCell>
+                    <TableCell>{cartItem.Quantity}</TableCell>
+                    <TableCell>{cartItem.Price} Eur.</TableCell>
+                    <TableCell>{cartItem.Calories}</TableCell>
+                    <TableCell>{cartItem.Price * cartItem.Quantity} Eur.</TableCell>
+                    <TableCell>
+                      <Button variant="contained" color="error" onClick={() => removeItemFromCart(cartItem.CartItemID)}>
+                        {language.Remove}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan="7" align="center">{language.YourCartIsEmpty}.</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {cart.length > 0 && (
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="h6">
+              <strong>{language.TotalPrice}:</strong> {totalPrice} Eur.
+            </Typography>
+            <Typography variant="h6">
+              <strong>{language.TotalCalories}:</strong> {totalCalories}
+            </Typography>
+          </Box>
         )}
-      </div>
-    </div>
+        <Box sx={{ marginTop: 2 }}>
+          {isLoading ? (
+            <CircularProgress />
+          ) : cart.length > 0 ? (
+            <Button variant="contained" color="primary" onClick={handleCheckout}>
+              {language.ProceedToCheckout}
+            </Button>
+          ) : (
+            <Typography>{language.TheCartIsEmpty}.</Typography>
+          )}
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
