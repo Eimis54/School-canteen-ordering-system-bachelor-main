@@ -5,6 +5,7 @@ import LanguageContext from "../LanguageContext";
 import {
   Box,
   Typography,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -17,6 +18,35 @@ import {
 } from "@mui/material";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_API_KEY_FRONTEND);
+
+// Custom styles
+const notebookStyles = {
+  paper: {
+    padding: "20px",
+    marginBottom: "20px",
+    backgroundColor: "#EAEBE5",
+  },
+  verticalLine: {
+    width: "2px",
+    backgroundColor: "#C46962",
+  },
+  tableCell: {
+    padding: "10px 16px",
+    borderRight: "2px solid rgba(0, 0, 0, 0.1)", // Vertical line between cells
+  },
+  totalBox: {
+    marginTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  removeButton: {
+    backgroundColor: "#D9534F", // Bootstrap danger color
+    "&:hover": {
+      backgroundColor: "#C9302C",
+    },
+  },
+};
 
 const ShoppingCart = () => {
   const { language } = useContext(LanguageContext);
@@ -58,14 +88,26 @@ const ShoppingCart = () => {
     try {
       const stripe = await stripePromise;
       const userId = localStorage.getItem("userId");
+    
+      const lineItems = cart.map((cartItem) => ({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: cartItem.product ? cartItem.product.ProductName : 'N/A',
+          },
+          unit_amount: Math.round(cartItem.Price * 100), // Convert to cents and round to nearest integer
+        },
+        quantity: cartItem.Quantity,
+      }));
+  
       const response = await axios.post(
         "http://localhost:3001/api/payment/create-checkout-session",
         {
-          cartItems: cart,
+          lineItems, // Send line items instead of cartItems
           userId: userId,
         }
       );
-
+  
       const sessionId = response.data.id;
       const { error } = await stripe.redirectToCheckout({ sessionId });
       if (error) {
@@ -107,47 +149,37 @@ const ShoppingCart = () => {
 
   return (
     <Container maxWidth="lg" sx={{ padding: 4 }}>
-      <Box
-        sx={{
-          minHeight: "100vh",
-          backgroundColor: "#FAF7F5", // Light background for the notepad
-          borderRadius: 2,
-          boxShadow: 2,
-          padding: 4,
-          border: "1px solid #C0C0C0", // Subtle border to resemble notebook
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      <Paper sx={notebookStyles.paper}>
         <Typography variant="h4" gutterBottom>
           {language.ShoppingCart}
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
         <TableContainer>
-          <Table sx={{ border: "1px solid #C0C0C0" }}>
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{language.Child}</TableCell>
-                <TableCell>{language.Product}</TableCell>
-                <TableCell>{language.Quantity}</TableCell>
-                <TableCell>{language.Price}</TableCell>
-                <TableCell>{language.Calories}</TableCell>
-                <TableCell>{language.Total}</TableCell>
-                <TableCell>{language.Action}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Child}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Product}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Quantity}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Price}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Calories}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Total}</TableCell>
+                <TableCell sx={notebookStyles.tableCell}>{language.Action}</TableCell>
               </TableRow>
             </TableHead>
+            
             <TableBody>
               {cart.length > 0 ? (
                 cart.map((cartItem) => (
                   <TableRow key={cartItem.CartItemID}>
-                    <TableCell>{cartItem.child ? cartItem.child.Name : "N/A"}</TableCell>
-                    <TableCell>{cartItem.product ? cartItem.product.ProductName : "N/A"}</TableCell>
-                    <TableCell>{cartItem.Quantity}</TableCell>
-                    <TableCell>{cartItem.Price} Eur.</TableCell>
-                    <TableCell>{cartItem.Calories}</TableCell>
-                    <TableCell>{cartItem.Price * cartItem.Quantity} Eur.</TableCell>
-                    <TableCell>
-                      <Button variant="contained" color="error" onClick={() => removeItemFromCart(cartItem.CartItemID)}>
+                    <TableCell sx={notebookStyles.tableCell}>{cartItem.child ? cartItem.child.Name : "N/A"}</TableCell>
+                    <TableCell sx={notebookStyles.tableCell}>{cartItem.product ? cartItem.product.ProductName : "N/A"}</TableCell>
+                    <TableCell sx={notebookStyles.tableCell}>{cartItem.Quantity}</TableCell>
+                    <TableCell sx={notebookStyles.tableCell}>{cartItem.Price} Eur.</TableCell>
+                    <TableCell sx={notebookStyles.tableCell}>{cartItem.Calories}</TableCell>
+                    <TableCell sx={notebookStyles.tableCell}>{(cartItem.Price * cartItem.Quantity).toFixed(1)} Eur.</TableCell>
+                    <TableCell sx={notebookStyles.tableCell}>
+                      <Button variant="contained" sx={notebookStyles.removeButton} onClick={() => removeItemFromCart(cartItem.CartItemID)}>
                         {language.Remove}
                       </Button>
                     </TableCell>
@@ -160,11 +192,12 @@ const ShoppingCart = () => {
               )}
             </TableBody>
           </Table>
+          <Box sx={notebookStyles.verticalLine} />
         </TableContainer>
         {cart.length > 0 && (
-          <Box sx={{ marginTop: 2 }}>
+          <Box sx={notebookStyles.totalBox}>
             <Typography variant="h6">
-              <strong>{language.TotalPrice}:</strong> {totalPrice} Eur.
+              <strong>{language.TotalPrice}:</strong> {totalPrice.toFixed(1)} Eur.
             </Typography>
             <Typography variant="h6">
               <strong>{language.TotalCalories}:</strong> {totalCalories}
@@ -182,7 +215,7 @@ const ShoppingCart = () => {
             <Typography>{language.TheCartIsEmpty}.</Typography>
           )}
         </Box>
-      </Box>
+      </Paper>
     </Container>
   );
 };

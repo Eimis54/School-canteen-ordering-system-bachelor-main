@@ -6,34 +6,46 @@ const stripe = Stripe(process.env.REACT_APP_STRIPE_API_KEY_BACKEND);
 const { Order, CartItem, Children, OrderItem } = require('../models');
 
 router.post('/create-checkout-session', async (req, res) => {
-  const { cartItems, userId } = req.body;
-  console.log("Received Cart Items:", cartItems);
+  const { lineItems, userId } = req.body; // Change cartItems to lineItems
+  console.log("Received Line Items:", lineItems); // Log line items
   console.log("Received UserID:", userId);
-
-  const lineItems = cartItems.map(item => ({
-    price_data: {
-      currency: 'eur',
-      product_data: {
-        name: item.product.ProductName,
-      },
-      unit_amount: item.Price * 100,
-    },
-    quantity: item.Quantity,
-  }));
 
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: lineItems,
+      line_items: lineItems, // Use lineItems directly
       mode: 'payment',
       success_url: 'http://localhost:3000/Success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'http://localhost:3000/cancel',
     });
 
+    // Optionally save the session ID or any other details you need
     res.json({ id: session.id });
   } catch (error) {
     console.error('Error creating Stripe session:', error);
     res.status(500).json({ error: 'Failed to create Stripe session' });
+  }
+});
+
+router.post('/refund', async (req, res) => {
+  const { paymentIntentId, amount } = req.body;
+
+  try {
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentIntentId,
+      amount, // Specify an amount in cents if needed
+    });
+
+    // Optionally update the order status in the database to reflect the refund
+    await Order.update(
+      { PaymentStatus: 'refunded' }, // Change to appropriate status
+      { where: { PaymentIntentId: paymentIntentId } }
+    );
+
+    res.status(200).json({ success: true, refund }); // Send success status with refund details
+  } catch (error) {
+    console.error('Refund error:', error);
+    res.status(500).json({ success: false, message: 'Refund failed', error: error.message });
   }
 });
 
@@ -62,14 +74,17 @@ router.post('/payment-success', async (req, res) => {
     const totalCalories = cartItems.reduce((acc, item) => acc + item.Calories * item.Quantity, 0);
     const orderCode = userCartId;
 
+    // Create the new order with the paymentIntentId
     const newOrder = await Order.create({
       UserID: userID,
       ChildID: child?.id,
       ChildName: child?.Name,
-      OrderCode: orderCode, 
+      OrderCode: orderCode,
       TotalPrice: totalAmount,
       TotalCalories: totalCalories,
       Status: true,
+      PaymentIntentId: session.payment_intent, // Save the paymentIntentId
+      PaymentStatus: 'succeeded',
     });
 
     await Promise.all(cartItems.map(async item => {
@@ -89,11 +104,9 @@ router.post('/payment-success', async (req, res) => {
     await CartItem.destroy({ where: { CartID: userCartId } });
 
   } catch (error) {
-
     console.error('Error in payment-success:', error);
     return res.status(500).json({ error: 'Failed to save order', details: error.message });
   }
 });
-
 
 module.exports = router;

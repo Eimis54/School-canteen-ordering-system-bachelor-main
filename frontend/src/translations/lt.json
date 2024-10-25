@@ -267,7 +267,7 @@
   "CloseOrders": "Uždaryti užsakymus",
   "Role": "Role",
   "Actions": "Veiksmai",
-  "ViewOrders": "Peržiūrėti Užsakymus",
+  "ViewOrders": "Peržiūrėti Užsakymą",
   "EditUser": "Redaguoti naudotoją",
   "Save": "Išsaugoti",
 
@@ -280,5 +280,8 @@
   "Tuesday": "Antradienis",
   "Wednesday": "Trečiadienis",
   "Thursday": "Ketvirtadienis",
-  "Friday": "Penktadienis"
+  "Friday": "Penktadienis",
+  "Refunded":"Gražintas",
+  "RefundOrder":"Užsakymo gražinimas",
+  "RefundSuccessful":"Gražinimas sėkmingas"
 }

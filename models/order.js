@@ -53,6 +53,22 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: 'ChildID',
     },
+    PaymentIntentId: {
+      type: DataTypes.STRING,
+      allowNull: true, // Make this nullable if not every order has a PaymentIntent
+      field: 'PaymentIntentId',
+    },
+    ChargeId: {
+      type: DataTypes.STRING,
+      allowNull: true, // Make this nullable if not every order has a ChargeId
+      field: 'ChargeId',
+    },
+    PaymentStatus: {
+      type: DataTypes.ENUM('pending', 'succeeded', 'failed','refunded'),
+      allowNull: false,
+      defaultValue: 'pending',
+      field: 'PaymentStatus',
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,

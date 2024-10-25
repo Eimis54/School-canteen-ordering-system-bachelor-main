@@ -4,24 +4,26 @@ import { Box, Typography, Link, Container } from "@mui/material";
 const Footer = () => {
   return (
     <Box
+      component="footer"
       sx={{
-        backgroundColor: "#FAF7F5", // Light background color for the footer
-        borderTop: "1px solid #C0C0C0", // Border at the top to separate it from the main content
-        padding: 2,
+        backgroundColor: "#FAF7F5", // Light background color
+        borderTop: "1px solid #C0C0C0", // Border to separate it
+        py: 2,
         textAlign: "center",
-        marginTop: "auto", // Makes sure it sticks to the bottom
+        mt: "auto", // Pushes the footer to the bottom
+        width: "100%", // Ensures it stretches across the full width
       }}
     >
       <Container maxWidth="lg">
-        <Typography variant="body1">
+        <Typography variant="body1" color="textSecondary">
           © 2024 School Canteen Ordering System. All Rights Reserved.
         </Typography>
-        <Typography variant="body2">
-          <Link href="/privacy-policy" underline="hover">
+        <Typography variant="body2" color="textSecondary">
+          <Link href="/privacy-policy" underline="hover" color="inherit">
             Privacy Policy
           </Link>{" "}
           |{" "}
-          <Link href="/terms-of-service" underline="hover">
+          <Link href="/terms-of-service" underline="hover" color="inherit">
             Terms of Service
           </Link>
         </Typography>

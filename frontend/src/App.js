@@ -111,6 +111,15 @@ const App = () => {
   return (
     <LanguageProvider>
       <Router>
+      <Box
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100vh",
+    background: "linear-gradient(to right, #FAF7F5 50%, #E8E1DF 70%, #D3CFCB 100%)",
+    backgroundSize: "contain",
+  }}
+>
           <Navbar
             isLoggedIn={isLoggedIn}
             handleLogout={handleLogout}
@@ -120,9 +129,7 @@ const App = () => {
           />
            <Box
       sx={{
-        background: "linear-gradient(to right, #FAF7F5 50%, #E8E1DF 70%, #D3CFCB 100%)",
-        backgroundSize: "contain",
-        height: "auto",
+       flex: 1
       }}
     >
             <Routes>
@@ -273,6 +280,7 @@ const App = () => {
               <Route path="*" element={<Navigate to="/" />} />
 
             </Routes>
+            </Box>
             </Box>
             <Footer />
       </Router>

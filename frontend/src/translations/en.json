@@ -279,7 +279,7 @@
     "CloseOrders":"Close Orders",
     "Role":"Role",
     "Actions":"Actions",
-    "ViewOrders":"View Orders",
+    "ViewOrders":"View Order",
     "EditUser":"Edit User",
     "Save":"Save",
 
@@ -293,7 +293,10 @@
   "Tuesday": "Tuesday",
   "Wednesday": "Wednesday",
   "Thursday": "Thursday",
-  "Friday": "Friday"
+  "Friday": "Friday",
+  "Refunded":"Refunded",
+  "RefundOrder":"Refund Order",
+  "RefundSuccessful":"Refund Successful"
 
     
 

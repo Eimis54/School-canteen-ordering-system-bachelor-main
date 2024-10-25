@@ -148,7 +148,7 @@ router.get('/history/:userId', async (req, res) => {
   try {
     const orders = await Order.findAll({
       where: { UserID: userId },
-      attributes: ['OrderID', 'TotalPrice', 'Status', 'ordercode'],
+      attributes: ['OrderID', 'TotalPrice', 'Status', 'ordercode', 'PaymentIntentId', 'PaymentStatus'], // Added PaymentStatus
       include: [{
         model: OrderItem,
         as: 'orderItems',
@@ -173,7 +173,6 @@ router.get('/history/:userId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 router.get('/specific/:orderId', async (req, res) => {
   const { orderId } = req.params;
 

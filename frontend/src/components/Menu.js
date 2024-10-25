@@ -97,8 +97,8 @@ const Menu = () => {
         {Object.keys(categorizedMenuItems).length ? (
           Object.keys(categorizedMenuItems).map((day, index) => (
             <Paper key={index} elevation={3} sx={notebookStyles.paper}>
-              <Typography variant="h5" gutterBottom sx={notebookStyles.textLine}>
-                {language[day]}
+              <Typography variant="h5" gutterBottom sx={notebookStyles.textLine}>             
+                {language[day]}                 
               </Typography>
               {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
                 <Box key={categoryName} sx={{ marginBottom: 2 }}>
@@ -106,6 +106,7 @@ const Menu = () => {
                     {categoryName}
                   </Typography>
                   <List sx={{ position: "relative" }}>
+                    
                     {categorizedMenuItems[day][categoryName].map((item, idx) => (
                       <ListItem key={idx} sx={notebookStyles.listItem}>
                         <ListItemText
