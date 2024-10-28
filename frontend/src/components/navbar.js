@@ -123,7 +123,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 <Typography variant="h6">{language.Profile}</Typography>
                 <IconButton
               onClick={() => switchLanguage("en")}
-              sx={{ padding: 0 }}
+              sx={{ padding: 0, marginLeft: "1rem" }}
             >
               <img
                 src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
@@ -144,8 +144,10 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
               />
             </IconButton>
                 <IconButton onClick={toggleProfile} sx={{ color: "black" }}>
+                  
                   <CloseIcon />
                 </IconButton>
+                
               </Box>
               <Box component="ul" sx={{ listStyleType: "none", padding: 0, margin: 0 }}>
                 <Button
@@ -209,6 +211,28 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
             <Button onClick={openRegister} sx={{ color: "black", marginLeft: "1rem" }}>
               {language.Register}
             </Button>
+            <IconButton
+              onClick={() => switchLanguage("en")}
+              sx={{ padding: 0, marginLeft: "1rem" }}
+            >
+              <img
+                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
+                alt="EN"
+                width={35}
+                height={20}
+              />
+            </IconButton>
+            <IconButton
+              onClick={() => switchLanguage("lt")}
+              sx={{ padding: 0 }}
+            >
+              <img
+                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
+                alt="LT"
+                width={35}
+                height={20}
+              />
+            </IconButton>
 
             <Drawer
               anchor="right"
@@ -260,6 +284,46 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 />
               )}
             </Drawer>
+          </>
+        )}
+        
+        {isLoggedIn && user?.isCashier && (
+          <>
+            <IconButton
+              onClick={() => switchLanguage("en")}
+              sx={{ padding: 0, marginLeft: "1rem" }}
+            >
+              <img
+                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
+                alt="EN"
+                width={35}
+                height={20}
+              />
+            </IconButton>
+            <IconButton
+              onClick={() => switchLanguage("lt")}
+              sx={{ padding: 0 }}
+            >
+              <img
+                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
+                alt="LT"
+                width={35}
+                height={20}
+              />
+            </IconButton>
+            <Button
+                  onClick={handleLogout}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    backgroundColor: "#ff4d4f",
+                    color: "white",
+                    border: "none",
+                  }}
+                >
+                  {language.logout}
+                </Button>
           </>
         )}
       </Box>

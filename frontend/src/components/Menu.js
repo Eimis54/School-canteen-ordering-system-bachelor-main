@@ -115,6 +115,9 @@ const Menu = () => {
                         />
                         <Box sx={notebookStyles.priceBox}>
                           <Typography variant="body1">{item.Price} Eur.</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {item.Calories} kcal
+                          </Typography>
                         </Box>
                       </ListItem>
                     ))}

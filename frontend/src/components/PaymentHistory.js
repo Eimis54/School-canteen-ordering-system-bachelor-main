@@ -134,13 +134,12 @@ const PaymentHistory = () => {
                     {language.ViewOrders}
                   </Button>
 
-                  {/* Hide the refund button if order is completed or refunded */}
                   {(order.Status !== false && order.PaymentStatus !== 'refunded') && (
                     <Button
                       size="small"
                       color="secondary"
                       variant="outlined"
-                      onClick={() => handleRefund(index)} // Pass the index of the order
+                      onClick={() => handleRefund(index)}
                     >
                       {language.RefundOrder}
                     </Button>

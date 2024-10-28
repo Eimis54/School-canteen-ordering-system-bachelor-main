@@ -33,16 +33,27 @@ router.post('/add', authenticateToken, async (req, res) => {
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const UserID = req.user.id;
-    const { CartID } = req.query; 
+    const { CartID } = req.query;
 
-    const whereClause = CartID ? { CartID } : {}; 
+    const whereClause = CartID ? { CartID } : {};
 
     const cartItems = await db.CartItem.findAll({
       where: whereClause,
       include: [
         { model: db.Children, as: 'child', attributes: ['Name'] },
-        { model: db.Product, as: 'product', attributes: ['ProductName'] }
-      ]
+        {
+          model: db.Product,
+          as: 'product',
+          attributes: ['ProductName'],
+          include: [
+            {
+              model: db.Photo,
+              as: 'Photos',  // Confirm this matches in the Product-Photo association
+              attributes: ['PhotoURL', 'AltText'],
+            },
+          ],
+        },
+      ],
     });
 
     if (cartItems.length === 0) {
@@ -55,6 +66,7 @@ router.get('/', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to retrieve cart items' });
   }
 });
+
 
 router.post('/create', authenticateToken, async (req, res) => {
   try {
@@ -81,7 +93,6 @@ router.delete('/clear/:cartID', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to clear cart' });
   }
 });
-
 router.put('/update/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;

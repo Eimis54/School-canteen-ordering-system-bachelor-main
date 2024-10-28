@@ -1,9 +1,20 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import LanguageContext from '../LanguageContext';
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  CircularProgress,
+  Alert,
+  Grid,
+} from '@mui/material';
 
 const FetchOrderPage = () => {
-  const {language} = useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [orderCode, setOrderCode] = useState('');
   const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
@@ -17,7 +28,6 @@ const FetchOrderPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("API Response: ", response.data);
       setOrder(response.data);
       setError('');
     } catch (error) {
@@ -31,63 +41,83 @@ const FetchOrderPage = () => {
     const token = localStorage.getItem('token');
     setLoading(true);
     try {
-        const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        console.log(language.ResponseFromCompletingOrder, response.data);
-        alert(language.OrderCompletedSuccessfully);
-        fetchOrder();
+      const response = await axios.put(`http://localhost:3001/api/orders/complete/${orderCode}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert(language.OrderCompletedSuccessfully);
+      fetchOrder();
     } catch (error) {
-        alert(language.FailedToCompleteTheOrder);
-        console.error(language.ErrorCompletingOrder, error.response ? error.response.data : error.message);
+      alert(language.FailedToCompleteTheOrder);
+      console.error(language.ErrorCompletingOrder, error.response ? error.response.data : error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     fetchOrder();
   };
 
   return (
-    <div>
-      <h2>{language.FetchbyOrderCode}</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={orderCode}
-          onChange={(e) => setOrderCode(e.target.value)}
-          placeholder={language.EnterOrderCode}
-          required
-        />
-        <button type="submit">{language.FetchOrder}</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {order && (
-        <div>
-          <h3>{language.OrderDetails}</h3>
-          <p>{language.OrderCode} {order.orderCode}</p>
-          <p>{language.Status} {order.status ? language.NotCompleted : language.Completed}</p>
-          <h4>{language.Products}</h4>
-          <ul>
-            {order.products && order.products.map((product, index) => (
-              <li key={index}>
-                {language.ProductName} {product.productName}, {language.Quantity} {product.quantity}, {language.Price} {product.price}, {language.TotalPrice} {product.totalPrice}
-              </li>
-            ))}
-          </ul>
-          <p>{language.TotalOrderPrice} {order.totalOrderPrice} Eur.</p>
+    <Container maxWidth="sm">
+      <Typography variant="h4" gutterBottom align="center">{language.FetchbyOrderCode}</Typography>
+      <Card variant="outlined" style={{ marginTop: '16px' }}>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={8}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  label={language.EnterOrderCode}
+                  value={orderCode}
+                  onChange={(e) => setOrderCode(e.target.value)}
+                  required
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <Button variant="contained" color="primary" type="submit" fullWidth>
+                  {language.FetchOrder}
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+          {error && <Alert severity="error" style={{ marginTop: '16px' }}>{error}</Alert>}
+          {loading && <CircularProgress style={{ marginTop: '16px' }} />}
+          {order && (
+            <div style={{ marginTop: '24px' }}>
+              <Typography variant="h5">{language.OrderDetails}</Typography>
+              <Typography variant="body1">{language.OrderCode}: {order.orderCode}</Typography>
+              <Typography variant="body1">
+                {language.Status}: {order.paymentStatus === 'refunded' ? language.Refunded : (order.status ? language.NotCompleted : language.Completed)}
+              </Typography>
+              <Typography variant="h6" style={{ marginTop: '16px' }}>{language.Products}</Typography>
+              <ul style={{ paddingLeft: '20px' }}>
+                {order.products && order.products.map((product, index) => (
+                  <li key={index}>
+                    <Typography variant="body2">
+                      {language.ProductName}: {product.productName}, {language.Quantity}: {product.quantity}, {language.Price}: {product.price}, {language.TotalPrice}: {(product.totalPrice).toFixed(2)}
+                    </Typography>
+                  </li>
+                ))}
+              </ul>
+              <Typography variant="body1" style={{ marginTop: '8px' }}>
+                {language.TotalOrderPrice}: {(order.totalOrderPrice).toFixed(2)} Eur.
+              </Typography>
 
-          {order.status === true && (
-            <button onClick={completeOrder} disabled={loading}>
-              {loading ? language.Completing : language.CompleteOrder}
-            </button>
+              {order.paymentStatus !== 'refunded' && order.status === true && (
+                <Button variant="contained" color="secondary" onClick={completeOrder} disabled={loading} style={{ marginTop: '16px' }}>
+                  {loading ? language.Completing : language.CompleteOrder}
+                </Button>
+              )}
+            </div>
           )}
-        </div>
-      )}
-    </div>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

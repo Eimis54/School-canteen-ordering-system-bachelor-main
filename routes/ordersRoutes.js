@@ -21,22 +21,26 @@ router.get('/tofetch/:orderCode', authenticateToken, async (req, res) => {
   try {
     const order = await Order.findOne({
       where: { orderCode },
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['ProductName'],
+            },
+          ],
+        },
+      ],
     });
 
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    const orderItems = await OrderItem.findAll({
-      where: { OrderID: order.OrderID },
-      include: [{
-        model: Product,
-        as: 'product',
-        attributes: ['ProductName'],
-      }],
-    });
-
-    const products = orderItems.map(item => ({
+    const products = order.orderItems.map(item => ({
       productName: item.product.ProductName,
       quantity: item.Quantity,
       price: item.Price,
@@ -48,12 +52,14 @@ router.get('/tofetch/:orderCode', authenticateToken, async (req, res) => {
       products,
       totalOrderPrice: products.reduce((total, item) => total + item.totalPrice, 0),
       status: order.Status,
+      paymentStatus: order.PaymentStatus, // Include the payment status here
     });
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({ error: 'Failed to fetch order details' });
   }
 });
+
 
 router.get('/display/:userID', async (req, res) => {
   const { userID } = req.params;

@@ -160,6 +160,7 @@ const OrderSection = () => {
         Quantity: item.Quantity,
         Price: item.Price,
         Calories: item.Calories,
+        PhotoID: item.PhotoID,
       }));
 
       await axios.post(

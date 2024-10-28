@@ -7,8 +7,6 @@ const { Order, CartItem, Children, OrderItem } = require('../models');
 
 router.post('/create-checkout-session', async (req, res) => {
   const { lineItems, userId } = req.body; // Change cartItems to lineItems
-  console.log("Received Line Items:", lineItems); // Log line items
-  console.log("Received UserID:", userId);
 
   try {
     const session = await stripe.checkout.sessions.create({
