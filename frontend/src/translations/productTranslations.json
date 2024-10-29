@@ -1,0 +1,116 @@
+{
+    "products": {
+        "2": { 
+        "en": {
+          "productname": "Egg"
+        },
+        "lt": {
+          "productname": "Kiaušinis"
+        }
+      },
+      "3": { 
+        "en": {
+          "productname": "Apple"
+        },
+        "lt": {
+          "productname": "Obuolys"
+        }
+      },
+      "5": { 
+        "en": {
+          "productname": "Cucumber"
+        },
+        "lt": {
+          "productname": "Agurkas"
+        }
+      },
+      "11": { 
+        "en": {
+          "productname": "Cucumber soup"
+        },
+        "lt": {
+          "productname": "Agurkienė"
+        }
+      },
+      "12": {
+        "en": {
+          "productname": "Poultry steak"
+        },
+        "lt": {
+          "productname": "Kepsnys paukštienos"
+        }
+      },
+      "13": {
+        "en": {
+          "productname": "Poultry pilaf"
+        },
+        "lt": {
+          "productname": "Plovas paukštienos"
+        }
+      },
+      "14": {
+        "en": {
+          "productname": "'Žemaičių' pancakes"
+        },
+        "lt": {
+          "productname": "Žemaičių blynai"
+        }
+      },
+      "15": {
+        "en": {
+          "productname": "Bun with jam"
+        },
+        "lt": {
+          "productname": "Bandelė su džemu"
+        }
+      },
+      "16": {
+        "en": {
+          "productname": "Bun with cottage cheese"
+        },
+        "lt": {
+          "productname": "Bandelė su varške"
+        }
+      },
+      "17": {
+        "en": {
+          "productname": "Bun with sausage"
+        },
+        "lt": {
+          "productname": "Bandelė su dešrele"
+        }
+      },
+      "18": {
+        "en": {
+          "productname": "Syrup drink"
+        },
+        "lt": {
+          "productname": "Gėrimas iš sirupo"
+        }
+      },
+      "19": {
+        "en": {
+          "productname": "Plum juice"
+        },
+        "lt": {
+          "productname": "Sultys slyvų"
+        }
+      },
+      "20": {
+        "en": {
+          "productname": "Apple juice"
+        },
+        "lt": {
+          "productname": "Sultys obuolių"
+        }
+      },
+      "21": {
+        "en": {
+          "productname": "Bun with caramel"
+        },
+        "lt": {
+          "productname": "Bandelė su karamele"
+        }
+      }
+    }
+  }

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_API_KEY_FRONTEND);
 
@@ -52,7 +53,7 @@ const notebookStyles = {
 };
 
 const ShoppingCart = () => {
-  const { language } = useContext(LanguageContext);
+  const { language, getProductName } = useContext(LanguageContext);
   const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -74,17 +75,20 @@ const ShoppingCart = () => {
           params: { CartID },
         });
 
-        // Log the cart items to see the structure
-        console.log(response.data.cartItems);
         setCart(response.data.cartItems);
       } catch (error) {
-        console.error(error);
-        setError("Failed to fetch cart data.");
+        if (error.response && error.response.status === 404) {
+          console.log("Cart is empty.");
+          setCart([]);
+        } else {
+          console.error(error);
+          setError(language.FailedToFetchCartData);
+        }
       }
     };
 
     fetchCartData();
-  }, []);
+  }, [language]);
 
   const handleCheckout = async () => {
     setIsLoading(true);
@@ -96,7 +100,7 @@ const ShoppingCart = () => {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: cartItem.product ? cartItem.product.ProductName : 'N/A',
+            name: getProductName(cartItem.product.ProductID),
           },
           unit_amount: Math.round(cartItem.Price * 100),
         },
@@ -141,7 +145,25 @@ const ShoppingCart = () => {
       );
     } catch (error) {
       console.error("Failed to update quantity:", error);
-      setError("Failed to update quantity. Please try again.");
+      setError(language.FailedToUpdateQuantity);
+    }
+  };
+
+  const handleRemoveItem = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:3001/api/cart/remove/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setCart((prevCart) => prevCart.filter((item) => item.CartItemID !== id));
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("Item already removed.");
+      } else {
+        console.error("Failed to remove item:", error);
+        setError(language.FailedToRemoveItem);
+      }
     }
   };
 
@@ -160,32 +182,47 @@ const ShoppingCart = () => {
         {error && <Typography color="error">{error}</Typography>}
 
         {cart.length > 0 ? (
-          cart.map((cartItem) => (
-            <Card key={cartItem.CartItemID} sx={notebookStyles.card}>
-              <CardContent sx={{ flex: 1 }}>
-                <Typography variant="h6">
-                  {cartItem.product ? cartItem.product.ProductName : "N/A"}
-                </Typography>
-                <Typography color="textSecondary">
-                  {language.Child}: {cartItem.child ? cartItem.child.Name : "N/A"}
-                </Typography>
-                <Typography>{language.Price}: {cartItem.Price} Eur</Typography>
-                <Typography>{language.Calories}: {cartItem.Calories} kcal</Typography>
-              </CardContent>
-              <Box sx={notebookStyles.quantityControl}>
-                <IconButton onClick={() => handleQuantityChange(cartItem.CartItemID, -1)}>
-                  <RemoveIcon />
-                </IconButton>
-                <Typography>{cartItem.Quantity}</Typography>
-                <IconButton onClick={() => handleQuantityChange(cartItem.CartItemID, 1)}>
-                  <AddIcon />
-                </IconButton>
-              </Box>
-            </Card>
-          ))
-        ) : (
-          <Typography>{language.YourCartIsEmpty}</Typography>
-        )}
+  cart.map((cartItem) => {
+    const productName = getProductName(cartItem.ProductID);
+    return (
+      <Card key={cartItem.CartItemID} sx={notebookStyles.card}>
+        <CardMedia
+          component="img"
+          image={`http://localhost:3001/${cartItem.product.Photos.PhotoURL}`}
+          alt={cartItem.product.Photos.AltText}
+          sx={notebookStyles.media}
+        />
+        <CardContent sx={{ flex: 1 }}>
+          <Typography variant="h6">
+            {productName}
+          </Typography>
+          <Typography color="textSecondary">
+            {language.Child}: {cartItem.child ? cartItem.child.Name : "N/A"}
+          </Typography>
+          <Typography>{language.Price}: {cartItem.Price} Eur</Typography>
+          <Typography>{language.Calories}: {cartItem.Calories} kcal</Typography>
+        </CardContent>
+        <Box sx={notebookStyles.quantityControl}>
+          <IconButton onClick={() => handleQuantityChange(cartItem.CartItemID, -1)}>
+            <RemoveIcon />
+          </IconButton>
+          <Typography>{cartItem.Quantity}</Typography>
+          <IconButton onClick={() => handleQuantityChange(cartItem.CartItemID, 1)}>
+            <AddIcon />
+          </IconButton>
+          <IconButton
+            sx={notebookStyles.removeButton}
+            onClick={() => handleRemoveItem(cartItem.CartItemID)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      </Card>
+    );
+  })
+) : (
+  <Typography>{language.YourCartIsEmpty}</Typography>
+)}
 
         {cart.length > 0 && (
           <Box sx={{ marginTop: 2, display: "flex", justifyContent: "space-between" }}>

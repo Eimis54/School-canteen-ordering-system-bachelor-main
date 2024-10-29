@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import './MenuAdministration.css';
+import {
+  Button,
+  Typography,
+  Grid,
+  Select,
+  MenuItem,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  FormHelperText,
+} from '@mui/material';
 import LanguageContext from '../LanguageContext';
 
 axios.defaults.baseURL = 'http://localhost:3001';
@@ -383,55 +393,62 @@ const handlePublicToggle = async (menuId) => {
 
   return (
     <div className="menu-admin-container">
-      <h2>{language.MenuAdministration}</h2>
-  
-      {/* Mygtukai */}
+      <Typography variant="h4">{language.MenuAdministration}</Typography>
+
+      {/* Buttons Section */}
       <div className="section-buttons">
-        <button onClick={() => setActiveSection('menus')}>{language.Menus}</button>
-        <button onClick={() => setActiveSection('categories')}>{language.Categories}</button>
-        <button onClick={() => setActiveSection('products')}>{language.Products}</button>
+        <Button variant="outlined" onClick={() => setActiveSection('menus')}>
+          {language.Menus}
+        </Button>
+        <Button variant="outlined" onClick={() => setActiveSection('categories')}>
+          {language.Categories}
+        </Button>
+        <Button variant="outlined" onClick={() => setActiveSection('products')}>
+          {language.Products}
+        </Button>
       </div>
-  
-      {/* Menu dalis */}
+
+      {/* Menus Section */}
       {activeSection === 'menus' && (
         <div className="menus-section">
-          <div className="menu-selection">
-            <h3>{language.SelectMenuToEdit}</h3>
-            <ul className="menu-list">
-              {menus.map(menu => (
-                <li key={menu.MenuID} className="menu-item">
-                  <button onClick={() => handleMenuSelection(menu.MenuID)}>
-                    {language[menu.DayOfWeek] || menu.DayOfWeek}
-                  </button>
-                  <label className="public-toggle-label">
-  {language.Public}:
-  <input
-    type="checkbox"
-    checked={menu.IsPublic || false}
-    onChange={() => handlePublicToggle(menu.MenuID)}
-    disabled={menu.IsPublic && !menus.some(m => m.MenuID === menu.MenuID && m.IsPublic)}
-  />
-</label>
-                </li>
-              ))}
-            </ul>
-          </div>
-  
+          <Typography variant="h5">{language.SelectMenuToEdit}</Typography>
+          <ul className="menu-list">
+            {menus.map(menu => (
+              <li key={menu.MenuID} className="menu-item">
+                <Button variant="text" onClick={() => handleMenuSelection(menu.MenuID)}>
+                  {language[menu.DayOfWeek] || menu.DayOfWeek}
+                </Button>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={menu.IsPublic || false}
+                      onChange={() => handlePublicToggle(menu.MenuID)}
+                      disabled={menu.IsPublic && !menus.some(m => m.MenuID === menu.MenuID && m.IsPublic)}
+                    />
+                  }
+                  label={language.Public}
+                />
+              </li>
+            ))}
+          </ul>
+
           {selectedMenu && (
             <div className="menu-editor">
-              <h3>{language.EditingMenuFor} {language[selectedMenu.DayOfWeek] || selectedMenu.DayOfWeek}</h3>
-              
-              <h4>{language.MenuItemsbyCategory}</h4>
+              <Typography variant="h6">
+                {language.EditingMenuFor} {language[selectedMenu.DayOfWeek] || selectedMenu.DayOfWeek}
+              </Typography>
+
+              <Typography variant="subtitle1">{language.MenuItemsbyCategory}</Typography>
               {categorizedMenuItems.length ? (
                 categorizedMenuItems.map(category => (
                   <div key={category.CategoryID}>
-                    <h5>{category.CategoryName}</h5>
+                    <Typography variant="h6">{category.CategoryName}</Typography>
                     <ul>
                       {category.products.length ? (
                         category.products.map(item => (
                           <li key={item.ProductID}>
                             {item.ProductName} - {item.Price} Eur. - {item.Calories} {language.Calories}
-                            <button onClick={() => handleRemoveMenuItem(item.ProductID)}>{language.Remove}</button>
+                            <Button onClick={() => handleRemoveMenuItem(item.ProductID)}>{language.Remove}</Button>
                           </li>
                         ))
                       ) : (
@@ -443,221 +460,203 @@ const handlePublicToggle = async (menuId) => {
               ) : (
                 <div>{language.NoCategoriesAvailable}</div>
               )}
-  
+
               <div className="add-menu-item">
-                <h4>{language.AddItemsToMenu}</h4>
-                <select onChange={(e) => {
-                  const productID = parseInt(e.target.value);
-                  const selectedProduct = products.find(p => p.ProductID === productID);
-                  setProductToAdd(selectedProduct);
-                }}>
-                  <option value="">{language.SelectProduct}</option>
+                <Typography variant="h6">{language.AddItemsToMenu}</Typography>
+                <Select
+                  onChange={(e) => {
+                    const productID = parseInt(e.target.value);
+                    const selectedProduct = products.find(p => p.ProductID === productID);
+                    setProductToAdd(selectedProduct);
+                  }}
+                  fullWidth
+                >
+                  <MenuItem value="">{language.SelectProduct}</MenuItem>
                   {products.map(product => (
-                    <option key={product.ProductID} value={product.ProductID}>
+                    <MenuItem key={product.ProductID} value={product.ProductID}>
                       {product.ProductName}
-                    </option>
+                    </MenuItem>
                   ))}
-                </select>
-                <button onClick={handleAddMenuItem}>{language.AddItemsToMenu}</button>
+                </Select>
+                <Button variant="contained" onClick={handleAddMenuItem}>
+                  {language.AddItemsToMenu}
+                </Button>
               </div>
-  
+
               {errorMessage && (
-                <div className="error-message">
-                  {errorMessage}
-                </div>
+                <Typography color="error">{errorMessage}</Typography>
               )}
-  
-              <button onClick={handleSaveMenu}>{language.SaveMenu}</button>
+
+              <Button variant="contained" onClick={handleSaveMenu}>
+                {language.SaveMenu}
+              </Button>
             </div>
           )}
         </div>
       )}
-      
-   {/* Kategoriju dalis */}
-  {activeSection === 'categories' && (
-  <div className="category-management">
-    <h3>{language.AddNewCategory}</h3>
-    <form onSubmit={handleAddCategory}>
-      <label>
-        {language.CategoryName}
-        <input
-          type="text"
-          name="CategoryName"
-          placeholder={language.CategoryName}
-          value={newCategory.CategoryName}
-          onChange={handleNewCategoryChange}
-          required
-        />
-      </label>
-      <button type="submit">{language.AddCategory}</button>
-    </form>
 
-    {errorMessage && (
-      <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>
-        {errorMessage}
-      </div>
-    )}
+      {/* Categories Section */}
+      {activeSection === 'categories' && (
+        <div className="category-management">
+          <Typography variant="h5">{language.AddNewCategory}</Typography>
+          <form onSubmit={handleAddCategory}>
+            <TextField
+              label={language.CategoryName}
+              name="CategoryName"
+              value={newCategory.CategoryName}
+              onChange={handleNewCategoryChange}
+              required
+              fullWidth
+            />
+            <Button type="submit" variant="contained">{language.AddCategory}</Button>
+          </form>
 
-    <h3>{language.ManageCategories}</h3>
-    {categories.length ? (
-      <ul>
-        {categories.map(category => (
-          <li key={category.CategoryID}>
-            {category.CategoryName}
-            <button onClick={() => setSelectedCategory(category)}>{language.Edit}</button>
-            <button onClick={() => handleDeleteCategory(category.CategoryID)}>{language.Delete}</button>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <div>{language.NoCategoriesAvailable}</div>
-    )}
-    
-    {selectedCategory && (
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        handleEditCategory();
-      }}>
-        <label>
-          {language.CategoryName}
-          <input
-            type="text"
-            placeholder={language.CategoryName}
-            value={selectedCategory.CategoryName}
-            onChange={(e) => setSelectedCategory({ ...selectedCategory, CategoryName: e.target.value })}
-            required
-          />
-        </label>
-        <button type="submit">{language.SaveChanges}</button>
-        <button type="button" onClick={() => setSelectedCategory(null)}>{language.Cancel}</button>
-      </form>
-    )}
-  </div>
-)}
-      {/* Produktu dalis */}
+          {errorMessage && (
+            <Typography color="error">{errorMessage}</Typography>
+          )}
+
+          <Typography variant="h5">{language.ManageCategories}</Typography>
+          {categories.length ? (
+            <ul>
+              {categories.map(category => (
+                <li key={category.CategoryID}>
+                  {category.CategoryName}
+                  <Button onClick={() => setSelectedCategory(category)}>{language.Edit}</Button>
+                  <Button onClick={() => handleDeleteCategory(category.CategoryID)}>{language.Delete}</Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div>{language.NoCategoriesAvailable}</div>
+          )}
+
+          {selectedCategory && (
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              handleEditCategory();
+            }}>
+              <TextField
+                label={language.CategoryName}
+                placeholder={language.CategoryName}
+                value={selectedCategory.CategoryName}
+                onChange={(e) => setSelectedCategory({ ...selectedCategory, CategoryName: e.target.value })}
+                required
+                fullWidth
+              />
+              <Button type="submit">{language.SaveChanges}</Button>
+              <Button type="button" onClick={() => setSelectedCategory(null)}>{language.Cancel}</Button>
+            </form>
+          )}
+        </div>
+      )}
+
+      {/* Products Section */}
       {activeSection === 'products' && (
         <div className="product-management">
-          <h3>{language.AddNewProduct}</h3>
+          <Typography variant="h5">{language.AddNewProduct}</Typography>
           {errorMessage && (
-            <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>
-              {errorMessage}
-            </div>
+            <Typography color="error">{errorMessage}</Typography>
           )}
           <form onSubmit={handleAddProduct}>
-            <label>
-              {language.ProductName}
-              <input
-                type="text"
-                name="ProductName"
-                placeholder={language.ProductName}
-                value={newProduct.ProductName}
-                onChange={handleNewProductChange}
-                required
-              />
-            </label>
-            <label>
-              {language.Price}:
-              <input
-                type="number"
-                name="Price"
-                placeholder={language.Price}
-                value={newProduct.Price}
-                onChange={handleNewProductChange}
-                required
-              />
-            </label>
-            <label>
-              {language.Category}:
-              <select
-                name="CategoryID"
-                placeholder={language.Category}
-                value={newProduct.CategoryID}
-                onChange={handleNewProductChange}
-                required
-              >
-                <option value="">{language.SelectCategory}</option>
-                {categories.map(category => (
-                  <option key={category.CategoryID} value={category.CategoryID}>
-                    {category.CategoryName}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {language.Calories}:
-              <input
-                type="number"
-                name="Calories"
-                placeholder={language.Calories}
-                value={newProduct.Calories}
-                onChange={handleNewProductChange}
-                required
-              />
-            </label>
-            <button type="submit">{language.AddProduct}</button>
+            <TextField
+              label={language.ProductName}
+              name="ProductName"
+              value={newProduct.ProductName}
+              onChange={handleNewProductChange}
+              required
+              fullWidth
+            />
+            <TextField
+              label={language.Price}
+              type="number"
+              name="Price"
+              value={newProduct.Price}
+              onChange={handleNewProductChange}
+              required
+              fullWidth
+            />
+            <Select
+            placeholder={language.SelectCategory}
+              name="CategoryID"
+              value={newProduct.CategoryID}
+              onChange={handleNewProductChange}
+              required
+              fullWidth
+            >
+              <MenuItem value="">{language.SelectCategory}</MenuItem>
+              {categories.map(category => (
+                <MenuItem key={category.CategoryID} value={category.CategoryID}>
+                  {category.CategoryName}
+                </MenuItem>
+              ))}
+            </Select>
+            <TextField
+              label={language.Calories}
+              type="number"
+              name="Calories"
+              value={newProduct.Calories}
+              onChange={handleNewProductChange}
+              required
+              fullWidth
+            />
+            <Button type="submit" variant="contained">{language.AddProduct}</Button>
           </form>
-  
-          <h3>{language.ManageProducts}</h3>
-          {products.map((product) => (
+
+          <Typography variant="h5">{language.ManageProducts}</Typography>
+          {products.map(product => (
             <div key={product.ProductID}>
-              <h3>{product.ProductName}</h3>
-              <p>{language.Price}: {product.Price} Eur.</p>
-              <p>{language.Calories}: {product.Calories}</p>
-              <p>{language.Category}: {categories.find(cat => cat.CategoryID === product.CategoryID)?.CategoryName || language.Unknown}</p>
-              <button onClick={() => setSelectedProduct(product)}>{language.Edit}</button>
-              <button onClick={() => handleDeleteProduct(product.ProductID)}>{language.Delete}</button>
+              <Typography variant="h6">{product.ProductName}</Typography>
+              <Typography>{language.Price}: {product.Price} Eur.</Typography>
+              <Typography>{language.Calories}: {product.Calories}</Typography>
+              <Typography>{language.Category}: {categories.find(cat => cat.CategoryID === product.CategoryID)?.CategoryName || language.Unknown}</Typography>
+              <Button onClick={() => setSelectedProduct(product)}>{language.Edit}</Button>
+              <Button onClick={() => handleDeleteProduct(product.ProductID)}>{language.Delete}</Button>
             </div>
           ))}
-          
+
           {selectedProduct && (
             <form onSubmit={(e) => {
               e.preventDefault();
               handleEditProduct();
             }}>
-              <label>
-                {language.ProductName}
-                <input
-                  type="text"
-                  value={selectedProduct.ProductName}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, ProductName: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                {language.Price}:
-                <input
-                  type="number"
-                  value={selectedProduct.Price}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, Price: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                {language.Calories}:
-                <input
-                  type="number"
-                  value={selectedProduct.Calories}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, Calories: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                {language.Category}:
-                <select
-                  value={selectedProduct.CategoryID}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, CategoryID: e.target.value })}
-                  required
-                >
-                  <option value="">{language.SelectCategory}</option>
-                  {categories.map(category => (
-                    <option key={category.CategoryID} value={category.CategoryID}>
-                      {category.CategoryName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button type="submit">{language.SaveChanges}</button>
-              <button type="button" onClick={() => setSelectedProduct(null)}>{language.Cancel}</button>
+              <TextField
+                label={language.ProductName}
+                value={selectedProduct.ProductName}
+                onChange={(e) => setSelectedProduct({ ...selectedProduct, ProductName: e.target.value })}
+                required
+                fullWidth
+              />
+              <TextField
+                label={language.Price}
+                type="number"
+                value={selectedProduct.Price}
+                onChange={(e) => setSelectedProduct({ ...selectedProduct, Price: e.target.value })}
+                required
+                fullWidth
+              />
+              <TextField
+                label={language.Calories}
+                type="number"
+                value={selectedProduct.Calories}
+                onChange={(e) => setSelectedProduct({ ...selectedProduct, Calories: e.target.value })}
+                required
+                fullWidth
+              />
+              <Select
+                value={selectedProduct.CategoryID}
+                onChange={(e) => setSelectedProduct({ ...selectedProduct, CategoryID: e.target.value })}
+                required
+                fullWidth 
+              >
+                <MenuItem value="">{language.SelectCategory}</MenuItem>
+                {categories.map(category => (
+                  <MenuItem key={category.CategoryID} value={category.CategoryID}>
+                    {category.CategoryName}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Button type="submit">{language.SaveChanges}</Button>
+              <Button type="button" onClick={() => setSelectedProduct(null)}>{language.Cancel}</Button>
             </form>
           )}
         </div>

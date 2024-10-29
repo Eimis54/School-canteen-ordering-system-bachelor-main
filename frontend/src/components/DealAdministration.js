@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { Container, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel, Snackbar, CircularProgress, Paper, List, ListItem, ListItemText, Checkbox } from '@mui/material';
 import LanguageContext from '../LanguageContext';
 
 const API_BASE_URL = 'http://localhost:3001';
 
 const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [deals, setDeals] = useState([]);
   const [currentDealId, setCurrentDealId] = useState(null);
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     fetchDeals();
@@ -29,6 +31,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       setDeals(response.data);
     } catch (error) {
       setError(language.FailedToFetchDeals);
+      setSnackbarOpen(true);
     }
   };
 
@@ -47,6 +50,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       setCurrentDealId(DealID);
     } catch (error) {
       setError(language.FailedToFetchDeals);
+      setSnackbarOpen(true);
     }
   };
 
@@ -66,6 +70,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       fetchDeals();
     } catch (error) {
       setError(language.FailedToUpdateDeal);
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
     }
@@ -81,6 +86,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       setPhotos(response.data);
     } catch (error) {
       setError(language.FailedToFetchPhotos);
+      setSnackbarOpen(true);
     }
   };
 
@@ -119,6 +125,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       }
     } catch (error) {
       setError(language.ErrorOccured);
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
     }
@@ -142,19 +149,20 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
       fetchDeals();
     } catch (error) {
       setError(language.FailedToDeleteDeal);
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
     }
   };
-  const handleCancel = () => {
 
+  const handleCancel = () => {
     setFormData({ title: '', description: '', photoUrl: '' });
     setCurrentDealId(null);
-    
     if (typeof onCancel === 'function') {
       onCancel();
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -164,99 +172,126 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
     setFormData({ ...formData, photoUrl: e.target.value });
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <div>
-      <h2>{currentDealId ? language.EditDeal : language.CreateDeal}</h2>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <form onSubmit={handleSave}>
-        <div>
-          <label>{language.Title}</label>
-          <input
-            type="text"
+    <Container>
+      <Paper sx={{ padding: 2 }}>
+        <Typography variant="h4" gutterBottom>
+          {currentDealId ? language.EditDeal : language.CreateDeal}
+        </Typography>
+        {error && (
+          <Snackbar
+            open={snackbarOpen}
+            onClose={handleSnackbarClose}
+            message={error}
+            autoHideDuration={6000}
+          />
+        )}
+        <form onSubmit={handleSave}>
+          <TextField
+            label={language.Title}
             name="title"
             placeholder={language.Title}
             value={formData.title}
             onChange={handleChange}
+            fullWidth
             required
+            margin="normal"
           />
-        </div>
-        <div>
-          <label>{language.Description}</label>
-          <textarea
+          <TextField
+            label={language.Description}
             name="description"
             placeholder={language.Description}
             value={formData.description}
             onChange={handleChange}
+            multiline
+            rows={4}
+            fullWidth
+            margin="normal"
           />
-        </div>
-        <div>
-          <label>{language.Photo}</label>
-          <select name="photoUrl" value={formData.photoUrl} onChange={handlePhotoSelect}>
-  <option value="">{language.SelectAPhoto}</option>
-  {photos.map((photo) => (
-    <option key={photo.PhotoID} value={photo.PhotoURL}>
-      {photo.AltText || language.NoDescription}
-    </option>
-  ))}
-</select>
-          {formData.photoUrl && 
-            <img 
+          <FormControl fullWidth margin="normal">
+            <InputLabel>{language.Photo}</InputLabel>
+            <Select name="photoUrl" value={formData.photoUrl} onChange={handlePhotoSelect}>
+              <MenuItem value="">{language.SelectAPhoto}</MenuItem>
+              {photos.map((photo) => (
+                <MenuItem key={photo.PhotoID} value={photo.PhotoURL}>
+                  {photo.AltText || language.NoDescription}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {formData.photoUrl && (
+            <img
               src={
                 formData.photoUrl.startsWith('http')
                   ? formData.photoUrl
                   : `${API_BASE_URL}/${formData.photoUrl.replace(/\\/g, '/')}`
-              } 
-              alt={language.Selected} 
-              style={{ maxWidth: '200px', marginTop: '10px' }} 
-            />
-          }
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? language.Saving : (currentDealId ? language.Update : language.Create)}
-        </button>
-        {currentDealId && (
-          <button type="button" onClick={() => handleDelete(currentDealId)} disabled={loading}>
-            {loading ? language.Deleting : language.Delete}
-          </button>
-        )}
-        <button type="button" onClick={handleCancel}>
-          {language.Cancel}
-        </button>
-      </form>
-
-      <h2>{language.DealList}</h2>
-      {deals.length === 0 ? (
-        <p>{language.NoDealsFound}</p>
-      ) : (
-        <ul>
-          {deals.map(deal => (
-            <li key={deal.DealID}>
-              <h3>{deal.title}</h3>
-              <p>{deal.description}</p>
-              {deal.photoUrl && 
-                <img 
-                  src={`${API_BASE_URL}/${deal.photoUrl.replace(/\\/g, '/')}`} 
-                  alt={deal.title} 
-                  style={{ maxWidth: '100px', marginTop: '10px' }} 
-                />
               }
-              <div>
-                <label>
-                  <input
-                    type="checkbox"
+              alt={language.Selected}
+              style={{ maxWidth: '200px', marginTop: '10px' }}
+            />
+          )}
+          <div>
+            <Button type="submit" variant="contained" color="primary" disabled={loading}>
+              {loading ? <CircularProgress size={24} /> : (currentDealId ? language.Update : language.Create)}
+            </Button>
+            {currentDealId && (
+              <Button variant="contained" color="secondary" onClick={() => handleDelete(currentDealId)} disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : language.Delete}
+              </Button>
+            )}
+            <Button variant="outlined" color="default" onClick={handleCancel}>
+              {language.Cancel}
+            </Button>
+          </div>
+        </form>
+
+        <Typography variant="h5" gutterBottom sx={{ marginTop: 4 }}>
+          {language.DealList}
+        </Typography>
+        {deals.length === 0 ? (
+          <Typography>{language.NoDealsFound}</Typography>
+        ) : (
+          <List>
+            {deals.map(deal => (
+              <ListItem key={deal.DealID} sx={{ border: '1px solid #ccc', marginBottom: 1, padding: 1 }}>
+                <ListItemText
+                  primary={deal.title}
+                  secondary={
+                    <>
+                      <Typography variant="body2">{deal.description}</Typography>
+                      {deal.photoUrl && (
+                        <img
+                          src={`${API_BASE_URL}/${deal.photoUrl.replace(/\\/g, '/')}`}
+                          alt={deal.title}
+                          style={{ maxWidth: '100px', marginTop: '10px' }}
+                        />
+                      )}
+                    </>
+                  }
+                />
+                <div>
+                  <Checkbox
                     checked={deal.isFeatured}
                     onChange={() => toggleFeatured(deal.DealID, deal.isFeatured)}
                   />
-                  {language.DisplayInCarousel}
-                </label>
-              </div>
-              <button onClick={() => handleEdit(deal.DealID)}>{language.Edit}</button>
-              <button onClick={() => handleDelete(deal.DealID)}>{language.Delete}</button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+                  <Typography variant="body2">{language.DisplayInCarousel}</Typography>
+                </div>
+                <Button variant="outlined" onClick={() => handleEdit(deal.DealID)}>
+                  {language.Edit}
+                </Button>
+                <Button variant="outlined" color="error" onClick={() => handleDelete(deal.DealID)}>
+                  {language.Delete}
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </Paper>
+    </Container>
   );
 };
 

@@ -2,24 +2,14 @@ import React from "react";
 import CarouselComponent from "./Carousel";
 import Menu from "./Menu";
 import OrderSection from "./OrderSection";
-import "./loggedInPage.css";
 import BannerComponent from "../designcomponents/BannerComponent";
 import { Box, Container } from "@mui/material";
-// import backgroundImg from "../assets/backgroundImg.png";
 
 const LoggedInPage = () => {
   return (
     <div className="home-page">
       <Box
         sx={{
-          // backgroundImage: `url('${backgroundImg}')`,
-          // backgroundSize: "cover",
-          // backgroundPosition: "center",
-          // backgroundRepeat: "no-repeat",
-          // width: "100%",
-          // height: "100%", // Full height of the viewport
-          // position: "relative",
-          // overflow: "hidden",
         }}
       >
         <Container

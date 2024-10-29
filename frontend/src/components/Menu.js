@@ -8,17 +8,16 @@ import {
   ListItemText,
   CircularProgress,
   Container,
-  backdropClasses,
 } from "@mui/material";
 import LanguageContext from "../LanguageContext";
 
 // Custom styles
 const notebookStyles = {
   paper: {
-    borderLeft: "4px solid #d1d1d1", // Vertical line on the left (like notebook margin)
+    borderLeft: "4px solid #d1d1d1",
     padding: "20px",
     marginBottom: "20px",
-    position: "relative", // Make it relative for absolute positioning of the vertical line
+    position: "relative",
     backgroundColor: "#EAEBE5",
   },
   listItem: {
@@ -30,17 +29,17 @@ const notebookStyles = {
   },
   verticalLine: {
     position: "absolute",
-    left: "18%", // Position the vertical line at the end of the price box
-    top: "0", // Align it to the top of the parent box
-    height: "126%", // Make it extend the full height of the list items
-    borderLeft: "2px solid rgba(0, 0, 0, 0.1)", // Vertical line
-    marginLeft: "10px", // Space between the product and the vertical line
-    backgroundColor:"#C46962"
+    left: "18%",
+    top: "0",
+    height: "126%",
+    borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
+    marginLeft: "10px",
+    backgroundColor: "#C46962",
   },
 };
 
 const Menu = () => {
-  const { language } = useContext(LanguageContext);
+  const { language, getProductName } = useContext(LanguageContext); // Destructure getProductName
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -98,19 +97,18 @@ const Menu = () => {
           Object.keys(categorizedMenuItems).map((day, index) => (
             <Paper key={index} elevation={3} sx={notebookStyles.paper}>
               <Typography variant="h5" gutterBottom sx={notebookStyles.textLine}>             
-                {language[day]}                 
+                {language[day] || day} {/* Translate day names, fallback to the original if not found */}                 
               </Typography>
               {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
                 <Box key={categoryName} sx={{ marginBottom: 2 }}>
                   <Typography variant="h6" sx={notebookStyles.textLine}>
-                    {categoryName}
+                    {language[categoryName] || categoryName} {/* Translate category names, fallback to the original if not found */}
                   </Typography>
                   <List sx={{ position: "relative" }}>
-                    
                     {categorizedMenuItems[day][categoryName].map((item, idx) => (
                       <ListItem key={idx} sx={notebookStyles.listItem}>
                         <ListItemText
-                          primary={item.ProductName}
+                          primary={getProductName(item.ProductID)} // Translate product names
                           secondary={item.Description}
                         />
                         <Box sx={notebookStyles.priceBox}>

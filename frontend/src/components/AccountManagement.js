@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import './AccountManagement.css';
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  InputAdornment,
+  Alert,
+  Container,
+  Paper
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LanguageContext from '../LanguageContext';
 
 const AccountManagement = () => {
@@ -25,7 +36,6 @@ const AccountManagement = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
@@ -75,6 +85,7 @@ const AccountManagement = () => {
     const phoneRegex = /^\+\d{11}$/;
     return phoneRegex.test(phoneNumber);
   };
+
   const validateEmail = (email) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
@@ -85,7 +96,7 @@ const AccountManagement = () => {
       return true;
     }
   };
-  
+
   const handleUserDetailsSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(userDetails.email)) {
@@ -135,14 +146,14 @@ const AccountManagement = () => {
   const handlePasswordChangeSubmit = async (e) => {
     e.preventDefault();
     if (!validatePassword()) {
-        setPasswordMessage(language.PasswordMustBeAtleast);
-        setPasswordMessageType('error');
-        return;
+      setPasswordMessage(language.PasswordMustBeAtleast);
+      setPasswordMessageType('error');
+      return;
     }
     if (passwordDetails.newPassword !== passwordDetails.confirmPassword) {
-        setPasswordMessage(language.NewPasswordNoMatch);
-        setPasswordMessageType('error');
-        return;
+      setPasswordMessage(language.NewPasswordNoMatch);
+      setPasswordMessageType('error');
+      return;
     }
     try {
       const token = localStorage.getItem('token');
@@ -159,124 +170,157 @@ const AccountManagement = () => {
         }),
       });
 
-        if (response.ok) {
-            setPasswordDetails({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            setPasswordMessage(language.PasswordChangedSuccess);
-            setPasswordMessageType('success');
-        } else {
-            const errorData = await response.json();
-            console.error(language.FailedToChangePass, response.status, errorData);
+      if (response.ok) {
+        setPasswordDetails({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        setPasswordMessage(language.PasswordChangedSuccess);
+        setPasswordMessageType('success');
+      } else {
+        const errorData = await response.json();
+        console.error(language.FailedToChangePass, response.status, errorData);
 
-            // Check for specific error code and set the message accordingly
-            if (errorData.errorCode === 'CURRENT_PASSWORD_INCORRECT') {
-                setPasswordMessage(language.CurrentPasswordIncorrect); // Set the translated message
-            } else {
-                const errorMessage = errorData.message || errorData.error || 'Unknown error';
-                setPasswordMessage(`${language.FailedToChangePass} ${errorMessage}`);
-            }
-            setPasswordMessageType('error');
+        if (errorData.errorCode === 'CURRENT_PASSWORD_INCORRECT') {
+          setPasswordMessage(language.CurrentPasswordIncorrect);
+        } else {
+          const errorMessage = errorData.message || errorData.error || 'Unknown error';
+          setPasswordMessage(`${language.FailedToChangePass} ${errorMessage}`);
         }
-    } catch (error) {
-        console.error(language.FailedToChangePass, error);
-        setPasswordMessage(language.FailedToChangePassNetwork);
         setPasswordMessageType('error');
+      }
+    } catch (error) {
+      console.error(language.FailedToChangePass, error);
+      setPasswordMessage(language.FailedToChangePassNetwork);
+      setPasswordMessageType('error');
     }
-};
+  };
 
   return (
-    <div className="container">
-      <h2 className="title">{language.AccountManagement}</h2>
-      {accountMessage && <div className={`message ${accountMessageType}`}>{accountMessage}</div>}
-      <form className="form" noValidate onSubmit={handleUserDetailsSubmit}>
-        <input
-          type="text"
-          name="name"
-          className="input"
-          placeholder={language.EnterName}
-          value={userDetails.name}
-          onChange={handleUserDetailsChange}
-        />
-        <input
-          type="text"
-          name="surname"
-          className="input"
-          placeholder={language.EnterSurname}
-          value={userDetails.surname}
-          onChange={handleUserDetailsChange}
-        />
-        <input
-          type="email"
-          name="email"
-          className="input"
-          placeholder={language.EnterEmail}
-          value={userDetails.email}
-          onChange={handleUserDetailsChange}
-        />
-       {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-        <input
-          type="text"
-          name="phoneNumber"
-          className="input"
-          placeholder={language.EnterPhoneNumber}
-          value={userDetails.phoneNumber}
-          onChange={handleUserDetailsChange}
-        />
-        <button type="submit" className="button">{language.UpdateDetails}</button>
-      </form>
-      <h2 className="title">{language.ChangePassword}</h2>
-      {passwordMessage && <div className={`message ${passwordMessageType}`}>{passwordMessage}</div>}
-      <form className="form" onSubmit={handlePasswordChangeSubmit}>
-        <div className="password-container">
-          <input
-            type={showCurrentPassword ? "text" : "password"}
+    <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <Paper elevation={3} sx={{ p: 4, bgcolor: '#f5f5f5' }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          {language.AccountManagement}
+        </Typography>
+
+        {accountMessage && (
+          <Alert severity={accountMessageType} sx={{ mb: 2 }}>
+            {accountMessage}
+          </Alert>
+        )}
+
+        <form onSubmit={handleUserDetailsSubmit}>
+          <TextField
+            label={language.EnterName}
+            name="name"
+            fullWidth
+            margin="normal"
+            value={userDetails.name}
+            onChange={handleUserDetailsChange}
+          />
+          <TextField
+            label={language.EnterSurname}
+            name="surname"
+            fullWidth
+            margin="normal"
+            value={userDetails.surname}
+            onChange={handleUserDetailsChange}
+          />
+          <TextField
+            label={language.EnterEmail}
+            name="email"
+            type="email"
+            fullWidth
+            margin="normal"
+            value={userDetails.email}
+            error={Boolean(emailError)}
+            helperText={emailError}
+            onChange={(e) => {
+              handleUserDetailsChange(e);
+              setEmailError('');
+            }}
+          />
+          <TextField
+            label={language.EnterPhoneNumber}
+            name="phoneNumber"
+            fullWidth
+            margin="normal"
+            value={userDetails.phoneNumber}
+            onChange={handleUserDetailsChange}
+          />
+          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+            {language.UpdateDetails}
+          </Button>
+        </form>
+
+        <Typography variant="h5" align="center" gutterBottom sx={{ mt: 4 }}>
+          {language.ChangePassword}
+        </Typography>
+
+        {passwordMessage && (
+          <Alert severity={passwordMessageType} sx={{ mb: 2 }}>
+            {passwordMessage}
+          </Alert>
+        )}
+
+        <form onSubmit={handlePasswordChangeSubmit}>
+          <TextField
+            label={language.EnterCurrentPassword}
             name="currentPassword"
-            className="input"
-            placeholder={language.EnterCurrentPassword}
+            type={showCurrentPassword ? 'text' : 'password'}
+            fullWidth
+            margin="normal"
             value={passwordDetails.currentPassword}
             onChange={handlePasswordDetailsChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowCurrentPassword(!showCurrentPassword)}>
+                    {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <span
-            className="eye-icon"
-            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-          >
-            {showCurrentPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-        <div className="password-container">
-          <input
-            type={showNewPassword ? "text" : "password"}
+          <TextField
+            label={language.EnterNewPassword}
             name="newPassword"
-            className="input"
-            placeholder={language.EnterNewPassword}
+            type={showNewPassword ? 'text' : 'password'}
+            fullWidth
+            margin="normal"
             value={passwordDetails.newPassword}
             onChange={handlePasswordDetailsChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowNewPassword(!showNewPassword)}>
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <span
-            className="eye-icon"
-            onClick={() => setShowNewPassword(!showNewPassword)}
-          >
-            {showNewPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-        <div className="password-container">
-          <input
-            type={showConfirmPassword ? "text" : "password"}
+          <TextField
+            label={language.ConfirmNewPassword}
             name="confirmPassword"
-            className="input"
-            placeholder={language.ConfirmNewPassword}
+            type={showConfirmPassword ? 'text' : 'password'}
+            fullWidth
+            margin="normal"
             value={passwordDetails.confirmPassword}
             onChange={handlePasswordDetailsChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <span
-            className="eye-icon"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          >
-            {showConfirmPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-        <button type="submit" className="button">{language.ChangePassword}</button>
-      </form>
-    </div>
+          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+            {language.ChangePassword}
+          </Button>
+        </form>
+      </Paper>
+    </Container>
   );
 };
 

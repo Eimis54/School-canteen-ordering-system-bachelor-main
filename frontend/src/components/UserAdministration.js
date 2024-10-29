@@ -2,9 +2,23 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import EditDeal from './DealAdministration';
 import LanguageContext from '../LanguageContext';
+import {
+  Container,
+  Typography,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  Box,
+  Snackbar,
+} from '@mui/material';
 
 const UserAdministration = () => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,11 +30,10 @@ const UserAdministration = () => {
     name: '',
     surname: '',
     email: '',
-    roleID: 1
+    roleID: 1,
   });
   const [showEditDeal, setShowEditDeal] = useState(false);
   const [editDealId, setEditDealId] = useState(null);
-
 
   useEffect(() => {
     fetchUsers();
@@ -90,7 +103,7 @@ const UserAdministration = () => {
       name: user.Name,
       surname: user.Surname,
       email: user.Email,
-      roleID: user.RoleID
+      roleID: user.RoleID,
     });
   };
 
@@ -126,7 +139,7 @@ const UserAdministration = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-  
+
       if (response.status === 200) {
         setOrders(response.data);
         setShowOrders(true);
@@ -144,126 +157,165 @@ const UserAdministration = () => {
     setFormData({ name: '', surname: '', email: '', roleID: 1 });
   };
 
+  const handleCloseSnackbar = () => {
+    setError(null);
+  };
+
   if (loading) return <div>{language.Loading}</div>;
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (
+      <Snackbar
+        open={!!error}
+        onClose={handleCloseSnackbar}
+        message={error}
+        autoHideDuration={6000}
+      />
+    );
+  }
 
   return (
-    <div>
-      <h2>{language.UserAdministration}</h2>
+    <Container maxWidth="lg" sx={{ mt: 5 }}>
+      <Typography variant="h4" gutterBottom>
+        {language.UserAdministration}
+      </Typography>
       {showOrders && (
-        <div>
-          <h3>{language.UserOrders}</h3>
+        <Paper elevation={3} sx={{ p: 2, mb: 4 }}>
+          <Typography variant="h6">{language.UserOrders}</Typography>
           {orders.length === 0 ? (
-            <p>{language.NoExistingOrders}</p>
+            <Typography>{language.NoExistingOrders}</Typography>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>{language.OrderID}</th>
-                  <th>{language.TotalPrice}</th>
-                  <th>{language.TotalCalories}</th>
-                  <th>{language.Status}</th>
-                  <th>{language.OrderDate}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map(order => (
-                  <tr key={order.OrderID}>
-                    <td>{order.OrderID}</td>
-                    <td>{order.TotalPrice}</td>
-                    <td>{order.TotalCalories}</td>
-                    <td>
-                {order.status === 0 ? language.Completed : 
-                 order.status === 1 ? language.NotCompleted :
-                 null
-                }
-            </td>
-                    <td>{order.OrderDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{language.OrderID}</TableCell>
+                    <TableCell>{language.TotalPrice}</TableCell>
+                    <TableCell>{language.TotalCalories}</TableCell>
+                    <TableCell>{language.Status}</TableCell>
+                    <TableCell>{language.OrderDate}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {orders.map(order => (
+                    <TableRow key={order.OrderID}>
+                      <TableCell>{order.OrderID}</TableCell>
+                      <TableCell>{order.TotalPrice}</TableCell>
+                      <TableCell>{order.TotalCalories}</TableCell>
+                      <TableCell>
+                        {order.status === 0 ? language.Completed : 
+                         order.status === 1 ? language.NotCompleted : 
+                         null
+                        }
+                      </TableCell>
+                      <TableCell>{order.OrderDate}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
-          <button onClick={() => setShowOrders(false)}>{language.CloseOrders}</button>
-        </div>
+          <Button onClick={() => setShowOrders(false)} variant="outlined" sx={{ mt: 2 }}>
+            {language.CloseOrders}
+          </Button>
+        </Paper>
       )}
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>{language.Name}</th>
-            <th>{language.Surname}</th>
-            <th>{language.Email}</th>
-            <th>{language.Role}</th>
-            <th>{language.Actions}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.UserID}>
-              <td>{user.UserID}</td>
-              <td>{user.Name}</td>
-              <td>{user.Surname}</td>
-              <td>{user.Email}</td>
-              <td>{roles.find(role => role.RoleID === user.RoleID)?.RoleName || language.Unknown}</td>
-              <td>
-                <button onClick={() => handleDelete(user.UserID)}>{language.Delete}</button>
-                <button onClick={() => handleEdit(user)}>{language.Edit}</button>
-                <button onClick={() => handleViewOrders(user.UserID)}>{language.ViewOrders}</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>{language.Name}</TableCell>
+                <TableCell>{language.Surname}</TableCell>
+                <TableCell>{language.Email}</TableCell>
+                <TableCell>{language.Role}</TableCell>
+                <TableCell>{language.Actions}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map(user => (
+                <TableRow key={user.UserID}>
+                  <TableCell>{user.UserID}</TableCell>
+                  <TableCell>{user.Name}</TableCell>
+                  <TableCell>{user.Surname}</TableCell>
+                  <TableCell>{user.Email}</TableCell>
+                  <TableCell>{roles.find(role => role.RoleID === user.RoleID)?.RoleName || language.Unknown}</TableCell>
+                  <TableCell>
+                    <Button variant="contained" color="error" onClick={() => handleDelete(user.UserID)}>
+                      {language.Delete}
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={() => handleEdit(user)} sx={{ mx: 1 }}>
+                      {language.Edit}
+                    </Button>
+                    <Button variant="outlined" onClick={() => handleViewOrders(user.UserID)}>
+                      {language.ViewOrders}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
       {editingUser && (
-        <div>
-          <h3>{language.EditUser}</h3>
+        <Paper elevation={3} sx={{ p: 2, mt: 4 }}>
+          <Typography variant="h6">{language.EditUser}</Typography>
           <form onSubmit={handleSave}>
-            <label>
-              {language.Name}:
-              <input
-                type="text"
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-              />
-            </label>
-            <label>
-              {language.Surname}:
-              <input
-                type="text"
-                value={formData.surname}
-                onChange={e => setFormData({ ...formData, surname: e.target.value })}
-              />
-            </label>
-            <label>
-              {language.Email}:
-              <input
-                type="email"
-                value={formData.email}
-                onChange={e => setFormData({ ...formData, email: e.target.value })}
-              />
-            </label>
-            <label>
-              {language.Role}:
-              <select
-                value={formData.roleID}
-                onChange={e => setFormData({ ...formData, roleID: parseInt(e.target.value, 10) })}
-              >
-                {roles.map(role => (
-                  <option key={role.RoleID} value={role.RoleID}>{role.RoleName}</option>
-                ))}
-              </select>
-            </label>
-            <button type="submit">{language.Save}</button>
-            <button type="button" onClick={handleCancelEdit}>{language.Cancel}</button>
+            <Box>
+              <label>
+                {language.Name}:
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                />
+              </label>
+            </Box>
+            <Box>
+              <label>
+                {language.Surname}:
+                <input
+                  type="text"
+                  value={formData.surname}
+                  onChange={e => setFormData({ ...formData, surname: e.target.value })}
+                />
+              </label>
+            </Box>
+            <Box>
+              <label>
+                {language.Email}:
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                />
+              </label>
+            </Box>
+            <Box>
+              <label>
+                {language.Role}:
+                <select
+                  value={formData.roleID}
+                  onChange={e => setFormData({ ...formData, roleID: Number(e.target.value) })}
+                >
+                  {roles.map(role => (
+                    <option key={role.RoleID} value={role.RoleID}>
+                      {role.RoleName}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </Box>
+            <Button type="submit" variant="contained" color="primary">
+              {language.Save}
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={handleCancelEdit}>
+              {language.Cancel}
+            </Button>
           </form>
-
-        </div>
+        </Paper>
       )}
-      {showEditDeal && (
-        <EditDeal dealId={editDealId} onCancel={handleCancelEdit} />
-      )}
-    </div>
+    </Container>
   );
 };
 
