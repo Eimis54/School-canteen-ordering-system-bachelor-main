@@ -243,7 +243,7 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
                 {loading ? <CircularProgress size={24} /> : language.Delete}
               </Button>
             )}
-            <Button variant="outlined" color="default" onClick={handleCancel}>
+            <Button variant="contained" color="error" onClick={handleCancel}>
               {language.Cancel}
             </Button>
           </div>
@@ -280,10 +280,10 @@ const DealAdministration = ({ DealID = null, onCancel = () => {} }) => {
                   />
                   <Typography variant="body2">{language.DisplayInCarousel}</Typography>
                 </div>
-                <Button variant="outlined" onClick={() => handleEdit(deal.DealID)}>
+                <Button variant="contained" onClick={() => handleEdit(deal.DealID)}>
                   {language.Edit}
                 </Button>
-                <Button variant="outlined" color="error" onClick={() => handleDelete(deal.DealID)}>
+                <Button variant="contained" color="error" onClick={() => handleDelete(deal.DealID)}>
                   {language.Delete}
                 </Button>
               </ListItem>

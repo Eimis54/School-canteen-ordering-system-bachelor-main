@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Typography, Container, Alert } from '@mui/material';
 import LanguageContext from '../LanguageContext';
 
 const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
-  const {language}=useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,12 +19,12 @@ const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         localStorage.setItem('userId', data.UserID);
-  
+
         // Fetch user data
         const userResponse = await fetch('http://localhost:3001/api/user', {
           headers: {
@@ -44,38 +45,49 @@ const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
       setError(language['ErrorOccured']);
     }
   };
-  
 
   const handleForgotPassword = () => {
     navigate('/forgot-password');
   };
 
   return (
-    <div>
-      <h2>{language.login}</h2>
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <Container maxWidth="xs" style={{ marginTop: '50px' }}>
+      <Typography variant="h4" component="h2" align="center">{language.login}</Typography>
+      {successMessage && <Alert severity="success">{successMessage}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
       <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
-        <label>{language.Email}:</label>
-        <input
+        <TextField
+          label={language.Email}
           type="email"
+          fullWidth
+          margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <br />
-        <label>{language.Password}:</label>
-        <input
+        <TextField
+          label={language.Password}
           type="password"
+          fullWidth
+          margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <br />
-        <button type="submit">{language.login}</button>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          style={{ marginTop: '16px' }}
+        >
+          {language.login}
+        </Button>
       </form>
-      <p>
-        <button onClick={handleForgotPassword}>{language.ForgotPasswordQ}</button>
-      </p>
-    </div>
+      <Typography align="center" style={{ marginTop: '16px' }}>
+        <Button onClick={handleForgotPassword}>{language.ForgotPasswordQ}</Button>
+      </Typography>
+    </Container>
   );
 };
 

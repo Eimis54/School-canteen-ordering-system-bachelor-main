@@ -96,16 +96,16 @@ const ShoppingCart = () => {
       const stripe = await stripePromise;
       const userId = localStorage.getItem("userId");
 
-      const lineItems = cart.map((cartItem) => ({
+      const lineItems = await Promise.all(cart.map(async (cartItem) => ({
         price_data: {
           currency: 'eur',
           product_data: {
-            name: getProductName(cartItem.product.ProductID),
+            name: await getProductName(cartItem.ProductID),
           },
           unit_amount: Math.round(cartItem.Price * 100),
         },
         quantity: cartItem.Quantity,
-      }));
+      })));
 
       const response = await axios.post(
         "http://localhost:3001/api/payment/create-checkout-session",
@@ -126,21 +126,27 @@ const ShoppingCart = () => {
   };
 
   const handleQuantityChange = async (id, change) => {
+    const updatedItem = cart.find((item) => item.CartItemID === id);
+    const newQuantity = updatedItem.Quantity + change;
+  
+    // If the quantity is zero or less, remove the item from the cart
+    if (newQuantity <= 0) {
+      handleRemoveItem(id);
+      return;
+    }
+  
+    // Otherwise, update the quantity
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.CartItemID === id
-          ? { ...item, Quantity: Math.max(1, item.Quantity + change) }
-          : item
+        item.CartItemID === id ? { ...item, Quantity: newQuantity } : item
       )
     );
-
-    const updatedItem = cart.find((item) => item.CartItemID === id);
-
+  
     try {
       const token = localStorage.getItem("token");
       await axios.put(
         `http://localhost:3001/api/cart/update/${id}`,
-        { Quantity: updatedItem.Quantity + change },
+        { Quantity: newQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {

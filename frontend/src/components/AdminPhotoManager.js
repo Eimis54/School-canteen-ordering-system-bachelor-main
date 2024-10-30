@@ -1,6 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import LanguageContext from '../LanguageContext';
+import {
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  TextField,
+  CircularProgress,
+  Box,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+} from '@mui/material';
 
 const API_BASE_URL = 'http://localhost:3001';
 
@@ -12,7 +25,7 @@ const AdminPhotoManager = () => {
   const [altText, setAltText] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const {language} = useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
 
   useEffect(() => {
     fetchPhotos();
@@ -103,47 +116,67 @@ const AdminPhotoManager = () => {
     }
   };
 
-  const handleProductChange = (e) => {
-    const selectedProductId = e.target.value;
-    setProductId(selectedProductId);
-  };
-
   return (
-    <div>
-      <h2>{language.PhotoManager}</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <input type="file" onChange={handleFileChange} />
-      <select value={productId} onChange={handleProductChange}>
-        <option value="">{language.SelectProduct}</option>
-        {products.map(product => (
-          <option key={product.ProductID} value={product.ProductID}>
-            {product.ProductName}
-          </option>
-        ))}
-      </select>
-      <input
-        type="text"
-        placeholder={language.AltText}
-        value={altText}
-        onChange={(e) => setAltText(e.target.value)}
-      />
-      <button onClick={handleUpload}>{language.UploadPhoto}</button>
-      {loading && <p>{language.Uploading}</p>}
-      <div>
-        <h3>{language.ExistingPhotos}</h3>
+    <Box sx={{ padding: 3 }}>
+      <Typography variant="h4" gutterBottom>{language.PhotoManager}</Typography>
+      {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+      
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 2 }}>
+        <Button variant="contained" component="label">
+          {language.SelectFile}
+          <input type="file" hidden onChange={handleFileChange} />
+        </Button>
+        <Select
+          value={productId}
+          onChange={(e) => setProductId(e.target.value)}
+          displayEmpty
+          sx={{ width: 200 }}
+        >
+          <MenuItem value="">{language.SelectProduct}</MenuItem>
+          {products.map(product => (
+            <MenuItem key={product.ProductID} value={product.ProductID}>
+              {product.ProductName}
+            </MenuItem>
+          ))}
+        </Select>
+        <TextField
+          label={language.AltText}
+          value={altText}
+          onChange={(e) => setAltText(e.target.value)}
+          sx={{ width: 300 }}
+        />
+        <Button variant="contained" onClick={handleUpload}>
+          {language.UploadPhoto}
+        </Button>
+        {loading && <CircularProgress size={24} />}
+      </Box>
+
+      <Typography variant="h5" sx={{ mt: 4 }}>{language.ExistingPhotos}</Typography>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
         {photos.map((photo) => (
-          <div key={photo.PhotoID}>
+          <Card key={photo.PhotoID} sx={{ width: 200 }}>
             {photo.PhotoURL ? (
-              <img src={`${API_BASE_URL}/${photo.PhotoURL}`} alt={photo.AltText || language.Photo} width="100" />
+              <CardMedia
+                component="img"
+                height="140"
+                image={`${API_BASE_URL}/${photo.PhotoURL}`}
+                alt={photo.AltText || language.Photo}
+              />
             ) : (
-              <p>language.NoImage</p>
+              <Typography variant="body2" sx={{ p: 2 }}>{language.NoImage}</Typography>
             )}
-            <p>{photo.AltText || language.NoDescription}</p>
-            <button onClick={() => handleDelete(photo.PhotoID)}>{language.Delete}</button>
-          </div>
+            <CardContent>
+              <Typography variant="body2">{photo.AltText || language.NoDescription}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button color="error" onClick={() => handleDelete(photo.PhotoID)}>
+                {language.Delete}
+              </Button>
+            </CardActions>
+          </Card>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

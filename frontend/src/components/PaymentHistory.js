@@ -78,7 +78,6 @@ const PaymentHistory = () => {
       setLoading(false);
     }
   };
-
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
@@ -102,7 +101,7 @@ const PaymentHistory = () => {
               <Card variant="outlined" sx={{ borderColor: '#C0C0C0' }}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
-                    {language.OrderCode}: {order.OrderCode}
+                    {language.OrderCode}: {order.ordercode}
                   </Typography>
                   <Typography variant="body1">
                     <strong>{language.TotalPrice}:</strong> {order.TotalPrice} Eur
