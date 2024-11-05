@@ -6,12 +6,12 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: "#FAF7F5", // Light background color
-        borderTop: "1px solid #C0C0C0", // Border to separate it
+        backgroundColor: "#FAF7F5",
+        borderTop: "1px solid #C0C0C0",
         py: 2,
         textAlign: "center",
-        mt: "auto", // Pushes the footer to the bottom
-        width: "100%", // Ensures it stretches across the full width
+        mt: "auto",
+        width: "100%",
       }}
     >
       <Container maxWidth="lg">

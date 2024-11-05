@@ -208,7 +208,7 @@ const ChildrenManagement = () => {
               <MenuItem key={i + 1} value={i + 1}>{i + 1}</MenuItem>
             ))}
           </Select>
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" sx={{backgroundColor: "black", color: "white"}}>
             {language.AddChild}
           </Button>
         </Box>
@@ -243,8 +243,8 @@ const ChildrenManagement = () => {
             </Select>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenEditDialog(false)}>{language.Cancel}</Button>
-            <Button onClick={handleEditChild} variant="contained">
+            <Button onClick={() => setOpenEditDialog(false)} sx={{color: "black"}}>{language.Cancel}</Button>
+            <Button onClick={handleEditChild} variant="contained" sx={{backgroundColor: "black", color: "white"}}>
               {language.UpdateChild}
             </Button>
           </DialogActions>

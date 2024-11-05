@@ -83,7 +83,7 @@ const Success = () => {
         </Alert>
       ) : (
         <Box>
-          <Typography variant="h4" color="primary" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{color: "black"}}>
             {language.OrderSuccessful}
           </Typography>
           <Typography variant="body1">
@@ -91,8 +91,7 @@ const Success = () => {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
-            sx={{ mt: 3 }}
+            sx={{ mt: 3, backgroundColor: "black", color: "white" }}
             onClick={() => window.location.href = '/payment-history'}
           >
             {language.ViewPaymentHistory}

@@ -14,15 +14,14 @@ const LoggedInPage = () => {
       >
         <Container
           sx={{
-            height: "100%", // Full height of the Box
+            height: "100%",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center", // Center contents vertically
-            alignItems: "center", // Center contents horizontally
+            justifyContent: "center",
+            alignItems: "center",
             padding: { xs: "20px", sm: "40px", md: "60px" },
           }}
         >
-          {/* <BannerComponent /> */}
           <CarouselComponent />
         </Container>
       </Box>

@@ -245,7 +245,7 @@ const AccountManagement = () => {
             value={userDetails.phoneNumber}
             onChange={handleUserDetailsChange}
           />
-          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2, backgroundColor: "black", color: "white" }}>
             {language.UpdateDetails}
           </Button>
         </form>
@@ -315,7 +315,7 @@ const AccountManagement = () => {
               ),
             }}
           />
-          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2, backgroundColor: "black", color: "white" }}>
             {language.ChangePassword}
           </Button>
         </form>

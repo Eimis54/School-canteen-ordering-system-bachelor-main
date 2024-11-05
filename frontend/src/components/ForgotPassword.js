@@ -39,9 +39,8 @@ const ForgotPassword = () => {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
           fullWidth
-          style={{ marginTop: '16px' }}
+          style={{ marginTop: '16px', backgroundColor: "black", color: "white" }}
         >
           {language.SendResetLink}
         </Button>

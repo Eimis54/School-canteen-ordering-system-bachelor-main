@@ -190,30 +190,38 @@ const OrderSection = () => {
   return (
     <Container>
       <Box sx={{ padding: "20px", paddingBottom: "40px", px: "20px" }}>
-        <h2>{language.AddToCart}</h2>
+        <Typography
+          variant="h4"
+          align="left"
+          gutterBottom
+        >
+          {language.AddToCart}
+        </Typography>
         {error && <div style={{ color: "red" }}>{error}</div>}
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel sx={{ color: "black" }}>
-            {language.SelectChild}
-          </InputLabel>
-          <Select
-            value={selectedChild}
-            onChange={(e) => setSelectedChild(e.target.value)}
-            sx={{ backgroundColor: "white" }}
-          >
-            <MenuItem value="">{language.Select}</MenuItem>
-            {children.length > 0 ? (
-              children.map((child) => (
-                <MenuItem key={child.id} value={child.id}>
-                  {child.Name}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem value="">{language.NoChildrenAvailable}</MenuItem>
-            )}
-          </Select>
-        </FormControl>
+        <FormControl fullWidth margin="normal" variant="outlined">
+  <InputLabel htmlFor="select-child" sx={{ color: "black" }}>
+    {language.SelectChild}
+  </InputLabel>
+  <Select
+    id="select-child"
+    value={selectedChild}
+    onChange={(e) => setSelectedChild(e.target.value)}
+    label={language.SelectChild}
+    sx={{ backgroundColor: "white" }}
+  >
+    <MenuItem value="">{language.Select}</MenuItem>
+    {children.length > 0 ? (
+      children.map((child) => (
+        <MenuItem key={child.id} value={child.id}>
+          {child.Name}
+        </MenuItem>
+      ))
+    ) : (
+      <MenuItem value="">{language.NoChildrenAvailable}</MenuItem>
+    )}
+  </Select>
+</FormControl>
 
         {menu ? (
           <div>
@@ -309,7 +317,7 @@ const OrderSection = () => {
         ) : (
           <p>{language.LoadingMenu}</p>
         )}
-
+<Box sx={{ mt: 2 }}>
         <Button
           variant="contained"
           onClick={handleAddToCart}
@@ -317,6 +325,7 @@ const OrderSection = () => {
         >
           {language.AddToCart}
         </Button>
+        </Box>
       </Box>
     </Container>
   );

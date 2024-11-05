@@ -10,7 +10,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Function to send the verification email
 const sendVerificationEmail = async (email, verificationCode) => {
   const mailOptions = {
     from: process.env.REACT_APP_AUTH_USERNAME,

@@ -7,7 +7,7 @@ router.get('/', authenticateToken, async (req, res) => {
   try {
     const orders = await Order.findAll({
       where: { UserID: req.user.id },
-      attributes: ['OrderID', 'TotalPrice', 'TotalCalories', 'Status', 'OrderDate', 'ChildName'], // Include ChildName
+      attributes: ['OrderID', 'TotalPrice', 'TotalCalories', 'Status', 'OrderDate', 'ChildName'],
     });
     res.json(orders);
   } catch (error) {
@@ -52,7 +52,7 @@ router.get('/tofetch/:orderCode', authenticateToken, async (req, res) => {
       products,
       totalOrderPrice: products.reduce((total, item) => total + item.totalPrice, 0),
       status: order.Status,
-      paymentStatus: order.PaymentStatus, // Include the payment status here
+      paymentStatus: order.PaymentStatus,
     });
   } catch (error) {
     console.error('Error fetching order details:', error);
@@ -154,7 +154,7 @@ router.get('/history/:userId', async (req, res) => {
   try {
     const orders = await Order.findAll({
       where: { UserID: userId },
-      attributes: ['OrderID', 'TotalPrice', 'Status', 'ordercode', 'PaymentIntentId', 'PaymentStatus'], // Added PaymentStatus
+      attributes: ['OrderID', 'TotalPrice', 'Status', 'ordercode', 'PaymentIntentId', 'PaymentStatus'],
       include: [{
         model: OrderItem,
         as: 'orderItems',

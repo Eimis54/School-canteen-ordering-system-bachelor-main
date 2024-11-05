@@ -55,12 +55,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     PaymentIntentId: {
       type: DataTypes.STRING,
-      allowNull: true, // Make this nullable if not every order has a PaymentIntent
+      allowNull: true,
       field: 'PaymentIntentId',
     },
     ChargeId: {
       type: DataTypes.STRING,
-      allowNull: true, // Make this nullable if not every order has a ChargeId
+      allowNull: true,
       field: 'ChargeId',
     },
     PaymentStatus: {

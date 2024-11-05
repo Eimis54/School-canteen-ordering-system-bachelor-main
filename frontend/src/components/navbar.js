@@ -271,7 +271,18 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 height={20}
               />
             </IconButton>
-
+            <Button
+                  component={Link}
+                  to="/Help"
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    color: "black",
+                  }}
+                >
+                  {language.Help}
+                </Button>
             <Drawer
               anchor="right"
               open={showLogin || showRegister}

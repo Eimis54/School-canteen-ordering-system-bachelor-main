@@ -43,7 +43,7 @@ const VerifyEmail = () => {
             onChange={(e) => setVerificationCode(e.target.value)} 
             placeholder={language.EnterVerificationCode} 
           />
-          <button onClick={handleVerify}>{language.Verify}</button>
+          <button onClick={handleVerify} >{language.Verify}</button>
           {message && <p>{message}</p>}
         </div>
       );

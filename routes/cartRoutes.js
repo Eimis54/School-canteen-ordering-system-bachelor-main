@@ -48,7 +48,7 @@ router.get('/', authenticateToken, async (req, res) => {
           include: [
             {
               model: db.Photo,
-              as: 'Photos',  // Confirm this matches in the Product-Photo association
+              as: 'Photos',
               attributes: ['PhotoURL', 'AltText'],
             },
           ],

@@ -77,15 +77,14 @@ const Login = ({ setIsLoggedIn, setUser, successMessage }) => {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
           fullWidth
-          style={{ marginTop: '16px' }}
+          style={{ marginTop: '16px', backgroundColor: "black", color: "white" }}
         >
           {language.login}
         </Button>
       </form>
       <Typography align="center" style={{ marginTop: '16px' }}>
-        <Button onClick={handleForgotPassword}>{language.ForgotPasswordQ}</Button>
+        <Button onClick={handleForgotPassword} sx={{color: "black"}}>{language.ForgotPasswordQ}</Button>
       </Typography>
     </Container>
   );

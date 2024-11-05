@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { Box, Typography, TextField, Button, Alert } from '@mui/material';
 import LanguageContext from '../LanguageContext';
 
 const ResetPassword = () => {
@@ -25,7 +26,7 @@ const ResetPassword = () => {
     }
 
     if (!validatePassword(password)) {
-      setError(language.PasswordMustBeAtleast); // Add a message in your translations
+      setError(language.PasswordMustBeAtleast);
       return;
     }
 
@@ -35,36 +36,57 @@ const ResetPassword = () => {
         password,
       });
       setMessage(language.PasswordResetSuccess);
+      setError('');
     } catch (error) {
       setError(error.response ? error.response.data.error : language.ErrorResettingPass);
+      setMessage('');
     }
   };
 
   return (
-    <div>
-      <h2>{language.ResetPassword}</h2>
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        {language.ResetPassword}
+      </Typography>
+      {message && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {message}
+        </Alert>
+      )}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
       <form onSubmit={handleSubmit}>
-        <label>{language.NewPassword}:</label>
-        <input
+        <TextField
+          fullWidth
           type="password"
+          label={language.NewPassword}
           placeholder={language.Password}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          margin="normal"
         />
-        <br />
-        <label>{language.ConfirmPassword}:</label>
-        <input
+        <TextField
+          fullWidth
           type="password"
+          label={language.ConfirmPassword}
           placeholder={language.ConfirmPassword}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          margin="normal"
         />
-        <br />
-        <button type="submit">{language.ResetPassword}</button>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 2, backgroundColor: "black", color: "white" }}
+        >
+          {language.ResetPassword}
+        </Button>
       </form>
-    </div>
+    </Box>
   );
 };
 

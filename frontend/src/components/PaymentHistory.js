@@ -64,10 +64,10 @@ const PaymentHistory = () => {
         const updatedOrders = [...orders];
         updatedOrders[orderIndex] = {
           ...updatedOrders[orderIndex],
-          refundSuccess: language.RefundSuccessful, // Store success message in the specific order
+          refundSuccess: language.RefundSuccessful,
         };
         setOrders(updatedOrders);
-        setError(''); // Clear any previous error
+        setError('');
       } else {
         setError(language.RefundFailed);
       }
@@ -114,7 +114,6 @@ const PaymentHistory = () => {
                       ? language.Pending
                       : language.Completed}
                   </Typography>
-                  {/* Show refund success message next to the order if it exists */}
                   {order.refundSuccess && (
                     <Alert severity="success" sx={{ mt: 1 }}>
                       {order.refundSuccess}
@@ -129,6 +128,7 @@ const PaymentHistory = () => {
                     color="primary"
                     variant="contained"
                     fullWidth
+                    sx={{backgroundColor: "black", color: "white"}}
                   >
                     {language.ViewOrders}
                   </Button>
@@ -136,7 +136,7 @@ const PaymentHistory = () => {
                   {(order.Status !== false && order.PaymentStatus !== 'refunded') && (
                     <Button
                       size="small"
-                      color="secondary"
+                      color="error"
                       variant="outlined"
                       onClick={() => handleRefund(index)}
                     >

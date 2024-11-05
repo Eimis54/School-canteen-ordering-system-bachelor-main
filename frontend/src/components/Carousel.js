@@ -28,8 +28,8 @@ const CarouselComponent = () => {
   return (
     <Box
       sx={{
-        width: "80%", // Full width
-        height: "60%", // Height relative to parent
+        width: "80%",
+        height: "60%",
         position: "relative",
         overflow: "hidden",
       }}
@@ -44,7 +44,7 @@ const CarouselComponent = () => {
         emulateTouch
         showStatus={false}
         showIndicators={false}
-        style={{ height: "100%" }} // Ensure carousel takes full height
+        style={{ height: "100%" }}
       >
         {deals.map((deal, index) => (
           <div key={index} style={{ height: "100%", position: "relative" }}>

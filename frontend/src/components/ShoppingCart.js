@@ -129,13 +129,11 @@ const ShoppingCart = () => {
     const updatedItem = cart.find((item) => item.CartItemID === id);
     const newQuantity = updatedItem.Quantity + change;
   
-    // If the quantity is zero or less, remove the item from the cart
     if (newQuantity <= 0) {
       handleRemoveItem(id);
       return;
     }
   
-    // Otherwise, update the quantity
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.CartItemID === id ? { ...item, Quantity: newQuantity } : item
@@ -239,7 +237,7 @@ const ShoppingCart = () => {
             {isLoading ? (
               <CircularProgress />
             ) : (
-              <Button variant="contained" color="primary" onClick={handleCheckout}>
+              <Button variant="contained" onClick={handleCheckout} sx={{backgroundColor: "black", color: "white"}}>
                 {language.ProceedToCheckout}
               </Button>
             )}

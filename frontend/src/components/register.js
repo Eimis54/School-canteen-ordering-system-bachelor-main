@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Button, TextField, Typography, Box, CircularProgress } from '@mui/material';
+import { Button, TextField, Typography, Container, Alert, CircularProgress } from '@mui/material';
 import LanguageContext from '../LanguageContext';
 
 const Register = () => {
@@ -15,7 +15,7 @@ const Register = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [userID, setUserID] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -41,11 +41,11 @@ const Register = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setLoading(true); // Start loading
+    setLoading(true);
 
     if (!name || !surname || !email || !password) {
       setError(language.AllFieldsAreRequired);
-      setLoading(false); // Stop loading on error
+      setLoading(false);
       return;
     }
 
@@ -84,7 +84,7 @@ const Register = () => {
       console.error(language.RegistrationFailed, error.response ? error.response.data : error.message);
       setError(error.response ? error.response.data.error : language.RegistrationFailed);
     } finally {
-      setLoading(false); // Stop loading after registration completes or fails
+      setLoading(false);
     }
   };
 
@@ -109,93 +109,82 @@ const Register = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
-      <Typography variant="h4" component="h2" gutterBottom>
+    <Container maxWidth="xs" style={{ marginTop: '50px' }}>
+      <Typography variant="h4" component="h2" align="center" gutterBottom>
         {language.Register}
       </Typography>
-      {error && <Typography color="error">{error}</Typography>}
-      {success && <Typography color="success.main">{success}</Typography>}
+      {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>}
 
       {!isVerifying ? (
-        <>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label={language.Name}
-              fullWidth
-              margin="normal"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <TextField
-              label={language.Surname}
-              fullWidth
-              margin="normal"
-              value={surname}
-              onChange={(e) => setSurname(e.target.value)}
-            />
-            <TextField
-              label={language.Email}
-              type="email"
-              fullWidth
-              margin="normal"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              label={language.Password}
-              type="password"
-              fullWidth
-              margin="normal"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-              disabled={loading} // Disable button while loading
-            >
-              {loading ? <CircularProgress size={24} /> : language.Register}
-            </Button>
-          </form>
-
-          {userID && (
-            <Button
-              onClick={() => setIsVerifying(true)}
-              variant="outlined"
-              color="secondary"
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              {language.VerifyEmail}
-            </Button>
-          )}
-        </>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label={language.Name}
+            fullWidth
+            margin="normal"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <TextField
+            label={language.Surname}
+            fullWidth
+            margin="normal"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+            required
+          />
+          <TextField
+            label={language.Email}
+            type="email"
+            fullWidth
+            margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <TextField
+            label={language.Password}
+            type="password"
+            fullWidth
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            style={{ marginTop: '16px', backgroundColor: "black", color: "white" }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : language.Register}
+          </Button>
+        </form>
       ) : (
-        <Box mt={3}>
-          <Typography variant="h5">{language.VerifyYourEmail}</Typography>
-          <Typography>{language.WeHaveSendVerification}</Typography>
+        <div style={{ marginTop: '20px' }}>
+          <Typography variant="h5" align="center">{language.VerifyYourEmail}</Typography>
+          <Typography align="center">{language.WeHaveSendVerification}</Typography>
           <TextField
             label={language.EnterVerificationCode}
             fullWidth
             margin="normal"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
+            required
           />
           <Button
             onClick={handleVerification}
             variant="contained"
-            color="primary"
             fullWidth
-            sx={{ mt: 2 }}
+            style={{ marginTop: '16px', backgroundColor: "black", color: "white" }}
           >
             {language.VerifyEmail}
           </Button>
-        </Box>
+        </div>
       )}
-    </Box>
+    </Container>
   );
 };
 

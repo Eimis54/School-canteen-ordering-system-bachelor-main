@@ -27,17 +27,37 @@ const notebookStyles = {
     alignItems: "center",
     marginBottom: "10px",
     width: "100%",
+    borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+    paddingBottom: "10px",
   },
   verticalLine: {
     position: "absolute",
     left: "25%",
     top: "0",
-    bottom: "0", // Stretches to the bottom of the parent container
-    width: "0.05px", // Line width
-    borderLeft: "2px solid rgba(0, 0, 0, 0.1)", // This will inherit the opacity from the parent
+    bottom: "0",
+    width: "0.05px",
+    borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
     backgroundColor: "#C46962",
-    opacity: 0.7, // Set opacity to 80%
-    height: "100vh",
+    opacity: 0.7,
+    height: "100%",
+  },
+  underlineText: {
+    position: "relative",
+    display: "inline-block",
+    width: "100%",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: "1px",
+      backgroundColor: "grey",
+      opacity: 0.5,
+    },
+  },
+  priceBox: {
+    textAlign: "right",
   },
 };
 
@@ -104,18 +124,17 @@ const Menu = () => {
           variant="h4"
           align="center"
           gutterBottom
-          sx={notebookStyles.textLine}
         >
           {language.OurMenu}
         </Typography>
         {Object.keys(categorizedMenuItems).length ? (
           Object.keys(categorizedMenuItems).map((day, index) => (
-            <Box sx={{ position: "relative" }}>
-              <Paper key={index} elevation={3} sx={notebookStyles.paper}>
+            <Box sx={{ position: "relative" }} key={index}>
+              <Paper elevation={3} sx={notebookStyles.paper}>
                 <Typography
                   variant="h5"
                   gutterBottom
-                  sx={notebookStyles.textLine}
+                  sx={notebookStyles.underlineText}
                 >
                   {language[day] || day}
                 </Typography>
@@ -123,7 +142,10 @@ const Menu = () => {
                   {Object.keys(categorizedMenuItems[day]).map(
                     (categoryName) => (
                       <Box key={categoryName} sx={{ marginBottom: 2 }}>
-                        <Typography variant="h6" sx={notebookStyles.textLine}>
+                        <Typography
+                          variant="h6"
+                          sx={notebookStyles.underlineText}
+                        >
                           {language[categoryName] || categoryName}
                         </Typography>
                         {categorizedMenuItems[day][categoryName].map(
