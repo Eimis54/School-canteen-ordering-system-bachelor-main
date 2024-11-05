@@ -11,14 +11,15 @@ import {
 } from "@mui/material";
 import LanguageContext from "../LanguageContext";
 
-// Custom styles
 const notebookStyles = {
   paper: {
     borderLeft: "4px solid #d1d1d1",
     padding: "20px",
     marginBottom: "20px",
     position: "relative",
-    backgroundColor: "#EAEBE5",
+    backgroundColor: "#f5f3c4",
+    overflow: "hidden",
+    height: "auto",
   },
   listItem: {
     display: "flex",
@@ -29,17 +30,19 @@ const notebookStyles = {
   },
   verticalLine: {
     position: "absolute",
-    left: "18%",
+    left: "25%",
     top: "0",
-    height: "126%",
-    borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
-    marginLeft: "10px",
+    bottom: "0", // Stretches to the bottom of the parent container
+    width: "0.05px", // Line width
+    borderLeft: "2px solid rgba(0, 0, 0, 0.1)", // This will inherit the opacity from the parent
     backgroundColor: "#C46962",
+    opacity: 0.7, // Set opacity to 80%
+    height: "100vh",
   },
 };
 
 const Menu = () => {
-  const { language, getProductName } = useContext(LanguageContext); // Destructure getProductName
+  const { language, getProductName } = useContext(LanguageContext);
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -62,7 +65,12 @@ const Menu = () => {
   if (!menu) {
     return (
       <Box
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
       >
         <CircularProgress />
         <Typography variant="h6" sx={{ marginLeft: 2 }}>
@@ -80,7 +88,9 @@ const Menu = () => {
       const categoryName = menuItem.Product?.ProductCategory?.CategoryName;
 
       if (categorizedMenuItems[item.DayOfWeek].hasOwnProperty(categoryName)) {
-        categorizedMenuItems[item.DayOfWeek][categoryName].push(menuItem.Product);
+        categorizedMenuItems[item.DayOfWeek][categoryName].push(
+          menuItem.Product
+        );
       } else {
         categorizedMenuItems[item.DayOfWeek][categoryName] = [menuItem.Product];
       }
@@ -90,40 +100,60 @@ const Menu = () => {
   return (
     <Container>
       <Box sx={notebookStyles.container}>
-        <Typography variant="h4" align="center" gutterBottom sx={notebookStyles.textLine}>
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={notebookStyles.textLine}
+        >
           {language.OurMenu}
         </Typography>
         {Object.keys(categorizedMenuItems).length ? (
           Object.keys(categorizedMenuItems).map((day, index) => (
-            <Paper key={index} elevation={3} sx={notebookStyles.paper}>
-              <Typography variant="h5" gutterBottom sx={notebookStyles.textLine}>             
-                {language[day] || day} {/* Translate day names, fallback to the original if not found */}                 
-              </Typography>
-              {Object.keys(categorizedMenuItems[day]).map((categoryName) => (
-                <Box key={categoryName} sx={{ marginBottom: 2 }}>
-                  <Typography variant="h6" sx={notebookStyles.textLine}>
-                    {language[categoryName] || categoryName} {/* Translate category names, fallback to the original if not found */}
-                  </Typography>
-                  <List sx={{ position: "relative" }}>
-                    {categorizedMenuItems[day][categoryName].map((item, idx) => (
-                      <ListItem key={idx} sx={notebookStyles.listItem}>
-                        <ListItemText
-                          primary={getProductName(item.ProductID)} // Translate product names
-                          secondary={item.Description}
-                        />
-                        <Box sx={notebookStyles.priceBox}>
-                          <Typography variant="body1">{item.Price} Eur.</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.Calories} kcal
-                          </Typography>
-                        </Box>
-                      </ListItem>
-                    ))}
-                    <Box sx={notebookStyles.verticalLine} />
-                  </List>
-                </Box>
-              ))}
-            </Paper>
+            <Box sx={{ position: "relative" }}>
+              <Paper key={index} elevation={3} sx={notebookStyles.paper}>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={notebookStyles.textLine}
+                >
+                  {language[day] || day}
+                </Typography>
+                <List>
+                  {Object.keys(categorizedMenuItems[day]).map(
+                    (categoryName) => (
+                      <Box key={categoryName} sx={{ marginBottom: 2 }}>
+                        <Typography variant="h6" sx={notebookStyles.textLine}>
+                          {language[categoryName] || categoryName}
+                        </Typography>
+                        {categorizedMenuItems[day][categoryName].map(
+                          (item, idx) => (
+                            <ListItem key={idx} sx={notebookStyles.listItem}>
+                              <ListItemText
+                                primary={getProductName(item.ProductID)}
+                                secondary={item.Description}
+                              />
+                              <Box sx={notebookStyles.priceBox}>
+                                <Typography variant="body1">
+                                  {item.Price} Eur.
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  {item.Calories} kcal
+                                </Typography>
+                              </Box>
+                            </ListItem>
+                          )
+                        )}
+                      </Box>
+                    )
+                  )}
+                </List>
+                <Box sx={notebookStyles.verticalLine} />
+              </Paper>
+            </Box>
           ))
         ) : (
           <Typography align="center">{language.NoMenuAvailable}</Typography>

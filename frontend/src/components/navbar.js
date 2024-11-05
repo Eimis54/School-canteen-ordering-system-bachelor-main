@@ -34,7 +34,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
         color: "black",
         padding: "1rem 2rem",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-        borderBottom: "2px solid grey"
+        borderBottom: "2px solid grey",
       }}
     >
       <Typography
@@ -59,22 +59,6 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
       >
         {isLoggedIn && !user?.isCashier && (
           <>
-            <Button
-              component={Link}
-              to="/cart"
-              sx={{
-                fontSize: "1rem",
-                color: "black",
-                textDecoration: "none",
-                padding: "0.5rem 1rem",
-                "&:hover": {
-                  backgroundColor: "#f0f0f0",
-                },
-              }}
-            >
-              <ShoppingCartIcon sx={{ fontSize: "1rem", marginRight: "0.5rem" }} />
-              {language.Cart}
-            </Button>
             {user?.isAdmin && (
               <Button
                 component={Link}
@@ -90,6 +74,23 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 {language.AdminDashboard}
               </Button>
             )}
+            <Button
+              component={Link}
+              to="/cart"
+              sx={{
+                fontSize: "0.9rem",
+                color: "black",
+                textDecoration: "none",
+                padding: "0.5rem 1rem",
+                "&:hover": {
+                  backgroundColor: "#f0f0f0",
+                },
+              }}
+            >
+              <ShoppingCartIcon
+                sx={{ fontSize: "1.2rem", marginRight: "0.5rem" }}
+              />
+            </Button>
 
             <Button
               onClick={toggleProfile}
@@ -122,66 +123,97 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
               >
                 <Typography variant="h6">{language.Profile}</Typography>
                 <IconButton
-              onClick={() => switchLanguage("en")}
-              sx={{ padding: 0, marginLeft: "1rem" }}
-            >
-              <img
-                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
-                alt="EN"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <IconButton
-              onClick={() => switchLanguage("lt")}
-              sx={{ padding: 0 }}
-            >
-              <img
-                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
-                alt="LT"
-                width={35}
-                height={20}
-              />
-            </IconButton>
+                  onClick={() => switchLanguage("en")}
+                  sx={{ padding: 0, marginLeft: "1rem" }}
+                >
+                  <img
+                    src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
+                    alt="EN"
+                    width={35}
+                    height={20}
+                  />
+                </IconButton>
+                <IconButton
+                  onClick={() => switchLanguage("lt")}
+                  sx={{ padding: 0 }}
+                >
+                  <img
+                    src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
+                    alt="LT"
+                    width={35}
+                    height={20}
+                  />
+                </IconButton>
                 <IconButton onClick={toggleProfile} sx={{ color: "black" }}>
-                  
                   <CloseIcon />
                 </IconButton>
-                
               </Box>
-              <Box component="ul" sx={{ listStyleType: "none", padding: 0, margin: 0 }}>
+              <Box
+                component="ul"
+                sx={{ listStyleType: "none", padding: 0, margin: 0 }}
+              >
                 <Button
                   component={Link}
                   to="/account"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    color: "black",
+                    borderBottom: "1px solid black",
+                  }}
                 >
                   {language.Account}
                 </Button>
                 <Button
                   component={Link}
                   to="/payment-history"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    color: "black",
+                    borderBottom: "1px solid black",
+                  }}
                 >
                   {language.PaymentHistory}
                 </Button>
                 <Button
                   component={Link}
                   to="/your-children"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    color: "black",
+                    borderBottom: "1px solid black",
+                  }}
                 >
                   {language.YourChildren}
                 </Button>
                 <Button
                   component={Link}
                   to="/FAQ"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    color: "black",
+                    borderBottom: "1px solid black",
+                  }}
                 >
                   {language.FAQ}
                 </Button>
                 <Button
                   component={Link}
                   to="/Help"
-                  sx={{ width: "100%", textAlign: "left", padding: "1rem", color: "black", borderBottom:"1px solid black" }}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "1rem",
+                    color: "black",
+                    borderBottom: "1px solid black",
+                  }}
                 >
                   {language.Help}
                 </Button>
@@ -205,10 +237,16 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
 
         {!isLoggedIn && (
           <>
-            <Button onClick={openLogin} sx={{ color: "black", marginLeft: "1rem" }}>
+            <Button
+              onClick={openLogin}
+              sx={{ color: "black", marginLeft: "1rem" }}
+            >
               {language.login}
             </Button>
-            <Button onClick={openRegister} sx={{ color: "black", marginLeft: "1rem" }}>
+            <Button
+              onClick={openRegister}
+              sx={{ color: "black", marginLeft: "1rem" }}
+            >
               {language.Register}
             </Button>
             <IconButton
@@ -259,7 +297,9 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   backgroundColor: "#f0f0f0",
                 }}
               >
-                <Typography variant="h6">{showLogin ? language.login : language.Register}</Typography>
+                <Typography variant="h6">
+                  {showLogin ? language.login : language.Register}
+                </Typography>
                 <IconButton
                   onClick={() => {
                     setShowLogin(false);
@@ -279,14 +319,12 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   setSuccessMessage={setSuccessMessage}
                 />
               ) : (
-                <Register
-                  onClose={() => setShowRegister(false)}
-                />
+                <Register onClose={() => setShowRegister(false)} />
               )}
             </Drawer>
           </>
         )}
-        
+
         {isLoggedIn && user?.isCashier && (
           <>
             <IconButton
@@ -312,18 +350,18 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
               />
             </IconButton>
             <Button
-                  onClick={handleLogout}
-                  sx={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "1rem",
-                    backgroundColor: "#ff4d4f",
-                    color: "white",
-                    border: "none",
-                  }}
-                >
-                  {language.logout}
-                </Button>
+              onClick={handleLogout}
+              sx={{
+                width: "100%",
+                textAlign: "left",
+                padding: "1rem",
+                backgroundColor: "#ff4d4f",
+                color: "white",
+                border: "none",
+              }}
+            >
+              {language.logout}
+            </Button>
           </>
         )}
       </Box>

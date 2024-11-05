@@ -19,7 +19,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = "http://localhost:3001";
 
 const OrderSection = () => {
   const { language, getProductName } = useContext(LanguageContext);
@@ -35,7 +35,9 @@ const OrderSection = () => {
   useEffect(() => {
     const fetchProductCategories = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/productcategories`);
+        const response = await axios.get(
+          `${API_BASE_URL}/api/productcategories`
+        );
         setCategories(response.data);
       } catch (error) {
         console.error(language.ErrorFetchingCategories, error);
@@ -192,7 +194,9 @@ const OrderSection = () => {
         {error && <div style={{ color: "red" }}>{error}</div>}
 
         <FormControl fullWidth margin="normal">
-          <InputLabel sx={{ color: "black" }}>{language.SelectChild}</InputLabel>
+          <InputLabel sx={{ color: "black" }}>
+            {language.SelectChild}
+          </InputLabel>
           <Select
             value={selectedChild}
             onChange={(e) => setSelectedChild(e.target.value)}
@@ -225,13 +229,26 @@ const OrderSection = () => {
                       (photo) => photo.ProductID === item.Product.ProductID
                     );
                     const existingItem = selectedItems.find(
-                      (selected) => selected.ProductID === item.Product.ProductID
+                      (selected) =>
+                        selected.ProductID === item.Product.ProductID
                     );
                     const quantity = existingItem ? existingItem.Quantity : 0;
 
                     return (
-                      <Grid item xs={12} sm={6} md={3} key={item.Product.ProductID}>
-                        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                      <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={3}
+                        key={item.Product.ProductID}
+                      >
+                        <Card
+                          sx={{
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
                           <Box sx={{ flexGrow: 1 }}>
                             <CardMedia
                               component="img"
@@ -240,7 +257,11 @@ const OrderSection = () => {
                                 height: "100%",
                                 objectFit: "cover",
                               }}
-                              image={photo ? `${API_BASE_URL}/${photo.PhotoURL}` : null}
+                              image={
+                                photo
+                                  ? `${API_BASE_URL}/${photo.PhotoURL}`
+                                  : null
+                              }
                               alt={photo ? photo.AltText : language.Photo}
                             />
                           </Box>
@@ -253,7 +274,12 @@ const OrderSection = () => {
                             </Typography>
                             <Box display="flex" alignItems="center">
                               <IconButton
-                                onClick={() => handleItemSelection(item.Product, Math.max(0, quantity - 1))}
+                                onClick={() =>
+                                  handleItemSelection(
+                                    item.Product,
+                                    Math.max(0, quantity - 1)
+                                  )
+                                }
                               >
                                 <RemoveIcon />
                               </IconButton>
@@ -261,7 +287,12 @@ const OrderSection = () => {
                                 {quantity}
                               </Typography>
                               <IconButton
-                                onClick={() => handleItemSelection(item.Product, quantity + 1)}
+                                onClick={() =>
+                                  handleItemSelection(
+                                    item.Product,
+                                    quantity + 1
+                                  )
+                                }
                               >
                                 <AddIcon />
                               </IconButton>
@@ -279,7 +310,11 @@ const OrderSection = () => {
           <p>{language.LoadingMenu}</p>
         )}
 
-        <Button variant="contained" color="primary" onClick={handleAddToCart}>
+        <Button
+          variant="contained"
+          onClick={handleAddToCart}
+          sx={{ backgroundColor: "black", color: "white" }}
+        >
           {language.AddToCart}
         </Button>
       </Box>
