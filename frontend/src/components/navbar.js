@@ -275,7 +275,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   component={Link}
                   to="/Help"
                   sx={{
-                    width: "100%",
+                    width: "80px",
                     textAlign: "left",
                     padding: "1rem",
                     color: "black",
