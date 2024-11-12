@@ -97,6 +97,28 @@ router.get("/publicmenu", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch public menu" });
   }
 });
+router.get("/publicmenu/:dayOfWeek", async (req, res) => {
+  const { dayOfWeek } = req.params;
+  try {
+    const menu = await Menu.findOne({
+      where: { DayOfWeek: dayOfWeek },
+      include: {
+        model: MenuItem,
+        as: "MenuItems",
+        include: {
+          model: Product,
+          as: "Product",
+        },
+      },
+    });
+    if (!menu) return res.status(404).json({ error: "Menu not found" });
+    res.json(menu);
+  } catch (error) {
+    console.error("Error fetching menu:", error);
+    res.status(500).json({ error: "Failed to fetch menu" });
+  }
+});
+
 
 router.get("/:dayOfWeek", async (req, res) => {
   const { dayOfWeek } = req.params;

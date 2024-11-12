@@ -31,22 +31,29 @@ const OrderSection = () => {
   const [error, setError] = useState("");
   const [groupedProducts, setGroupedProducts] = useState({});
   const [categories, setCategories] = useState([]);
+  const [selectedDay, setSelectedDay] = useState("Monday");
+
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+  ];
 
   useEffect(() => {
     const fetchProductCategories = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/productcategories`
-        );
+        const response = await axios.get(`${API_BASE_URL}/api/productcategories`);
         setCategories(response.data);
       } catch (error) {
         console.error(language.ErrorFetchingCategories, error);
       }
     };
 
-    const fetchPublicMenu = async () => {
+    const fetchPublicMenu = async (day) => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/menu/publicmenu`);
+        const response = await axios.get(`${API_BASE_URL}/api/menu/publicmenu/${day}`);
         setMenu(response.data);
       } catch (error) {
         setError(language.FailedToFetchMenu);
@@ -55,8 +62,10 @@ const OrderSection = () => {
     };
 
     fetchProductCategories();
-    fetchPublicMenu();
-  }, [language]);
+    if (selectedDay) {
+      fetchPublicMenu(selectedDay);
+    }
+  }, [language, selectedDay]);
 
   useEffect(() => {
     if (menu && categories.length > 0) {
@@ -69,7 +78,6 @@ const OrderSection = () => {
       const category = categories.find(
         (cat) => cat.CategoryID === item.Product.CategoryID
       );
-
       const categoryName = category ? category.CategoryName : "Other";
       if (!acc[categoryName]) {
         acc[categoryName] = [];
@@ -77,7 +85,6 @@ const OrderSection = () => {
       acc[categoryName].push(item);
       return acc;
     }, {});
-
     setGroupedProducts(grouped);
   };
 
@@ -143,7 +150,6 @@ const OrderSection = () => {
 
     try {
       const token = localStorage.getItem("token");
-
       let CartID = localStorage.getItem("cartID");
       if (!CartID) {
         const cartResponse = await axios.post(
@@ -190,43 +196,59 @@ const OrderSection = () => {
   return (
     <Container>
       <Box sx={{ padding: "20px", paddingBottom: "40px", px: "20px" }}>
-        <Typography
-          variant="h4"
-          align="left"
-          gutterBottom
-        >
+        <Typography variant="h4" align="left" gutterBottom>
           {language.AddToCart}
         </Typography>
         {error && <div style={{ color: "red" }}>{error}</div>}
 
         <FormControl fullWidth margin="normal" variant="outlined">
-  <InputLabel htmlFor="select-child" sx={{ color: "black" }}>
-    {language.SelectChild}
-  </InputLabel>
-  <Select
-    id="select-child"
-    value={selectedChild}
-    onChange={(e) => setSelectedChild(e.target.value)}
-    label={language.SelectChild}
-    sx={{ backgroundColor: "white" }}
-  >
-    <MenuItem value="">{language.Select}</MenuItem>
-    {children.length > 0 ? (
-      children.map((child) => (
-        <MenuItem key={child.id} value={child.id}>
-          {child.Name}
-        </MenuItem>
-      ))
-    ) : (
-      <MenuItem value="">{language.NoChildrenAvailable}</MenuItem>
-    )}
-  </Select>
-</FormControl>
+          <InputLabel htmlFor="select-child" sx={{ color: "black" }}>
+            {language.SelectChild}
+          </InputLabel>
+          <Select
+            id="select-child"
+            value={selectedChild}
+            onChange={(e) => setSelectedChild(e.target.value)}
+            label={language.SelectChild}
+            sx={{ backgroundColor: "white" }}
+          >
+            <MenuItem value="">{language.Select}</MenuItem>
+            {children.length > 0 ? (
+              children.map((child) => (
+                <MenuItem key={child.id} value={child.id}>
+                  {child.Name}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem value="">{language.NoChildrenAvailable}</MenuItem>
+            )}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal" variant="outlined">
+          <InputLabel htmlFor="select-day" sx={{ color: "black" }}>
+            {language.SelectDay}
+          </InputLabel>
+          <Select
+            id="select-day"
+            value={selectedDay}
+            onChange={(e) => setSelectedDay(e.target.value)}
+            label={language.SelectDay}
+            sx={{ backgroundColor: "white" }}
+          >
+            <MenuItem value="">{language.Select}</MenuItem>
+            {daysOfWeek.map((day) => (
+              <MenuItem key={day} value={day}>
+                {language[day] || day}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         {menu ? (
           <div>
             <h3>
-              {language.MenuFor}: {language[menu.DayOfWeek]}
+              {language.MenuFor}: {language[menu.DayOfWeek] || menu.DayOfWeek}
             </h3>
             {Object.keys(groupedProducts).map((category) => (
               <div key={category}>
@@ -243,33 +265,13 @@ const OrderSection = () => {
                     const quantity = existingItem ? existingItem.Quantity : 0;
 
                     return (
-                      <Grid
-                        item
-                        xs={12}
-                        sm={6}
-                        md={3}
-                        key={item.Product.ProductID}
-                      >
-                        <Card
-                          sx={{
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
+                      <Grid item xs={12} sm={6} md={3} key={item.Product.ProductID}>
+                        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
                           <Box sx={{ flexGrow: 1 }}>
                             <CardMedia
                               component="img"
-                              sx={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                              }}
-                              image={
-                                photo
-                                  ? `${API_BASE_URL}/${photo.PhotoURL}`
-                                  : null
-                              }
+                              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              image={photo ? `${API_BASE_URL}/${photo.PhotoURL}` : null}
                               alt={photo ? photo.AltText : language.Photo}
                             />
                           </Box>
@@ -283,23 +285,15 @@ const OrderSection = () => {
                             <Box display="flex" alignItems="center">
                               <IconButton
                                 onClick={() =>
-                                  handleItemSelection(
-                                    item.Product,
-                                    Math.max(0, quantity - 1)
-                                  )
+                                  handleItemSelection(item.Product, Math.max(quantity - 1, 0))
                                 }
                               >
                                 <RemoveIcon />
                               </IconButton>
-                              <Typography variant="body1" sx={{ mx: 2 }}>
-                                {quantity}
-                              </Typography>
+                              <Typography variant="body2">{quantity}</Typography>
                               <IconButton
                                 onClick={() =>
-                                  handleItemSelection(
-                                    item.Product,
-                                    quantity + 1
-                                  )
+                                  handleItemSelection(item.Product, quantity + 1)
                                 }
                               >
                                 <AddIcon />
@@ -313,19 +307,13 @@ const OrderSection = () => {
                 </Grid>
               </div>
             ))}
+            <Button variant="contained" color="primary" onClick={handleAddToCart}>
+              {language.AddToCart}
+            </Button>
           </div>
         ) : (
           <p>{language.LoadingMenu}</p>
         )}
-<Box sx={{ mt: 2 }}>
-        <Button
-          variant="contained"
-          onClick={handleAddToCart}
-          sx={{ backgroundColor: "black", color: "white" }}
-        >
-          {language.AddToCart}
-        </Button>
-        </Box>
       </Box>
     </Container>
   );

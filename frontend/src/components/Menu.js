@@ -8,6 +8,8 @@ import {
   ListItemText,
   CircularProgress,
   Container,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import LanguageContext from "../LanguageContext";
 
@@ -29,6 +31,7 @@ const notebookStyles = {
     width: "100%",
     borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
     paddingBottom: "10px",
+    animation: "fadeIn 0.5s ease",
   },
   verticalLine: {
     position: "absolute",
@@ -59,11 +62,30 @@ const notebookStyles = {
   priceBox: {
     textAlign: "right",
   },
+  backgroundImage: {
+    backgroundImage: 'url("/path-to-your-background.jpg")',
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    minHeight: "40vh",
+  },
+  container: {
+    maxWidth: "800px",
+    margin: "0 auto",
+    padding: "20px",
+  },
 };
+
+const fadeInStyle = `
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+`;
 
 const Menu = () => {
   const { language, getProductName } = useContext(LanguageContext);
   const [menu, setMenu] = useState(null);
+  const [selectedDay, setSelectedDay] = useState("Monday");
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -119,27 +141,38 @@ const Menu = () => {
 
   return (
     <Container>
-      <Box sx={notebookStyles.container}>
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-        >
-          {language.OurMenu}
-        </Typography>
-        {Object.keys(categorizedMenuItems).length ? (
-          Object.keys(categorizedMenuItems).map((day, index) => (
-            <Box sx={{ position: "relative" }} key={index}>
+      <style>{fadeInStyle}</style>
+      <Box sx={notebookStyles.backgroundImage}>
+        <Box sx={notebookStyles.container}>
+          <Typography variant="h4" align="center" gutterBottom>
+            {language.OurMenu}
+          </Typography>
+
+          <Box display="flex" justifyContent="center" mb={3}>
+            <Select
+              value={selectedDay}
+              onChange={(e) => setSelectedDay(e.target.value)}
+            >
+              {Object.keys(categorizedMenuItems).map((day) => (
+                <MenuItem key={day} value={day}>
+                  {language[day] || day}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+
+          {categorizedMenuItems[selectedDay] ? (
+            <Box sx={{ position: "relative" }}>
               <Paper elevation={3} sx={notebookStyles.paper}>
                 <Typography
                   variant="h5"
                   gutterBottom
                   sx={notebookStyles.underlineText}
                 >
-                  {language[day] || day}
+                  {language[selectedDay] || selectedDay}
                 </Typography>
                 <List>
-                  {Object.keys(categorizedMenuItems[day]).map(
+                  {Object.keys(categorizedMenuItems[selectedDay]).map(
                     (categoryName) => (
                       <Box key={categoryName} sx={{ marginBottom: 2 }}>
                         <Typography
@@ -148,7 +181,7 @@ const Menu = () => {
                         >
                           {language[categoryName] || categoryName}
                         </Typography>
-                        {categorizedMenuItems[day][categoryName].map(
+                        {categorizedMenuItems[selectedDay][categoryName].map(
                           (item, idx) => (
                             <ListItem key={idx} sx={notebookStyles.listItem}>
                               <ListItemText
@@ -176,10 +209,12 @@ const Menu = () => {
                 <Box sx={notebookStyles.verticalLine} />
               </Paper>
             </Box>
-          ))
-        ) : (
-          <Typography align="center">{language.NoMenuAvailable}</Typography>
-        )}
+          ) : (
+            <Typography align="center">
+              {language.NoMenuAvailable}
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Container>
   );

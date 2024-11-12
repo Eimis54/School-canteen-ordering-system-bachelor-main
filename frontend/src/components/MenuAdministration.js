@@ -420,7 +420,7 @@ const handlePublicToggle = async (menuId) => {
           <Button variant="text" onClick={() => handleMenuSelection(menu.MenuID)} style={{ flex: 1 }}>
             {language[menu.DayOfWeek] || menu.DayOfWeek}
           </Button>
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Checkbox
                 checked={menu.IsPublic || false}
@@ -429,7 +429,7 @@ const handlePublicToggle = async (menuId) => {
               />
             }
             label={language.Public}
-          />
+          /> */}
         </li>
       ))}
     </ul>
