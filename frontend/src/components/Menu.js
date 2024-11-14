@@ -22,6 +22,7 @@ const notebookStyles = {
     backgroundColor: "#f5f3c4",
     overflow: "hidden",
     height: "auto",
+    width: "100%"
   },
   listItem: {
     display: "flex",
@@ -35,7 +36,7 @@ const notebookStyles = {
   },
   verticalLine: {
     position: "absolute",
-    left: "25%",
+    left: "30%",
     top: "0",
     bottom: "0",
     width: "0.05px",
@@ -184,10 +185,10 @@ const Menu = () => {
                         {categorizedMenuItems[selectedDay][categoryName].map(
                           (item, idx) => (
                             <ListItem key={idx} sx={notebookStyles.listItem}>
-                              <ListItemText
-                                primary={getProductName(item.ProductID)}
-                                secondary={item.Description}
-                              />
+                            <ListItemText
+                              primary={getProductName(item.ProductID, item.ProductName)}
+                             secondary={item.Description}
+                            />
                               <Box sx={notebookStyles.priceBox}>
                                 <Typography variant="body1">
                                   {item.Price} Eur.

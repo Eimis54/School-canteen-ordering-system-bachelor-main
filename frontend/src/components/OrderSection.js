@@ -32,6 +32,7 @@ const OrderSection = () => {
   const [groupedProducts, setGroupedProducts] = useState({});
   const [categories, setCategories] = useState([]);
   const [selectedDay, setSelectedDay] = useState("Monday");
+  const [cartDay, setCartDay] = useState(null);
 
   const daysOfWeek = [
     "Monday",
@@ -122,6 +123,21 @@ const OrderSection = () => {
     fetchPhotos();
   }, [language]);
 
+  useEffect(() => {
+    const fetchCartDay = async () => {
+      try {
+        const CartID = localStorage.getItem("cartID");
+        if (CartID) {
+          const response = await axios.get(`${API_BASE_URL}/api/cart/${CartID}`);
+          setCartDay(response.data.DayOfWeek);
+        }
+      } catch (error) {
+        console.error("Failed to fetch cart day", error);
+      }
+    };
+    fetchCartDay();
+  }, []);
+
   const handleItemSelection = (product, quantity) => {
     setSelectedItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
@@ -132,44 +148,50 @@ const OrderSection = () => {
         updatedItems[existingItemIndex] = { ...product, Quantity: quantity };
         return updatedItems;
       } else {
-        return [...prevItems, { ...product, Quantity: quantity }];
+        return [...prevItems, { ...product, Quantity: quantity }];  
       }
     });
   };
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
-
+  
     if (!selectedChild) {
       return alert(language.PleaseSelectAChild);
     }
-
+  
     if (selectedItems.length === 0) {
       return alert(language.NoItemsSelectedForCart);
     }
-
+  
+    if (cartDay && cartDay !== selectedDay) {
+      const conflictMessageKey = `OrderConflictMessage${selectedDay}`;
+      return alert(language[conflictMessageKey]);
+    }
+  
     try {
       const token = localStorage.getItem("token");
       let CartID = localStorage.getItem("cartID");
       if (!CartID) {
         const cartResponse = await axios.post(
           `${API_BASE_URL}/api/cart/create`,
-          {},
+          { DayOfWeek: selectedDay },
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         CartID = cartResponse.data.CartID;
         localStorage.setItem("cartID", CartID);
+        setCartDay(selectedDay);
       }
-
+  
       const cartItems = selectedItems.map((item) => ({
         ProductID: item.ProductID,
         Quantity: item.Quantity,
         Price: item.Price,
         Calories: item.Calories,
       }));
-
+  
       await axios.post(
         `${API_BASE_URL}/api/cart/add`,
         {
@@ -183,7 +205,7 @@ const OrderSection = () => {
           },
         }
       );
-
+  
       alert(language.ItemsAddedToCartSuccess);
       setSelectedChild("");
       setSelectedItems([]);
@@ -192,7 +214,6 @@ const OrderSection = () => {
       console.error(error);
     }
   };
-
   return (
     <Container>
       <Box sx={{ padding: "20px", paddingBottom: "40px", px: "20px" }}>
@@ -276,9 +297,9 @@ const OrderSection = () => {
                             />
                           </Box>
                           <CardContent>
-                            <Typography variant="h6">
-                              {getProductName(item.Product.ProductID)}
-                            </Typography>
+                          <Typography variant="h6">
+  {getProductName(item.Product.ProductID, item.Product.ProductName)}
+</Typography>
                             <Typography variant="body2">
                               {item.Product.Price} Eur.
                             </Typography>
@@ -307,9 +328,14 @@ const OrderSection = () => {
                 </Grid>
               </div>
             ))}
-            <Button variant="contained" color="primary" onClick={handleAddToCart}>
-              {language.AddToCart}
-            </Button>
+<Button
+  variant="contained"
+  color="primary"
+  onClick={handleAddToCart}
+  sx={{ mt: 4 }}
+>
+  {language.AddToCart}
+</Button>
           </div>
         ) : (
           <p>{language.LoadingMenu}</p>

@@ -16,18 +16,19 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
-  const getProductName = (productId) => {
-    console.log("Getting product name for ProductID:", productId); // Debug line
+  const getProductName = (productId, productName = '') => {
     const translations = productTranslations.products[productId];
+    console.log('Translations:', translations); // Debugging line
     if (translations) {
-      const name = translations[language === en ? 'en' : 'lt'].productname;
-      console.log("Found product name:", name); // Debug line
-      return name;
+      const name = translations[language === en ? 'en' : 'lt']?.productname;
+      console.log('Translated name:', name); // Debugging line
+      if (name) {
+        return name;
+      }
     }
-    console.log("Product name not available for ProductID:", productId); // Debug line
-    return 'Product name not available';
+    console.log('Using fallback product name:', productName); // Debugging line
+    return productName || 'Product name not available';
   };
-
   return (
     <LanguageContext.Provider value={{ language, switchLanguage, getProductName }}>
       {children}

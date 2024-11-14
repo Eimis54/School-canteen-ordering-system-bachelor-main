@@ -330,8 +330,13 @@
   "FAQChildAbsentDesc": "If your child is absent, please cancel the order as early as possible.",
   "FAQContactSupport": "How do I contact support if I have issues with the system?",
   "FAQContactSupportDesc": "For any assistance, please contact support at support@evalgykla.com or call us at the provided contact number on the support page."
-, "SelectDay":"Select day"
-    
+, "SelectDay":"Select day",
+"OrderConflictMessageMonday": "You already have items for Monday. Complete that order before adding items for a new day.",
+  "OrderConflictMessageTuesday": "You already have items for Tuesday. Complete that order before adding items for a new day.",
+  "OrderConflictMessageWednesday": "You already have items for Wednesday. Complete that order before adding items for a new day.",
+  "OrderConflictMessageThursday": "You already have items for Thursday. Complete that order before adding items for a new day.",
+  "OrderConflictMessageFriday": "You already have items for Friday. Complete that order before adding items for a new day."
+
 
 
 

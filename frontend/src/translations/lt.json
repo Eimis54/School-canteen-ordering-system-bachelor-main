@@ -317,5 +317,11 @@
   "FAQChildAbsentDesc": "Jeigu Jūsų vaiko nėra, prašome kuo anksčiau atšaukti užsakymą.",
   "FAQContactSupport": "Kaip susisiekti su palaikymo tarnyba, jei kyla problemų dėl sistemos?",
   "FAQContactSupportDesc": "Jei reikia pagalbos, susisiekite su palaikymo komanda adresu support@evalgykla.com arba skambinkite mums pagalbos puslapyje nurodytu kontaktiniu numeriu."
-, "SelectDay":"Pasirinkite dieną"
+, "SelectDay":"Pasirinkite dieną",
+"OrderConflictMessageMonday": "Jūs jau turite prekių pirmadieniui. Užbaikite tą užsakymą prieš pridėdami prekes naujai dienai.",
+"OrderConflictMessageTuesday": "Jūs jau turite prekių antradieniui. Užbaikite tą užsakymą prieš pridėdami prekes naujai dienai.",
+"OrderConflictMessageWednesday": "Jūs jau turite prekių trečiadieniui. Užbaikite tą užsakymą prieš pridėdami prekes naujai dienai.",
+"OrderConflictMessageThursday": "Jūs jau turite prekių ketvirtadieniui. Užbaikite tą užsakymą prieš pridėdami prekes naujai dienai.",
+"OrderConflictMessageFriday": "Jūs jau turite prekių penktadieniui. Užbaikite tą užsakymą prieš pridėdami prekes naujai dienai."
+
 }
