@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   Box,
   Typography,
@@ -22,7 +22,7 @@ const notebookStyles = {
     backgroundColor: "#f5f3c4",
     overflow: "hidden",
     height: "auto",
-    width: "100%"
+    width: "auto"
   },
   listItem: {
     display: "flex",
@@ -33,10 +33,11 @@ const notebookStyles = {
     borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
     paddingBottom: "10px",
     animation: "fadeIn 0.5s ease",
+    position:"relative"
   },
-  verticalLine: {
+  verticalLine: (leftPosition) => ({
     position: "absolute",
-    left: "30%",
+    left: leftPosition,
     top: "0",
     bottom: "0",
     width: "0.05px",
@@ -44,7 +45,7 @@ const notebookStyles = {
     backgroundColor: "#C46962",
     opacity: 0.7,
     height: "100%",
-  },
+  }),
   underlineText: {
     position: "relative",
     display: "inline-block",
@@ -88,6 +89,9 @@ const Menu = () => {
   const [menu, setMenu] = useState(null);
   const [selectedDay, setSelectedDay] = useState("Monday");
 
+  const productNameRef = useRef(null);
+  const [linePosition, setLinePosition] = useState("30%");
+
   useEffect(() => {
     const fetchMenu = async () => {
       try {
@@ -104,6 +108,13 @@ const Menu = () => {
 
     fetchMenu();
   }, [language]);
+
+  useEffect(() => {
+    if (productNameRef.current) {
+      const productWidth = productNameRef.current.offsetWidth;
+      setLinePosition(productWidth + 200);
+    }
+  }, [menu]);
 
   if (!menu) {
     return (
@@ -185,10 +196,14 @@ const Menu = () => {
                         {categorizedMenuItems[selectedDay][categoryName].map(
                           (item, idx) => (
                             <ListItem key={idx} sx={notebookStyles.listItem}>
-                            <ListItemText
-                              primary={getProductName(item.ProductID, item.ProductName)}
-                             secondary={item.Description}
-                            />
+                              <ListItemText
+                                primary={
+                                  <span ref={productNameRef}>
+                                    {getProductName(item.ProductID, item.ProductName)}
+                                  </span>
+                                }
+                                secondary={item.Description}
+                              />
                               <Box sx={notebookStyles.priceBox}>
                                 <Typography variant="body1">
                                   {item.Price} Eur.
@@ -207,13 +222,11 @@ const Menu = () => {
                     )
                   )}
                 </List>
-                <Box sx={notebookStyles.verticalLine} />
+                <Box sx={notebookStyles.verticalLine(linePosition)} />
               </Paper>
             </Box>
           ) : (
-            <Typography align="center">
-              {language.NoMenuAvailable}
-            </Typography>
+            <Typography align="center">{language.NoMenuAvailable}</Typography>
           )}
         </Box>
       </Box>

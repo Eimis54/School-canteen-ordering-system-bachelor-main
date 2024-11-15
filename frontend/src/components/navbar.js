@@ -93,11 +93,18 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
             </Button>
 
             <Button
-              onClick={toggleProfile}
-              sx={{ color: "black", marginLeft: "1rem" }}
-            >
-              {language.Welcome}, {user ? user.Name : ""}
-            </Button>
+  onClick={toggleProfile}
+  sx={{
+    color: "black",
+    marginLeft: "1rem",
+    width: { xs: "100%", sm: "auto" },
+    padding: { xs: "0.5rem 1rem", sm: "0.75rem 1.5rem" },
+    textAlign: "center",
+    display: { xs: "block", sm: "inline-flex" },
+  }}
+>
+  {language.Welcome}, {user ? user.Name : ""}
+</Button>
 
             <Drawer
               anchor="right"

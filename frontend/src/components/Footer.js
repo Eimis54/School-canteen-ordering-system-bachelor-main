@@ -18,15 +18,6 @@ const Footer = () => {
         <Typography variant="body1" color="textSecondary">
           © 2024 School Canteen Ordering System. All Rights Reserved.
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          <Link href="/privacy-policy" underline="hover" color="inherit">
-            Privacy Policy
-          </Link>{" "}
-          |{" "}
-          <Link href="/terms-of-service" underline="hover" color="inherit">
-            Terms of Service
-          </Link>
-        </Typography>
       </Container>
     </Box>
   );
