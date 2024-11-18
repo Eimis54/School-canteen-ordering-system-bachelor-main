@@ -79,24 +79,15 @@ const UserAdministration = () => {
 
   const handleDelete = async (userId) => {
     if (!window.confirm(language.WantToDeleteUser)) return;
-
     try {
-      const response = await axios.delete(`http://localhost:3001/api/user/admin/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      await axios.delete(`http://localhost:3001/api/user/admin/users/${userId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-
-      if (response.status === 200) {
-        setUsers(users.filter(user => user.UserID !== userId));
-      } else {
-        setError(language.FailedToDeleteUser);
-      }
+      setUsers(users.filter(user => user.UserID !== userId));
     } catch (error) {
       setError(language.ErrorOccured);
     }
   };
-
   const handleEdit = (user) => {
     setEditingUser(user);
     setFormData({

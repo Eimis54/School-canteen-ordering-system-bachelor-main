@@ -79,9 +79,20 @@ const FetchOrderPage = () => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <Button variant="contained" color="primary" type="submit" fullWidth>
-                  {language.FetchOrder}
-                </Button>
+              <Button
+  variant="contained"
+  type="submit"
+  fullWidth
+  sx={{
+    backgroundColor: 'black',
+    color: 'white',            
+    '&:hover': {
+      backgroundColor: '#333',
+    },
+  }}
+>
+  {language.FetchOrder}
+</Button>
               </Grid>
             </Grid>
           </form>
@@ -109,9 +120,22 @@ const FetchOrderPage = () => {
               </Typography>
 
               {order.paymentStatus !== 'refunded' && order.status === true && (
-                <Button variant="contained" color="secondary" onClick={completeOrder} disabled={loading} style={{ marginTop: '16px' }}>
-                  {loading ? language.Completing : language.CompleteOrder}
-                </Button>
+                <Button
+                variant="contained"
+                onClick={completeOrder}
+                disabled={loading}
+                sx={{
+                  marginTop: '16px',
+                  backgroundColor: 'black', 
+                  color: 'white',            
+                  '&:hover': {
+                    backgroundColor: '#333',
+                  },
+                }}
+              >
+                {loading ? language.Completing : language.CompleteOrder}
+              </Button>
+              
               )}
             </div>
           )}

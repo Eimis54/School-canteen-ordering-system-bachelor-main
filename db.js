@@ -19,7 +19,6 @@ db.sequelize = sequelize;
 
 db.User = require('./models/user')(sequelize, Sequelize.DataTypes);
 db.Order = require('./models/order')(sequelize, Sequelize.DataTypes);
-db.OrderDetail = require('./models/orderDetail')(sequelize, Sequelize.DataTypes);
 db.Product = require('./models/product')(sequelize, Sequelize.DataTypes);
 db.ProductCategory = require('./models/productCategory')(sequelize, Sequelize.DataTypes);
 db.Role = require('./models/role')(sequelize, Sequelize.DataTypes);

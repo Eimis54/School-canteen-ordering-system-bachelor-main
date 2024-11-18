@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User, Order } = require('../models');
+const { User, Order, Children } = require('../models');
 const { authenticateToken, isAdmin } = require('../middleware/auth.js');
 
 const router = express.Router();
@@ -145,13 +145,20 @@ router.delete('/admin/users/:id', authenticateToken, isAdmin, async (req, res) =
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    await Order.update({ UserID: null }, { where: { UserID: userId } });
+
+    await Children.update({ UserID: null }, { where: { UserID: userId } });
+
     await user.destroy();
+    
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Failed to delete user' });
   }
 });
+
 router.get('/admin/users', authenticateToken, isAdmin, async (req, res) => {
   try {
     const users = await User.findAll({

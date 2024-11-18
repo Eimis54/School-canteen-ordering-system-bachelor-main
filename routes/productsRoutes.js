@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Product, ProductCategory } = require('../models');
 const { authenticateToken, isAdmin } = require('../middleware/auth.js');
+const { Sequelize } = require('sequelize');
+
 
 router.post('/admin/products', authenticateToken, isAdmin, async (req, res) => {
   const { name, description, price, categoryId } = req.body;
@@ -21,13 +23,20 @@ router.post('/admin/products', authenticateToken, isAdmin, async (req, res) => {
 
 router.get('/products', async (req, res) => {
   try {
-    const products = await Product.findAll();
+    const products = await Product.findAll({
+      where: {
+        Price: {
+          [Sequelize.Op.ne]: null,
+        },
+      },
+    });
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ error: 'Failed to fetch products', details: error.message });
   }
 });
+
 
 router.get('/products/:id', async (req, res) => {
   const { id } = req.params;
@@ -74,13 +83,17 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
     const product = await Product.findByPk(id);
     if (!product) return res.status(404).json({ error: 'Product not found' });
 
-    await product.destroy();
-    res.json({ message: 'Product deleted successfully' });
+    product.Price = null;
+    product.CategoryID = null;
+    await product.save();
+
+    res.json({ message: 'Product marked as deleted (inactive)' });
   } catch (error) {
-    console.error('Error deleting product:', error);
-    res.status(500).json({ error: 'Failed to delete product' });
+    console.error('Error updating product status:', error);
+    res.status(500).json({ error: 'Failed to update product status' });
   }
 });
+
 
 router.post('/admin/productcategories', authenticateToken, isAdmin, async (req, res) => {
   const { name, description } = req.body;
@@ -175,5 +188,6 @@ router.post('/', async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
+
 
 module.exports = router;

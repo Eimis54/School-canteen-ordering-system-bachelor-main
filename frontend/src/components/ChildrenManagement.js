@@ -174,9 +174,9 @@ const ChildrenManagement = () => {
                 <IconButton onClick={() => handleEditClick(child)}>
                   <Edit />
                 </IconButton>
-                <IconButton onClick={() => handleDeleteChild(child.id)}>
+                {/* <IconButton onClick={() => handleDeleteChild(child.id)}>
                   <Delete />
-                </IconButton>
+                </IconButton> */}
               </ListItem>
             ))
           ) : (

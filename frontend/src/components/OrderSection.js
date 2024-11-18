@@ -275,57 +275,59 @@ const OrderSection = () => {
               <div key={category}>
                 <h4>{language[category] || category}</h4>
                 <Grid container spacing={2}>
-                  {groupedProducts[category].map((item) => {
-                    const photo = photos.find(
-                      (photo) => photo.ProductID === item.Product.ProductID
-                    );
-                    const existingItem = selectedItems.find(
-                      (selected) =>
-                        selected.ProductID === item.Product.ProductID
-                    );
-                    const quantity = existingItem ? existingItem.Quantity : 0;
+  {groupedProducts[category].map((item) => {
+    // Check if the product has a valid price
+    if (!item.Product.Price) {
+      return null; // Skip rendering the item if price is null or undefined
+    }
 
-                    return (
-                      <Grid item xs={12} sm={6} md={3} key={item.Product.ProductID}>
-                        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-                          <Box sx={{ flexGrow: 1 }}>
-                            <CardMedia
-                              component="img"
-                              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-                              image={photo ? `${API_BASE_URL}/${photo.PhotoURL}` : null}
-                              alt={photo ? photo.AltText : language.Photo}
-                            />
-                          </Box>
-                          <CardContent>
-                          <Typography variant="h6">
-  {getProductName(item.Product.ProductID, item.Product.ProductName)}
-</Typography>
-                            <Typography variant="body2">
-                              {item.Product.Price} Eur.
-                            </Typography>
-                            <Box display="flex" alignItems="center">
-                              <IconButton
-                                onClick={() =>
-                                  handleItemSelection(item.Product, Math.max(quantity - 1, 0))
-                                }
-                              >
-                                <RemoveIcon />
-                              </IconButton>
-                              <Typography variant="body2">{quantity}</Typography>
-                              <IconButton
-                                onClick={() =>
-                                  handleItemSelection(item.Product, quantity + 1)
-                                }
-                              >
-                                <AddIcon />
-                              </IconButton>
-                            </Box>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
+    const photo = photos.find(
+      (photo) => photo.ProductID === item.Product.ProductID
+    );
+    const existingItem = selectedItems.find(
+      (selected) => selected.ProductID === item.Product.ProductID
+    );
+    const quantity = existingItem ? existingItem.Quantity : 0;
+
+    return (
+      <Grid item xs={12} sm={6} md={3} key={item.Product.ProductID}>
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <CardMedia
+              component="img"
+              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+              image={photo ? `${API_BASE_URL}/${photo.PhotoURL}` : null}
+              alt={photo ? photo.AltText : language.Photo}
+            />
+          </Box>
+          <CardContent>
+            <Typography variant="h6">
+              {getProductName(item.Product.ProductID, item.Product.ProductName)}
+            </Typography>
+            <Typography variant="body2">{item.Product.Price} Eur.</Typography>
+            <Box display="flex" alignItems="center">
+              <IconButton
+                onClick={() =>
+                  handleItemSelection(item.Product, Math.max(quantity - 1, 0))
+                }
+              >
+                <RemoveIcon />
+              </IconButton>
+              <Typography variant="body2">{quantity}</Typography>
+              <IconButton
+                onClick={() =>
+                  handleItemSelection(item.Product, quantity + 1)
+                }
+              >
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </CardContent>
+        </Card>
+      </Grid>
+    );
+  })}
+</Grid>
               </div>
             ))}
 <Button

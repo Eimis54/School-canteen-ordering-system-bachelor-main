@@ -3,30 +3,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Products', {
-      ProductID: {
+    await queryInterface.createTable('Photos', {
+      PhotoID: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      CategoryID: {
+      ProductID: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
-          model: 'ProductCategories',
-          key: 'CategoryID',
+          model: 'Products',
+          key: 'ProductID',
         },
       },
-      ProductName: {
-        type: Sequelize.STRING(100),
+      PhotoURL: {
+        type: Sequelize.STRING(255),
         allowNull: false,
       },
-      Calories: {
-        type: Sequelize.DECIMAL(6, 2),
-        allowNull: false,
-      },
-      Price: {
-        type: Sequelize.DECIMAL(10, 2),
+      AltText: {
+        type: Sequelize.STRING(255),
         allowNull: true,
       },
       createdAt: {
@@ -41,19 +37,19 @@ module.exports = {
       },
     });
 
-    await queryInterface.addConstraint('Products', {
-      fields: ['CategoryID'],
+    await queryInterface.addConstraint('Photos', {
+      fields: ['ProductID'],
       type: 'foreign key',
-      name: 'product_category_fk',
+      name: 'photo_product_fk',
       references: {
-        table: 'ProductCategories',
-        field: 'CategoryID',
+        table: 'Products',
+        field: 'ProductID',
       },
-      onDelete: 'SET NULL',
+      onDelete: 'CASCADE',
     });
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Products');
+    await queryInterface.dropTable('Photos');
   }
 };

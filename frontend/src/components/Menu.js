@@ -193,31 +193,28 @@ const Menu = () => {
                         >
                           {language[categoryName] || categoryName}
                         </Typography>
-                        {categorizedMenuItems[selectedDay][categoryName].map(
-                          (item, idx) => (
-                            <ListItem key={idx} sx={notebookStyles.listItem}>
-                              <ListItemText
-                                primary={
-                                  <span ref={productNameRef}>
-                                    {getProductName(item.ProductID, item.ProductName)}
-                                  </span>
-                                }
-                                secondary={item.Description}
-                              />
-                              <Box sx={notebookStyles.priceBox}>
-                                <Typography variant="body1">
-                                  {item.Price} Eur.
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {item.Calories} kcal
-                                </Typography>
-                              </Box>
-                            </ListItem>
+                        {categorizedMenuItems[selectedDay][categoryName].map((item, idx) => (
+  item.Price !== null && (
+    <ListItem key={idx} sx={notebookStyles.listItem}>
+      <ListItemText
+        primary={
+          <span ref={productNameRef}>
+            {getProductName(item.ProductID, item.ProductName)}
+          </span>
+        }
+        secondary={item.Description}
+      />
+      <Box sx={notebookStyles.priceBox}>
+        <Typography variant="body1">
+          {item.Price} Eur.
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {item.Calories} kcal
+        </Typography>
+      </Box>
+    </ListItem>
                           )
-                        )}
+                        ))}
                       </Box>
                     )
                   )}
