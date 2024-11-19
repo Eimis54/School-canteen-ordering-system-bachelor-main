@@ -22,7 +22,7 @@ const notebookStyles = {
     backgroundColor: "#f5f3c4",
     overflow: "hidden",
     height: "auto",
-    width: "auto"
+    width: "auto",
   },
   listItem: {
     display: "flex",
@@ -33,7 +33,7 @@ const notebookStyles = {
     borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
     paddingBottom: "10px",
     animation: "fadeIn 0.5s ease",
-    position:"relative"
+    position: "relative",
   },
   verticalLine: (leftPosition) => ({
     position: "absolute",
@@ -112,7 +112,7 @@ const Menu = () => {
   useEffect(() => {
     if (productNameRef.current) {
       const productWidth = productNameRef.current.offsetWidth;
-      setLinePosition(productWidth + 200);
+      setLinePosition(`${productWidth + 200}px`);
     }
   }, [menu]);
 
@@ -193,28 +193,35 @@ const Menu = () => {
                         >
                           {language[categoryName] || categoryName}
                         </Typography>
-                        {categorizedMenuItems[selectedDay][categoryName].map((item, idx) => (
-  item.Price !== null && (
-    <ListItem key={idx} sx={notebookStyles.listItem}>
-      <ListItemText
-        primary={
-          <span ref={productNameRef}>
-            {getProductName(item.ProductID, item.ProductName)}
-          </span>
-        }
-        secondary={item.Description}
-      />
-      <Box sx={notebookStyles.priceBox}>
-        <Typography variant="body1">
-          {item.Price} Eur.
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {item.Calories} kcal
-        </Typography>
-      </Box>
-    </ListItem>
-                          )
-                        ))}
+                        {categorizedMenuItems[selectedDay][categoryName].map(
+                          (item, idx) =>
+                            item.Price !== null && (
+                              <ListItem key={idx} sx={notebookStyles.listItem}>
+                                <ListItemText
+                                  primary={
+                                    <span ref={productNameRef}>
+                                      {getProductName(
+                                        item.ProductID,
+                                        item.ProductName
+                                      )}
+                                    </span>
+                                  }
+                                  secondary={item.Description}
+                                />
+                                <Box sx={notebookStyles.priceBox}>
+                                  <Typography variant="body1">
+                                    {item.Price} Eur.
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {item.Calories} kcal
+                                  </Typography>
+                                </Box>
+                              </ListItem>
+                            )
+                        )}
                       </Box>
                     )
                   )}

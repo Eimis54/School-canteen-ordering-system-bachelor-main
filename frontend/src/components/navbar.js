@@ -1,18 +1,36 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Box, Button, Typography, Drawer, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Drawer,
+  IconButton,
+  useMediaQuery,
+} from "@mui/material";
 import Login from "./login";
 import Register from "./register";
 import LanguageContext from "../LanguageContext";
 import CloseIcon from "@mui/icons-material/Close";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
   const [showProfile, setShowProfile] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const { language, switchLanguage } = useContext(LanguageContext);
   const [successMessage, setSuccessMessage] = useState("");
+  const closeAllDrawers = () => {
+    setIsLoggedIn(true);
+    setShowLogin(false);
+    setShowRegister(false);
+    setDrawerOpen(false);
+    setShowProfile(false);
+  };
+
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const toggleProfile = () => setShowProfile(!showProfile);
   const openLogin = () => {
@@ -23,6 +41,8 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
     setShowRegister(true);
     setShowLogin(false);
   };
+
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
   return (
     <Box
@@ -93,18 +113,18 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
             </Button>
 
             <Button
-  onClick={toggleProfile}
-  sx={{
-    color: "black",
-    marginLeft: "1rem",
-    width: { xs: "100%", sm: "auto" },
-    padding: { xs: "0.5rem 1rem", sm: "0.75rem 1.5rem" },
-    textAlign: "center",
-    display: { xs: "block", sm: "inline-flex" },
-  }}
->
-  {language.Welcome}, {user ? user.Name : ""}
-</Button>
+              onClick={toggleProfile}
+              sx={{
+                color: "black",
+                marginLeft: "1rem",
+                width: { xs: "100%", sm: "auto" },
+                padding: { xs: "0.5rem 1rem", sm: "0.75rem 1.5rem" },
+                textAlign: "center",
+                display: { xs: "block", sm: "inline-flex" },
+              }}
+            >
+              {language.Welcome}, {user ? user.Name : ""}
+            </Button>
 
             <Drawer
               anchor="right"
@@ -241,44 +261,160 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
             </Drawer>
           </>
         )}
-
-        {!isLoggedIn && (
+        {isMobile && !isLoggedIn ? (
           <>
-            <Button
-              onClick={openLogin}
-              sx={{ color: "black", marginLeft: "1rem" }}
-            >
-              {language.login}
-            </Button>
-            <Button
-              onClick={openRegister}
-              sx={{ color: "black", marginLeft: "1rem" }}
-            >
-              {language.Register}
-            </Button>
-            <IconButton
-              onClick={() => switchLanguage("en")}
-              sx={{ padding: 0, marginLeft: "1rem" }}
-            >
-              <img
-                src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
-                alt="EN"
-                width={35}
-                height={20}
-              />
+            <IconButton onClick={toggleDrawer} sx={{ color: "black" }}>
+              <MenuIcon />
             </IconButton>
-            <IconButton
-              onClick={() => switchLanguage("lt")}
-              sx={{ padding: 0 }}
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
             >
-              <img
-                src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
-                alt="LT"
-                width={35}
-                height={20}
-              />
-            </IconButton>
-            <Button
+              <Box
+                sx={{
+                  width: 250,
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "1rem",
+                }}
+              >
+                <Box
+                  sx={{ display: "flex", gap: "1rem", alignItems: "center" }}
+                >
+                  <Box sx={{ display: "flex", gap: "1rem" }}>
+                    <IconButton
+                      onClick={() => switchLanguage("en")}
+                      sx={{ padding: 0 }}
+                    >
+                      <img
+                        src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
+                        alt="EN"
+                        width={35}
+                        height={20}
+                      />
+                    </IconButton>
+
+                    <IconButton
+                      onClick={() => switchLanguage("lt")}
+                      sx={{ padding: 0 }}
+                    >
+                      <img
+                        src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
+                        alt="LT"
+                        width={35}
+                        height={20}
+                      />
+                    </IconButton>
+                  </Box>
+
+                  <Box sx={{ ml: "auto" }}>
+                    <IconButton
+                      onClick={() => setDrawerOpen(false)}
+                      sx={{ color: "black" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
+
+                {!isLoggedIn && (
+                  <>
+                    <Button
+                      onClick={() => {
+                        setDrawerOpen(false);
+                      }}
+                      component={Link}
+                      to="/login"
+                      sx={{
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "1rem",
+                        color: "black",
+                        borderBottom: "1px solid black",
+                        marginLeft: isMobile ? 0 : "1rem",
+                      }}
+                    >
+                      {language.login}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setDrawerOpen(false);
+                      }}
+                      component={Link}
+                      to="/register"
+                      sx={{
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "1rem",
+                        color: "black",
+                        borderBottom: "1px solid black",
+                        marginLeft: isMobile ? 0 : "1rem",
+                      }}
+                    >
+                      {language.Register}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setDrawerOpen(false);
+                      }}
+                      component={Link}
+                      to="/Help"
+                      sx={{
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "1rem",
+                        color: "black",
+                        borderBottom: "1px solid black",
+                        marginLeft: isMobile ? 0 : "1rem",
+                      }}
+                    >
+                      {language.Help}
+                    </Button>
+                  </>
+                )}
+              </Box>
+            </Drawer>
+          </>
+        ) : (
+          <>
+            {!isLoggedIn && (
+              <>
+                <Button
+                  onClick={openLogin}
+                  sx={{ color: "black", marginLeft: "1rem" }}
+                >
+                  {language.login}
+                </Button>
+                <Button
+                  onClick={openRegister}
+                  sx={{ color: "black", marginLeft: "1rem" }}
+                >
+                  {language.Register}
+                </Button>
+                <IconButton
+                  onClick={() => switchLanguage("en")}
+                  sx={{ padding: 0, marginLeft: "1rem" }}
+                >
+                  <img
+                    src="https://www.countryflags.com/wp-content/uploads/united-kingdom-flag-png-large.png"
+                    alt="EN"
+                    width={35}
+                    height={20}
+                  />
+                </IconButton>
+                <IconButton
+                  onClick={() => switchLanguage("lt")}
+                  sx={{ padding: 0 }}
+                >
+                  <img
+                    src="https://cdn.countryflags.com/thumbs/lithuania/flag-400.png"
+                    alt="LT"
+                    width={35}
+                    height={20}
+                  />
+                </IconButton>
+                <Button
                   component={Link}
                   to="/Help"
                   sx={{
@@ -290,6 +426,9 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                 >
                   {language.Help}
                 </Button>
+              </>
+            )}
+
             <Drawer
               anchor="right"
               open={showLogin || showRegister}
@@ -335,6 +474,7 @@ const Navbar = ({ isLoggedIn, handleLogout, user, setIsLoggedIn, setUser }) => {
                   setUser={setUser}
                   successMessage={successMessage}
                   setSuccessMessage={setSuccessMessage}
+                  closeAllDrawers={closeAllDrawers}
                 />
               ) : (
                 <Register onClose={() => setShowRegister(false)} />

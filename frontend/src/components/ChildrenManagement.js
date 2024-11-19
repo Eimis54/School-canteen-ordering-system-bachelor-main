@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
   Typography,
@@ -15,20 +15,20 @@ import {
   DialogActions,
   Container,
   Paper,
-} from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
-import LanguageContext from '../LanguageContext';
+} from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
+import LanguageContext from "../LanguageContext";
 
 const ChildrenManagement = () => {
   const { language } = useContext(LanguageContext);
   const [children, setChildren] = useState([]);
-  const [newChildName, setNewChildName] = useState('');
-  const [newChildSurname, setNewChildSurname] = useState('');
-  const [newChildGrade, setNewChildGrade] = useState('');
-  const [editName, setEditName] = useState('');
-  const [editSurname, setEditSurname] = useState('');
-  const [editGrade, setEditGrade] = useState('');
-  const [error, setError] = useState('');
+  const [newChildName, setNewChildName] = useState("");
+  const [newChildSurname, setNewChildSurname] = useState("");
+  const [newChildGrade, setNewChildGrade] = useState("");
+  const [editName, setEditName] = useState("");
+  const [editSurname, setEditSurname] = useState("");
+  const [editGrade, setEditGrade] = useState("");
+  const [error, setError] = useState("");
   const [editingChildId, setEditingChildId] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
@@ -38,19 +38,22 @@ const ChildrenManagement = () => {
 
   const fetchChildren = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const userID = localStorage.getItem('userId');
+      const token = localStorage.getItem("token");
+      const userID = localStorage.getItem("userId");
       if (!userID) {
         setError(language.UserIDNotAvailableLogIn);
         return;
       }
-      const response = await fetch(`http://localhost:3001/api/children?userID=${userID}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/children?userID=${userID}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         setChildren(data);
-        setError('');
+        setError("");
       } else {
         setError(language.FailedToFetchChildren);
       }
@@ -66,16 +69,16 @@ const ChildrenManagement = () => {
       return;
     }
     try {
-      const token = localStorage.getItem('token');
-      const userID = localStorage.getItem('userId');
+      const token = localStorage.getItem("token");
+      const userID = localStorage.getItem("userId");
       if (!userID) {
         setError(language.UserIDNotAvailableLogIn);
         return;
       }
-      const response = await fetch('http://localhost:3001/api/children', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/api/children", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -87,10 +90,10 @@ const ChildrenManagement = () => {
       });
       if (response.ok) {
         fetchChildren();
-        setNewChildName('');
-        setNewChildSurname('');
-        setNewChildGrade('');
-        setError('');
+        setNewChildName("");
+        setNewChildSurname("");
+        setNewChildGrade("");
+        setError("");
       } else {
         setError(language.FailedToAddChild);
       }
@@ -113,23 +116,26 @@ const ChildrenManagement = () => {
       return;
     }
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/children/${editingChildId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          Name: editName,
-          Surname: editSurname,
-          Grade: editGrade,
-        }),
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3001/api/children/${editingChildId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            Name: editName,
+            Surname: editSurname,
+            Grade: editGrade,
+          }),
+        }
+      );
       if (response.ok) {
         fetchChildren();
         setOpenEditDialog(false);
-        setError('');
+        setError("");
       } else {
         setError(language.FailedToEditChild);
       }
@@ -140,11 +146,14 @@ const ChildrenManagement = () => {
 
   const handleDeleteChild = async (childId) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/children/${childId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3001/api/children/${childId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.ok) {
         fetchChildren();
       } else {
@@ -157,7 +166,7 @@ const ChildrenManagement = () => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
-      <Paper elevation={3} sx={{ p: 4, backgroundColor: '#f5f5f5' }}>
+      <Paper elevation={3} sx={{ p: 4, backgroundColor: "#f5f5f5" }}>
         <Typography variant="h4" gutterBottom>
           {language.YourChildren}
         </Typography>
@@ -165,10 +174,14 @@ const ChildrenManagement = () => {
         <List>
           {children.length > 0 ? (
             children.map((child) => (
-              <ListItem key={child.id} sx={{ display: 'flex', alignItems: 'center' }}>
+              <ListItem
+                key={child.id}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 <Box sx={{ flex: 1 }}>
                   <Typography>
-                    {child.Name} {child.Surname} - {language.Grade}: {child.Grade}
+                    {child.Name} {child.Surname} - {language.Grade}:{" "}
+                    {child.Grade}
                   </Typography>
                 </Box>
                 <IconButton onClick={() => handleEditClick(child)}>
@@ -183,32 +196,64 @@ const ChildrenManagement = () => {
             <Typography>{language.NoChildrenFound}</Typography>
           )}
         </List>
-        
-        <Box component="form" onSubmit={handleAddChild} sx={{ display: 'flex', gap: '10px', mt: 3 }}>
+
+        <Box
+          component="form"
+          onSubmit={handleAddChild}
+          sx={{ display: "flex", flexDirection: "column", gap: "10px", mt: 3 }}
+        >
           <TextField
             label={language.EnterChildName}
             value={newChildName}
             onChange={(e) => setNewChildName(e.target.value)}
             required
+            fullWidth
+            sx={{
+              maxWidth: "100%",
+              "@media (max-width: 600px)": {
+                width: "100%",
+              },
+            }}
           />
           <TextField
             label={language.EnterChildSurname}
             value={newChildSurname}
             onChange={(e) => setNewChildSurname(e.target.value)}
             required
+            fullWidth
+            sx={{
+              maxWidth: "100%",
+              "@media (max-width: 600px)": {
+                width: "100%",
+              },
+            }}
           />
           <Select
             value={newChildGrade}
             onChange={(e) => setNewChildGrade(e.target.value)}
             displayEmpty
             required
+            sx={{
+              width: "100%",
+              "@media (max-width: 600px)": {
+                width: "100%",
+              },
+            }}
           >
-            <MenuItem value="" disabled>{language.Selectgrade}</MenuItem>
+            <MenuItem value="" disabled>
+              {language.Selectgrade}
+            </MenuItem>
             {[...Array(12).keys()].map((i) => (
-              <MenuItem key={i + 1} value={i + 1}>{i + 1}</MenuItem>
+              <MenuItem key={i + 1} value={i + 1}>
+                {i + 1}
+              </MenuItem>
             ))}
           </Select>
-          <Button type="submit" variant="contained" sx={{backgroundColor: "black", color: "white"}}>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ backgroundColor: "black", color: "white", width: "100%" }}
+          >
             {language.AddChild}
           </Button>
         </Box>
@@ -236,15 +281,28 @@ const ChildrenManagement = () => {
               displayEmpty
               fullWidth
             >
-              <MenuItem value="" disabled>{language.Selectgrade}</MenuItem>
+              <MenuItem value="" disabled>
+                {language.Selectgrade}
+              </MenuItem>
               {[...Array(12).keys()].map((i) => (
-                <MenuItem key={i + 1} value={i + 1}>{i + 1}</MenuItem>
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
               ))}
             </Select>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenEditDialog(false)} sx={{color: "black"}}>{language.Cancel}</Button>
-            <Button onClick={handleEditChild} variant="contained" sx={{backgroundColor: "black", color: "white"}}>
+            <Button
+              onClick={() => setOpenEditDialog(false)}
+              sx={{ color: "black" }}
+            >
+              {language.Cancel}
+            </Button>
+            <Button
+              onClick={handleEditChild}
+              variant="contained"
+              sx={{ backgroundColor: "black", color: "white" }}
+            >
               {language.UpdateChild}
             </Button>
           </DialogActions>
