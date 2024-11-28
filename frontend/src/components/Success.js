@@ -84,17 +84,17 @@ const Success = () => {
       ) : (
         <Box>
           <Typography variant="h4" gutterBottom sx={{color: "black"}}>
-            {language.OrderSuccessful}
+          Užsakymas sėkmingas!
           </Typography>
           <Typography variant="body1">
-            {language.YourOrderCodeIs}: <strong>{orderCode}</strong>
+          Jūsų užsakymo kodas yra: <strong>{orderCode}</strong>
           </Typography>
           <Button
             variant="contained"
             sx={{ mt: 3, backgroundColor: "black", color: "white" }}
             onClick={() => window.location.href = '/payment-history'}
           >
-            {language.ViewPaymentHistory}
+            Peržiūrėti užsakymų istoriją
           </Button>
         </Box>
       )}

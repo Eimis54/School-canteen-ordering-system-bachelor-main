@@ -45,6 +45,9 @@ const notebookStyles = {
     backgroundColor: "#C46962",
     opacity: 0.7,
     height: "100%",
+    "@media (max-width: 600px)": {
+      display: "none",
+    },
   }),
   underlineText: {
     position: "relative",

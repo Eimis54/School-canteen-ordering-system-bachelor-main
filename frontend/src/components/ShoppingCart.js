@@ -28,6 +28,7 @@ const notebookStyles = {
   },
   card: {
     display: "flex",
+    flexDirection: { xs: "column", sm: "row" },
     alignItems: "center",
     justifyContent: "space-between",
     padding: "10px",
@@ -35,14 +36,17 @@ const notebookStyles = {
     backgroundColor: "#fff",
   },
   media: {
-    width: "100px",
+    width: { xs: "100%", sm: "100px" },
     height: "100px",
     objectFit: "cover",
     borderRadius: "5px",
+    marginBottom: { xs: "10px", sm: 0 },
   },
   quantityControl: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
   },
   removeButton: {
     backgroundColor: "#D9534F",
@@ -96,16 +100,18 @@ const ShoppingCart = () => {
       const stripe = await stripePromise;
       const userId = localStorage.getItem("userId");
 
-      const lineItems = await Promise.all(cart.map(async (cartItem) => ({
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: await getProductName(cartItem.ProductID),
+      const lineItems = await Promise.all(
+        cart.map(async (cartItem) => ({
+          price_data: {
+            currency: "eur",
+            product_data: {
+              name: await getProductName(cartItem.ProductID),
+            },
+            unit_amount: Math.round(cartItem.Price * 100),
           },
-          unit_amount: Math.round(cartItem.Price * 100),
-        },
-        quantity: cartItem.Quantity,
-      })));
+          quantity: cartItem.Quantity,
+        }))
+      );
 
       const response = await axios.post(
         "http://localhost:3001/api/payment/create-checkout-session",
@@ -128,18 +134,18 @@ const ShoppingCart = () => {
   const handleQuantityChange = async (id, change) => {
     const updatedItem = cart.find((item) => item.CartItemID === id);
     const newQuantity = updatedItem.Quantity + change;
-  
+
     if (newQuantity <= 0) {
       handleRemoveItem(id);
       return;
     }
-  
+
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.CartItemID === id ? { ...item, Quantity: newQuantity } : item
       )
     );
-  
+
     try {
       const token = localStorage.getItem("token");
       await axios.put(
@@ -175,7 +181,10 @@ const ShoppingCart = () => {
     (acc, cartItem) => acc + cartItem.Price * cartItem.Quantity,
     0
   );
-  const totalCalories = cart.reduce((acc, item) => acc + item.Calories * item.Quantity, 0);
+  const totalCalories = cart.reduce(
+    (acc, item) => acc + item.Calories * item.Quantity,
+    0
+  );
 
   return (
     <Container maxWidth="lg" sx={{ padding: 4 }}>
@@ -186,58 +195,84 @@ const ShoppingCart = () => {
         {error && <Typography color="error">{error}</Typography>}
 
         {cart.length > 0 ? (
-  cart.map((cartItem) => {
-    const productName = getProductName(cartItem.ProductID);
-    return (
-      <Card key={cartItem.CartItemID} sx={notebookStyles.card}>
-        <CardMedia
-          component="img"
-          image={`http://localhost:3001/${cartItem.product.Photos.PhotoURL}`}
-          alt={cartItem.product.Photos.AltText}
-          sx={notebookStyles.media}
-        />
-        <CardContent sx={{ flex: 1 }}>
-          <Typography variant="h6">
-            {productName}
-          </Typography>
-          <Typography color="textSecondary">
-            {language.Child}: {cartItem.child ? cartItem.child.Name : "N/A"}
-          </Typography>
-          <Typography>{language.Price}: {cartItem.Price} Eur</Typography>
-          <Typography>{language.Calories}: {cartItem.Calories} kcal</Typography>
-        </CardContent>
-        <Box sx={notebookStyles.quantityControl}>
-          <IconButton onClick={() => handleQuantityChange(cartItem.CartItemID, -1)}>
-            <RemoveIcon />
-          </IconButton>
-          <Typography>{cartItem.Quantity}</Typography>
-          <IconButton onClick={() => handleQuantityChange(cartItem.CartItemID, 1)}>
-            <AddIcon />
-          </IconButton>
-          <IconButton
-            sx={notebookStyles.removeButton}
-            onClick={() => handleRemoveItem(cartItem.CartItemID)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Box>
-      </Card>
-    );
-  })
-) : (
-  <Typography>{language.YourCartIsEmpty}</Typography>
-)}
+          cart.map((cartItem) => {
+            const productName = getProductName(cartItem.ProductID);
+            return (
+              <Card key={cartItem.CartItemID} sx={notebookStyles.card}>
+                <CardMedia
+                  component="img"
+                  image={`http://localhost:3001/${cartItem.product.Photos.PhotoURL}`}
+                  alt={cartItem.product.Photos.AltText}
+                  sx={notebookStyles.media}
+                />
+                <CardContent sx={{ flex: 1 }}>
+                  <Typography variant="h6">{productName}</Typography>
+                  <Typography color="textSecondary">
+                    {language.Child}:{" "}
+                    {cartItem.child ? cartItem.child.Name : "N/A"}
+                  </Typography>
+                  <Typography>
+                    {language.Price}: {cartItem.Price} Eur
+                  </Typography>
+                  <Typography>
+                    {language.Calories}: {cartItem.Calories} kcal
+                  </Typography>
+                </CardContent>
+                <Box sx={notebookStyles.quantityControl}>
+                  <IconButton
+                    onClick={() =>
+                      handleQuantityChange(cartItem.CartItemID, -1)
+                    }
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                  <Typography>{cartItem.Quantity}</Typography>
+                  <IconButton
+                    onClick={() =>
+                      handleQuantityChange(cartItem.CartItemID, 1)
+                    }
+                  >
+                    <AddIcon />
+                  </IconButton>
+                  <IconButton
+                    sx={notebookStyles.removeButton}
+                    onClick={() => handleRemoveItem(cartItem.CartItemID)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              </Card>
+            );
+          })
+        ) : (
+          <Typography>{language.YourCartIsEmpty}</Typography>
+        )}
 
         {cart.length > 0 && (
-          <Box sx={{ marginTop: 2, display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              marginTop: 2,
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", sm: "center" },
+              gap: 2,
+            }}
+          >
             <Typography variant="h6">
               <strong>{language.TotalPrice}:</strong> {totalPrice.toFixed(2)} Eur
             </Typography>
-            <Typography variant="h6"><strong>{language.TotalCalories}:</strong> {totalCalories} kcal</Typography>
+            <Typography variant="h6">
+              <strong>{language.TotalCalories}:</strong> {totalCalories} kcal
+            </Typography>
             {isLoading ? (
               <CircularProgress />
             ) : (
-              <Button variant="contained" onClick={handleCheckout} sx={{backgroundColor: "black", color: "white"}}>
+              <Button
+                variant="contained"
+                onClick={handleCheckout}
+                sx={{ backgroundColor: "black", color: "white" }}
+              >
                 {language.ProceedToCheckout}
               </Button>
             )}

@@ -28,6 +28,8 @@ db.Menu = require('./models/menu')(sequelize, Sequelize.DataTypes);
 db.MenuItem = require('./models/menuitems')(sequelize, Sequelize.DataTypes);
 db.CartItem = require('./models/cartitem')(sequelize, Sequelize.DataTypes);
 db.OrderItem = require('./models/orderitem')(sequelize, Sequelize.DataTypes);
+db.Deal = require('./models/deal')(sequelize, Sequelize.DataTypes);
+
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
