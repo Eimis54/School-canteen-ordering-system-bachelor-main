@@ -40,6 +40,12 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       underscored: false,
   });
+  Deal.associate = function (models) {
+    Deal.hasMany(models.Photo, {
+      foreignKey: 'DealID',
+      as: 'Photos',
+    });
+  };
 
   return Deal;
 };
