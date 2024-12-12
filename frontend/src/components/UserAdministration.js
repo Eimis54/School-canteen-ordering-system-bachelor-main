@@ -224,27 +224,28 @@ const UserAdministration = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map(user => (
-                <TableRow key={user.UserID}>
-                  <TableCell>{user.UserID}</TableCell>
-                  <TableCell>{user.Name}</TableCell>
-                  <TableCell>{user.Surname}</TableCell>
-                  <TableCell>{user.Email}</TableCell>
-                  <TableCell>{roles.find(role => role.RoleID === user.RoleID)?.RoleName || language.Unknown}</TableCell>
-                  <TableCell>
-                    <Button variant="contained" color="error" onClick={() => handleDelete(user.UserID)}>
-                      {language.Delete}
-                    </Button>
-                    <Button variant="contained" color="primary" onClick={() => handleEdit(user)} sx={{ mx: 1 }}>
-                      {language.Edit}
-                    </Button>
-                    <Button variant="outlined" onClick={() => handleViewOrders(user.UserID)}>
-                      {language.ViewOrders}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+  {users.map(user => (
+    <TableRow key={user.UserID}>
+      <TableCell>{user.UserID}</TableCell>
+      <TableCell>{user.Name}</TableCell>
+      <TableCell>{user.Surname}</TableCell>
+      <TableCell>{user.Email}</TableCell>
+      <TableCell>{roles.find(role => role.RoleID === user.RoleID)?.RoleName || language.Unknown}</TableCell>
+      <TableCell>
+        <Button variant="contained" color="error" onClick={() => handleDelete(user.UserID)}>
+          {language.Delete}
+        </Button>
+        <Button variant="contained" color="primary" onClick={() => handleEdit(user)}>
+          {language.Edit}
+        </Button>
+        <Button variant="outlined" onClick={() => handleViewOrders(user.UserID)}>
+          {language.ViewOrders}
+        </Button>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
           </Table>
         </TableContainer>
       </Paper>

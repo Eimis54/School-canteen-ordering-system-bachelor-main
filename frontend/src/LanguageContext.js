@@ -6,7 +6,7 @@ import productTranslations from './translations/productTranslations.json';
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(en);
+  const [language, setLanguage] = useState(lt);
 
   const switchLanguage = (lang) => {
     if (lang === 'en') {
